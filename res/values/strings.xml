@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Simple Android Application</string>
+    <string name="greeting">Congratulations! You have just created an Android Application with Codenvy</string>
+</resources>
