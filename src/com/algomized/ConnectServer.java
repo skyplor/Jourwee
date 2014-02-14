@@ -25,7 +25,7 @@ public class ConnectServer
     String LOG_TAG = "ConnectServer";
     String username = "";
     int age = 0;
-	  HttpClient client;
+	HttpClient client;
     String result = "";
      
     public ConnectServer(String session_id)
@@ -50,8 +50,8 @@ public class ConnectServer
 			result = in.readLine();
 			if (!result.equals("null"))
 			{
-				  ObjectMapper mapper = new ObjectMapper();
-          User user = mapper.readValue(result,User.class);
+				ObjectMapper mapper = new ObjectMapper();
+				User user = mapper.readValue(result,User.class);
 			}
 			else
 			{
