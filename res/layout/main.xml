@@ -1,82 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-android:orientation="vertical"
-android:layout_width="fill_parent"
-android:layout_height="fill_parent"
-android:background="#27a7df">
-  
-  <ImageView
-  android:id="@+id/imageView1"
-  android:src="@drawable/ic_jourweelogo"
-  android:layout_width="wrap_content"
-  android:layout_height="wrap_content"
-  android:layout_centerHorizontal="true"
-  android:layout_marginTop="40dp">
-  </ImageView>
-  
-  <EditText
-  android:layout_width="210dp"
-  android:inputType="textEmailAddress"
-  android:id="@+id/emailTxtBox"
-  android:layout_below="@+id/imageView1"
-  android:layout_toRightOf="@+id/emailTxt"
-  android:layout_marginTop="15dp"
-  android:layout_marginLeft="5dp"
-  android:textSize="17px"
-  android:layout_height="30dp"
-  android:hint="Please enter your email address"
-  android:background="@drawable/edittext_rounded_corners">
-  </EditText>
-  
-  <TextView
-  android:text="@string/email"
-  android:id="@+id/emailTxt"
-  android:layout_width="wrap_content"
-  android:layout_height="wrap_content"
-  android:layout_below="@+id/imageView1"
-  android:layout_marginLeft="35dp"
-  android:layout_marginTop="20dp"
-  android:textColor="#000000"
-  android:textStyle="bold">
-  </TextView>
-  
-  <EditText
-  android:layout_width="210dp"
-  android:inputType="textPassword"
-  android:id="@+id/pwTxtBox"
-  android:layout_alignLeft="@+id/emailTxtBox"
-  android:textSize="17px"
-  android:textScaleX="0.7"
-  android:layout_height="30dp"
-  android:layout_marginTop="20dp"
-  android:layout_below="@+id/emailTxtBox"
-  android:hint="Please enter your password"
-  android:background="@drawable/edittext_rounded_corners">
-  </EditText>
-  
-  <TextView
-  android:text="@string/password"
-  android:id="@+id/passwordTxt"
-  android:layout_width="wrap_content"
-  android:layout_height="wrap_content"
-  android:layout_below="@+id/emailTxtBox"
-  android:layout_marginLeft="10dp"
-  android:layout_marginTop="25dp"
-  android:textColor="#000000"
-  android:textStyle="bold">
-  </TextView>
-  
-  <Button
-  android:layout_width="100dp"
-  android:text="Login"
-  android:id="@+id/loginBtn"
-  android:layout_height="38dp"
-  android:layout_below="@+id/pwTxtBox"
-  android:layout_marginTop="15dp"
-  android:layout_centerHorizontal="true"
-  android:textColor="#FFFFFF"
-  android:textSize="20dp"
-  android:textStyle="bold"
-  android:background="@drawable/button_rounded_corners">
-  </Button>
+<RelativeLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	tools:context="Login"
+	android:background="#27a7df">
+
+	<!-- Edit Text has 2 attributes that has problems -->
+
+	<EditText
+		android:layout_width="210dp"
+		android:inputType="textPassword"
+		android:id="@+id/pwTxtBox"
+		android:layout_alignLeft="@+id/emailTxtBox"
+		android:textSize="12sp"
+		android:layout_height="30dp"
+		android:layout_marginTop="20dp"
+		android:layout_below="@+id/emailTxtBox"
+		android:hint="Please enter your password"
+		android:background="@drawable/edittext_rounded_corners">
+	</EditText>
+
+	<TextView
+		android:text="@string/email"
+		android:id="@+id/emailTxt"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_below="@+id/imageView1"
+		android:layout_marginLeft="35dp"
+		android:layout_marginTop="20dp"
+		android:textColor="#FFFFFF"
+		android:textStyle="bold">
+	</TextView>
+
+	<TextView
+		android:text="@string/password"
+		android:id="@+id/passwordTxt"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_below="@+id/emailTxtBox"
+		android:layout_marginLeft="10dp"
+		android:layout_marginTop="25dp"
+		android:textColor="#FFFFFF"
+		android:textStyle="bold">
+	</TextView>
+
+	<Button
+		android:layout_width="100dp"
+		android:text="Login"
+		android:id="@+id/loginBtn"
+		android:layout_height="38dp"
+		android:layout_below="@+id/pwTxtBox"
+		android:layout_marginTop="15dp"
+		android:layout_centerHorizontal="true"
+		android:textColor="#FFFFFF"
+		android:textSize="20dp"
+		android:textStyle="bold"
+		android:background="@drawable/button_rounded_corners">
+	</Button>
+	
+	<ImageView
+		android:id="@+id/imageView1"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignParentTop="true"
+		android:layout_centerHorizontal="true"
+		android:contentDescription="Jourwee"
+		android:src="@drawable/ic_jourweelogo" />
+	
+	<EditText
+		android:id="@+id/emailTxtBox"
+		android:layout_width="210dp"
+		android:layout_height="30dp"
+		android:layout_alignBaseline="@+id/emailTxt"
+		android:layout_alignBottom="@+id/emailTxt"
+		android:layout_alignLeft="@+id/imageView1"
+		android:background="@drawable/edittext_rounded_corners"
+		android:ems="10"
+		android:hint="Please enter your email address"
+		android:inputType="textEmailAddress"
+		android:textSize="12sp">
+		<requestFocus />
+	</EditText>
 </RelativeLayout>
