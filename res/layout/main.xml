@@ -8,80 +8,61 @@
 	tools:context="Login"
 	android:background="#27a7df">
 
-	<!-- Edit Text has 2 attributes that has problems -->
+	<!-- Edit Text has 2 attributes that has problems (If we type in something 
+		then it wouldnt have any problem)It's trying to delete the words when i focus 
+		on it but no words to delete hence indexoutofbound -->
 
-	<EditText
-		android:layout_width="210dp"
-		android:inputType="textPassword"
-		android:id="@+id/pwTxtBox"
-		android:layout_alignLeft="@+id/emailTxtBox"
-		android:textSize="12sp"
-		android:layout_height="30dp"
-		android:layout_marginTop="20dp"
-		android:layout_below="@+id/emailTxtBox"
-		android:hint="Please enter your password"
-		android:background="@drawable/edittext_rounded_corners">
-	</EditText>
-
-	<TextView
-		android:text="@string/email"
-		android:id="@+id/emailTxt"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_below="@+id/imageView1"
-		android:layout_marginLeft="35dp"
-		android:layout_marginTop="20dp"
-		android:textColor="#FFFFFF"
-		android:textStyle="bold">
-	</TextView>
-
-	<TextView
-		android:text="@string/password"
-		android:id="@+id/passwordTxt"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_below="@+id/emailTxtBox"
-		android:layout_marginLeft="10dp"
-		android:layout_marginTop="25dp"
-		android:textColor="#FFFFFF"
-		android:textStyle="bold">
-	</TextView>
-
-	<Button
-		android:layout_width="100dp"
-		android:text="Login"
-		android:id="@+id/loginBtn"
-		android:layout_height="38dp"
-		android:layout_below="@+id/pwTxtBox"
-		android:layout_marginTop="15dp"
-		android:layout_centerHorizontal="true"
-		android:textColor="#FFFFFF"
-		android:textSize="20dp"
-		android:textStyle="bold"
-		android:background="@drawable/button_rounded_corners">
-	</Button>
-	
 	<ImageView
 		android:id="@+id/imageView1"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_alignParentTop="true"
 		android:layout_centerHorizontal="true"
-		android:contentDescription="Jourwee"
+		android:layout_marginTop="46dp"
+		android:contentDescription="@string/app_name"
 		android:src="@drawable/ic_jourweelogo" />
-	
+
+
 	<EditText
-		android:id="@+id/emailTxtBox"
+		android:id="@+id/loginTxtBox"
 		android:layout_width="210dp"
 		android:layout_height="30dp"
-		android:layout_alignBaseline="@+id/emailTxt"
-		android:layout_alignBottom="@+id/emailTxt"
-		android:layout_alignLeft="@+id/imageView1"
+		android:layout_below="@+id/imageView1"
+		android:layout_centerHorizontal="true"
 		android:background="@drawable/edittext_rounded_corners"
-		android:ems="10"
-		android:hint="Please enter your email address"
-		android:inputType="textEmailAddress"
-		android:textSize="12sp">
+		android:layout_marginTop="35dp"
+		android:hint="@string/login_id"
+		android:inputType="textNoSuggestions"
+		android:paddingLeft="5dp"
+		android:textColor="#27a7df"
+		android:textSize="13sp">
 		<requestFocus />
 	</EditText>
+	<Button
+		android:id="@+id/loginBtn"
+		android:layout_width="200dp"
+		android:layout_height="38dp"
+		android:layout_alignLeft="@+id/pwTxtBox"
+		android:layout_alignRight="@+id/pwTxtBox"
+		android:layout_below="@+id/pwTxtBox"
+		android:layout_marginTop="19dp"
+		android:background="#2980b9"
+		android:text="@string/login"
+		android:textColor="#FFFFFF"
+		android:textSize="15sp"
+		android:textStyle="bold" />
+	<EditText
+		android:id="@+id/pwTxtBox"
+		android:layout_width="210dp"
+		android:layout_height="30dp"
+		android:layout_alignLeft="@+id/loginTxtBox"
+		android:layout_below="@+id/loginTxtBox"
+		android:layout_marginTop="5dp"
+		android:background="@drawable/edittext_rounded_corners"
+		android:ems="10"
+		android:hint="@string/password"
+		android:inputType="textPassword"
+		android:paddingLeft="5dp"
+		android:textColor="#27a7df"
+		android:textSize="13sp" />
 </RelativeLayout>

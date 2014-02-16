@@ -5,22 +5,22 @@
 <item android:state_enabled="true"> 
     <shape android:shape="rectangle"> 
         <solid android:color="#303042"/> 
-         <corners 
-            android:radius="10dp" />
+         <!-- <corners 
+            android:radius="10dp" /> -->
          <stroke 
             android:width="0.7dp"                 
-            android:color="#BDBDBD" />   
+            android:color="#2980b9" />   
     </shape> 
 </item> 
  
 <item android:state_enabled="false"> 
     <shape android:shape="rectangle"> 
         <solid android:color="#EAEAEA"/>     
-        <corners 
-            android:radius="10dp" />
+        <!-- <corners 
+            android:radius="10dp" /> -->
         <stroke 
             android:width="0.7dp"                 
-            android:color="#BDBDBD" />        
+            android:color="#2980b9" />        
     </shape> 
 </item> 
  

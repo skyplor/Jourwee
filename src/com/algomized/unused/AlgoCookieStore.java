@@ -1,4 +1,4 @@
-package com.algomized;
+package com.algomized.unused;
 
 import java.net.CookieStore;
 import java.net.HttpCookie;
@@ -9,6 +9,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import com.algomized.Constants;
 
 import android.content.Context;
 import android.content.SharedPreferences;
