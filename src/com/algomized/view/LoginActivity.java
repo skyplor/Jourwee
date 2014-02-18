@@ -3,15 +3,12 @@ package com.algomized.view;
 import java.io.UnsupportedEncodingException;
 
 import com.algomized.R;
-import com.algomized.R.id;
-import com.algomized.R.layout;
 import com.algomized.controller.ConnectServer;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -28,6 +25,10 @@ public class LoginActivity extends Activity
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
+		// no matter what, we have to check if user has a session first.
+		ConnectServer cs = new ConnectServer(this);
+		cs.testRequest(true);
+		
 		setContentView(R.layout.main);
 
 		login_idBox = (EditText) findViewById(R.id.loginTxtBox);
@@ -51,47 +52,43 @@ public class LoginActivity extends Activity
 				}
 			}
 		});
-		
-		checkLoginStatus();
+
+		// checkLoginStatus();
+
 	}
 
+	// Check if user is already logged in
 	private void checkLoginStatus()
 	{
-		// TODO Auto-generated method stub
 		ConnectServer cs = new ConnectServer(this);
-		if(cs.checkLoginStatus())
+		if (cs.checkLoginStatus())
 		{
 			startLocationActivity();
 		}
-		
+
 	}
 
+	// User is not logged in, proceed to try connecting to server for credentials verification
 	public void connectToServer(String username, String password)
 	{
 		ConnectServer cs = new ConnectServer(username, password, this);
 		try
 		{
-			if(cs.login())
-			{
-				startLocationActivity();
-			}
+			cs.login();
 		}
 		catch (JsonProcessingException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		catch (UnsupportedEncodingException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		// Log.d(LOG_TAG,cs.printUserDetails());
 	}
 
+	// If user is already logged in, start Location Activity
 	private void startLocationActivity()
 	{
-		// TODO Auto-generated method stub
 		Intent intent = new Intent(LoginActivity.this, LocationActivity.class);
 		this.startActivity(intent);
 		this.finish();

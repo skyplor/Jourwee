@@ -5,15 +5,48 @@
 	android:layout_height="match_parent"
 	xmlns:tools="http://schemas.android.com/tools"
 	tools:context=".view.LocationActivity">
-    <TextView
-	android:id="@+id/textView1"
-	android:layout_width="wrap_content"
-	android:layout_height="wrap_content"
-	android:layout_alignParentLeft="true"
-	android:layout_alignParentTop="true"
-	android:layout_marginLeft="80dp"
-	android:layout_marginTop="80dp"
-	android:text="In location view" />
-    <Button android:id="@+id/logoutBtn" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignLeft="@+id/textView1" android:layout_below="@+id/textView1" android:layout_marginTop="18dp" android:text="@string/logoutBtn"/>
+	<Button
+		android:id="@+id/testRequestBtn"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignBaseline="@+id/logoutBtn"
+		android:layout_alignBottom="@+id/logoutBtn"
+		android:layout_alignLeft="@+id/nameTxt"
+		android:layout_marginLeft="16dp"
+		android:text="@string/test_request" />
+	<Button
+		android:id="@+id/logoutBtn"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_below="@+id/nameTxt"
+		android:layout_marginLeft="31dp"
+		android:layout_marginTop="40dp"
+		android:layout_toRightOf="@+id/testRequestBtn"
+		android:text="@string/logoutBtn" />
+	<TextView
+		android:id="@+id/nameTxt"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignParentLeft="true"
+		android:layout_below="@+id/usernameTxt"
+		android:layout_marginLeft="33dp"
+		android:layout_marginTop="30dp"
+		android:text="@string/name" />
+	<TextView
+		android:id="@+id/usernameTxt"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignLeft="@+id/nameTxt"
+		android:layout_below="@+id/userIDTxt"
+		android:layout_marginTop="28dp"
+		android:text="@string/username" />
+	<TextView
+		android:id="@+id/userIDTxt"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignLeft="@+id/usernameTxt"
+		android:layout_alignParentTop="true"
+		android:layout_marginTop="52dp"
+		android:text="@string/user_id" />
 
 </RelativeLayout>
