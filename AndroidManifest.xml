@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.algomized"
+<manifest package="com.algomized.android.jourwee"
     android:versionCode="1"
-    android:versionName="1.0" >
+    android:versionName="1.0" xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-sdk
         android:minSdkVersion="9"
-        android:targetSdkVersion="17" />
+        android:targetSdkVersion="19" />
 
     <uses-permission
         android:name="android.permission.INTERNET" />
@@ -14,12 +13,13 @@
         android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
+        android:name="com.algomized.android.jourwee.JourweeApplication"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@android:style/Theme.Light.NoTitleBar" >
         <activity
-            android:name=".view.LoginActivity"
+            android:name="com.algomized.android.jourwee.view.StartActivity"
             android:icon="@drawable/ic_launcher"
             android:label="@string/app_name" >
             <intent-filter>
@@ -31,8 +31,12 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".view.LocationActivity"
+            android:name="com.algomized.android.jourwee.view.LocationActivity"
             android:label="@string/title_activity_location" >
+        </activity>
+        <activity
+            android:name="com.algomized.android.jourwee.view.LoginActivity"
+            android:label="@string/title_activity_login" >
         </activity>
     </application>
 

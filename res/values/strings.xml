@@ -5,6 +5,7 @@
     <string name="login_id">Username</string>
     <string name="app_name">Jourwee</string>
     <string name="login">Login</string>
+    <string name="register">Register</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_location">LocationActivity</string>
@@ -13,5 +14,17 @@
     <string name="user_id">User ID</string>
     <string name="username">Username</string>
     <string name="name">Name</string>
+    <string name="title_activity_login">LoginActivity</string>
+    <string name="welcome">Welcome to Jourwee!</string>
+    <string name="already_have_an_account_sign_in">Already have an account?<b><u>Sign In</u></b></string>
+    <string name="error_password">Please enter a password at least six characters long</string>
+    <string name="error_email">Please enter a valid email address</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="empty"/>
+    <string name="create_account">Create Account</string>    
+    <string name="title_signin">Sign In</string>
+    <string name="signin_error">We could not sign you in. Please check your username and password before trying again.</string>
+    <string name="error_signin">Error During Sign In</string>
+    <string name="ok">Okay</string>
 
 </resources>

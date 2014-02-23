@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.DrawerLayout
+	android:id="@+id/layout"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:minus="http://schemas.android.com/apk/res-auto">
+	<FrameLayout
+		android:id="@+id/content"
+		android:paddingTop="@dimen/actionbar_size"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent" />
+	<RelativeLayout
+		android:layout_gravity="start"
+		android:id="@+id/drawer"
+		android:paddingTop="@dimen/actionbar_size"
+		android:layout_width="255.0dip"
+		android:layout_height="fill_parent"
+		>
+		<!-- style="@style/Theme.Minus.Drawer" -->
+		<View
+			android:id="@+id/line"
+			android:background="@color/drawer_orange"
+			android:layout_width="fill_parent"
+			android:layout_height="1.0dip"
+			android:layout_alignParentTop="true" />
+		<ListView
+			android:id="@+id/drawer_list"
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent"
+			android:divider="#ffe5e5e5"
+			android:dividerHeight="1.0dip"
+			android:choiceMode="singleChoice"
+			android:layout_below="@id/line"
+			android:fadeScrollbars="false" />
+		
+			<!-- android:listSelector="@drawable/bg_drawer_item" -->
+	</RelativeLayout>
+</android.support.v4.widget.DrawerLayout>

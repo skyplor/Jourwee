@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item type="id" name="mascot">false</item>
+    <item type="id" name="signin">false</item>
+    <item type="id" name="signup">false</item>
+    <item type="id" name="buttons">false</item>
+</resources>
