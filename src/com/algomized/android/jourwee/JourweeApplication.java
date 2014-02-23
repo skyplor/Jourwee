@@ -98,31 +98,4 @@ public class JourweeApplication extends Application
             mRequestQueue.cancelAll(tag);
         }
     }
-
-//	public static JourweeApplication getInstance(Context context)
-//	{
-//		JourweeApplication jourweeAppInstance = _instance;
-//		JourweeApplication jourweeAppInstance2;
-//		if (jourweeAppInstance == null)
-//		{
-//			RequestQueue localRequestQueue = Volley.newRequestQueue(context.getApplicationContext());
-//			SharedPreferences localSharedPreferences = context.getSharedPreferences("accountPrefs", 0);
-//			JourweeAuth localJourweeAuth = new JourweeAuth(context.getApplicationContext(), new PreferencesTokenStore(localSharedPreferences), localMinusVolley.getNetwork());
-//			jourweeAppInstance2 = new JourweeApplication(context.getApplicationContext(), localJourweeAuth.getHttpClient(), localMinusVolley.getNetwork(), new MinusCache(context.getApplicationContext(), localMinusAuth), MinusGson.getInstance(), localRequestQueue, localMinusAuth);
-//			_instance = jourweeAppInstance2;
-//		}
-//		while (true)
-//		{
-//			return localMinusApe2;
-//			if (context != null)
-//				localMinusApe1.setContext(context.getApplicationContext());
-//			localMinusApe2 = localMinusApe1;
-//		}
-//	}
-//
-//	private void setContext(Context applicationContext)
-//	{
-//		// TODO Auto-generated method stub
-//
-//	}
 }

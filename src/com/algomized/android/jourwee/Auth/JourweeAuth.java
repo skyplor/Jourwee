@@ -67,7 +67,7 @@ public class JourweeAuth
 		{
 			public void onErrorResponse(VolleyError paramAnonymousVolleyError)
 			{
-				Log.e("minus:auth", "onErrorResponse", paramAnonymousVolleyError);
+				Log.e("jourwee:auth", "onErrorResponse", paramAnonymousVolleyError);
 				paramAuthListener.onAuthResult(Result.error(paramAnonymousVolleyError));
 			}
 		})
@@ -106,7 +106,7 @@ public class JourweeAuth
 				}
 				catch (JsonParseException localJsonParseException)
 				{
-					Log.w("minus:auth", "Error parsing auth response", localJsonParseException);
+					Log.w("jourwee:auth", "Error parsing auth response", localJsonParseException);
 				}
 				return Response.error(new VolleyError("Unexpected server response"));
 			}
@@ -127,7 +127,7 @@ public class JourweeAuth
 
 	private void onPersistCreds()
 	{
-		this.mStore.edit().putString("minusApi_current_user", curUser).putString("minusApi_refresh_token", this.mRefreshToken).putString("minusApi_access_token", this.mAccessToken).putLong("minusApi_access_token_expires", this.mExpires).commit();
+		this.mStore.edit().putString("jourweeApi_current_user", curUser).putString("jourweeApi_refresh_token", this.mRefreshToken).putString("jourweeApi_access_token", this.mAccessToken).putLong("jourweeApi_access_token_expires", this.mExpires).commit();
 	}
 
 	public void addClientCredentials(Map<String, String> paramMap)

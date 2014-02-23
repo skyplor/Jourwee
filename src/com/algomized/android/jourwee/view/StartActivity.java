@@ -113,9 +113,9 @@ public class StartActivity extends ActionBarActivity implements AuthListener
 	public void SignIn(String paramString1, String paramString2)
 	{
 		showDialog(100);
-		// MinusApe localMinusApe = MinusApe.getInstance(this);
-		// Preferences.configureProxy(this, localMinusApe);
-		// localMinusApe.authenticate(new UserPassCreds(paramString1, paramString2), this);
+		// JourweeApe localJourweeApe = JourweeApe.getInstance(this);
+		// Preferences.configureProxy(this, localJourweeApe);
+		// localJourweeApe.authenticate(new UserPassCreds(paramString1, paramString2), this);
 		Util.authenticate(new UserPassCreds(paramString1, paramString2), this, this.getApplicationContext());
 	}
 
@@ -148,14 +148,14 @@ public class StartActivity extends ActionBarActivity implements AuthListener
 					return;
 				break;
 			case SUCCESS:
-				MinusApe.getInstance(this).getActiveUser(this);
+				JourweeApe.getInstance(this).getActiveUser(this);
 				return;
 		}
 		String str = StatusToast.pickErrorString(this, result);
-		MinusDialogBuilder localMinusDialogBuilder = new MinusDialogBuilder(this);
+		JourweeDialogBuilder localJourweeDialogBuilder = new JourweeDialogBuilder(this);
 		try
 		{
-			localMinusDialogBuilder.setMessage(str).setTitle(R.string.error_signin).setPositiveButton(R.string.ok, null).show();
+			localJourweeDialogBuilder.setMessage(str).setTitle(R.string.error_signin).setPositiveButton(R.string.ok, null).show();
 			return;
 		}
 		catch (Exception localBadTokenException)

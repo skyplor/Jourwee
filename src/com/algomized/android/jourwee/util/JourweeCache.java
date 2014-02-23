@@ -1,14 +1,19 @@
 package com.algomized.android.jourwee.util;
 
-import android.content.Context;
+import java.util.List;
 
+import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
+
+import com.algomized.android.jourwee.Auth.CKey;
+import com.algomized.android.jourwee.Auth.CacheResult;
 import com.algomized.android.jourwee.Auth.Cacheable;
 import com.algomized.android.jourwee.Auth.JourweeAuth;
 import com.algomized.android.jourwee.model.User;
 
 public class JourweeCache extends SqliteCache
 {
-    private static class MinusSession extends SqliteSession
+    private static class JourweeSession extends SqliteSession
     {
 
         protected void saveInternal(Cacheable cacheable)
@@ -23,9 +28,9 @@ public class JourweeCache extends SqliteCache
             return super.stageInternal(cacheable);
         }
 
-        public MinusSession(JourweeCache minuscache)
+        public JourweeSession(JourweeCache jourweecache)
         {
-            super(minuscache);
+            super(jourweecache);
         }
     }
 
@@ -34,28 +39,28 @@ public class JourweeCache extends SqliteCache
     private final JourweeAuth auth;
     private User mActiveUser;
 
-    public JourweeCache(Context context, JourweeAuth minusauth)
+    public JourweeCache(Context context, JourweeAuth jourweeauth)
     {
-        super(context, MinusGson.newInstance(), new Class[] {
-            com/minus/ape/MinusUser, com/minus/ape/MinusUserList, com/minus/ape/MinusNearbyUser, com/minus/ape/MinusNearbyUserList, com/minus/ape/MinusMessage, com/minus/ape/MinusMessageList, com/minus/ape/MinusMessageThreadBase, com/minus/ape/MinusMessageThreadList, com/minus/ape/MinusFile, com/minus/ape/MinusFeedItem, 
-            com/minus/ape/MinusFeed, com/minus/ape/MinusAsset, com/minus/ape/MinusAssetBundle, com/minus/ape/MinusAssetBundleList, com/minus/ape/MinusAssetHistory, com/minus/ape/MinusPromotion, com/minus/ape/MinusRelationshipChoices, com/minus/ape/MinusDeactivationFeedback
+        super(context, JourweeGson.newInstance(), new Class[] {
+            com/jourwee/ape/User, com/jourwee/ape/UserList, com/jourwee/ape/JourweeNearbyUser, com/jourwee/ape/JourweeNearbyUserList, com/jourwee/ape/JourweeMessage, com/jourwee/ape/JourweeMessageList, com/jourwee/ape/JourweeMessageThreadBase, com/jourwee/ape/JourweeMessageThreadList, com/jourwee/ape/JourweeFile, com/jourwee/ape/JourweeFeedItem, 
+            com/jourwee/ape/JourweeFeed, com/jourwee/ape/JourweeAsset, com/jourwee/ape/JourweeAssetBundle, com/jourwee/ape/JourweeAssetBundleList, com/jourwee/ape/JourweeAssetHistory, com/jourwee/ape/JourweePromotion, com/jourwee/ape/JourweeRelationshipChoices, com/jourwee/ape/JourweeDeactivationFeedback
         });
-        auth = minusauth;
+        auth = jourweeauth;
     }
 
     public void cleanMessageThreads()
     {
-        delete(com/minus/ape/MinusMessageThreadBase, "__cache_time__ = 0", null);
+        delete(com/jourwee/ape/JourweeMessageThreadBase, "__cache_time__ = 0", null);
     }
 
     public void cleanMessages()
     {
-        delete(com/minus/ape/MinusMessage, "__cache_time__ = 0", null);
+        delete(com/jourwee/ape/JourweeMessage, "__cache_time__ = 0", null);
     }
 
     public void cleanShims(Pane pane)
     {
-        deleteList(com/minus/ape/MinusMessageList, com/minus/ape/MinusMessage, null, pane);
+        deleteList(com/jourwee/ape/JourweeMessageList, com/jourwee/ape/JourweeMessage, null, pane);
     }
 
     public void clearActiveUser()
@@ -80,21 +85,21 @@ public class JourweeCache extends SqliteCache
             as = new String[0];
         }
         i = 0;
-        iterator = query(com/minus/ape/MinusMessageThreadBase, s, as).iterator();
+        iterator = query(com/jourwee/ape/JourweeMessageThreadBase, s, as).iterator();
         do
         {
             if (!iterator.hasNext())
             {
                 return i;
             }
-            MinusMessageThreadBase minusmessagethreadbase = (MinusMessageThreadBase)iterator.next();
-            if (minusmessagethreadbase.getParent().equals(inboxid))
+            JourweeMessageThreadBase jourweemessagethreadbase = (JourweeMessageThreadBase)iterator.next();
+            if (jourweemessagethreadbase.getParent().equals(inboxid))
             {
-                i += minusmessagethreadbase.getUnreadCount();
+                i += jourweemessagethreadbase.getUnreadCount();
             }
-            minusmessagethreadbase.setUnreadCount(0);
-            minusmessagethreadbase.setRead(true);
-            save(minusmessagethreadbase);
+            jourweemessagethreadbase.setUnreadCount(0);
+            jourweemessagethreadbase.setRead(true);
+            save(jourweemessagethreadbase);
         } while (true);
     }
 
@@ -103,7 +108,7 @@ public class JourweeCache extends SqliteCache
         super.dispatchInfo(changeinfo);
     }
 
-    public MinusUser getActiveUserIfCached()
+    public User getActiveUserIfCached()
     {
         if (mActiveUser != null && mActiveUser.slug.get().equals(auth.getSlug()))
         {
@@ -124,18 +129,18 @@ public class JourweeCache extends SqliteCache
     {
         String as[] = new String[1];
         as[0] = (new StringBuilder(String.valueOf('"'))).append(BoolState.TRUE.name()).append('"').toString();
-        return query(com/minus/ape/MinusAssetBundle, "installed = ?", as);
+        return query(com/jourwee/ape/JourweeAssetBundle, "installed = ?", as);
     }
 
-    public MinusUser getOrLoadActiveUser()
+    public User getOrLoadActiveUser()
     {
-        MinusUser minususer = getActiveUserIfCached();
-        if (minususer != null)
+        User jourweeuser = getActiveUserIfCached();
+        if (jourweeuser != null)
         {
-            return minususer;
+            return jourweeuser;
         } else
         {
-            return (MinusUser)load(com/minus/ape/MinusUser, Slug.ACTIVEUSER);
+            return (User)load(com/jourwee/ape/User, Slug.ACTIVEUSER);
         }
     }
 
@@ -143,14 +148,14 @@ public class JourweeCache extends SqliteCache
     {
         String as[] = new String[1];
         as[0] = inboxid.get();
-        return queryInt(com/minus/ape/MinusMessageThreadBase, "unread_count", 0, "url = ? LIMIT 1", as);
+        return queryInt(com/jourwee/ape/JourweeMessageThreadBase, "unread_count", 0, "url = ? LIMIT 1", as);
     }
 
     public boolean hasUnreadIncoming(InboxId inboxid)
     {
         String as[] = new String[1];
         as[0] = inboxid.getId();
-        int i = queryInt(com/minus/ape/MinusMessage, "1 AS count", 0, "user = ? AND read=0 AND incoming=1 LIMIT 1", as);
+        int i = queryInt(com/jourwee/ape/JourweeMessage, "1 AS count", 0, "user = ? AND read=0 AND incoming=1 LIMIT 1", as);
         boolean flag = false;
         if (i != 0)
         {
@@ -184,13 +189,13 @@ public class JourweeCache extends SqliteCache
         contentvalues.put("read", Integer.valueOf(1));
         String as[] = new String[2];
         as[0] = inboxid.getId();
-        as[1] = MinusMessageBase.Status.FAILED.name();
-        update(com/minus/ape/MinusMessage, contentvalues, "user = ? AND incoming = 1 AND read = 0 AND status != ?", as);
+        as[1] = JourweeMessageBase.Status.FAILED.name();
+        update(com/jourwee/ape/JourweeMessage, contentvalues, "user = ? AND incoming = 1 AND read = 0 AND status != ?", as);
     }
 
     public boolean markPriorOutgoingMessagesAsRead(InboxId inboxid, MUUID muuid)
     {
-        SchemaParser schemaparser = SchemaParser.of(com/minus/ape/MinusMessage);
+        SchemaParser schemaparser = SchemaParser.of(com/jourwee/ape/JourweeMessage);
         String s = schemaparser.getTableName();
         String s1 = schemaparser.getActualKeyName();
         String s2 = (new StringBuilder("user = ? AND incoming=0 AND read=0 AND status != ? AND created <= (SELECT created FROM ")).append(s).append(" WHERE ").append(s1).append(" = ?)").toString();
@@ -198,9 +203,9 @@ public class JourweeCache extends SqliteCache
         contentvalues.put("read", Integer.valueOf(1));
         String as[] = new String[3];
         as[0] = inboxid.getId();
-        as[1] = MinusMessageBase.Status.FAILED.name();
+        as[1] = JourweeMessageBase.Status.FAILED.name();
         as[2] = muuid.get();
-        update(com/minus/ape/MinusMessage, contentvalues, s2, as);
+        update(com/jourwee/ape/JourweeMessage, contentvalues, s2, as);
         return numAffected() > 0;
     }
 
@@ -212,14 +217,14 @@ public class JourweeCache extends SqliteCache
     public SqliteSession newSession()
     {
         ensureInitialized();
-        return new MinusSession(this);
+        return new JourweeSession(this);
     }
 
     protected void onCreate(SQLiteDatabase sqlitedatabase)
     {
         super.onCreate(sqlitedatabase);
-        SchemaParser schemaparser = SchemaParser.of(com/minus/ape/MinusMessageThreadBase);
-        SchemaParser schemaparser1 = SchemaParser.of(com/minus/ape/MinusMessageList);
+        SchemaParser schemaparser = SchemaParser.of(com/jourwee/ape/JourweeMessageThreadBase);
+        SchemaParser schemaparser1 = SchemaParser.of(com/jourwee/ape/JourweeMessageList);
         String s = (new StringBuilder(" BEGIN   UPDATE ")).append(schemaparser1.getTableName()).append("  SET ").append("__cache_time__").append(" = 0 ").append("  WHERE new.url = ").append(schemaparser1.getTableName()).append(".").append("key_group").append("  ;").append(" END ").toString();
         sqlitedatabase.execSQL((new StringBuilder("CREATE TRIGGER IF NOT EXISTS invalidate_threads_new_message AFTER  UPDATE OF uuid ON ")).append(schemaparser.getTableName()).append(s).toString());
         sqlitedatabase.execSQL((new StringBuilder("CREATE TRIGGER IF NOT EXISTS invalidate_threads_invalidated AFTER  UPDATE OF __cache_time__ ON ")).append(schemaparser.getTableName()).append(" WHEN new.").append("__cache_time__").append(" <= 0 ").append(s).toString());
@@ -240,20 +245,20 @@ public class JourweeCache extends SqliteCache
 
     void tryCacheActiveUser(Object obj)
     {
-        if ((obj instanceof MinusUser) && auth != null && auth.getSlug() != null && (auth.getSlug().equals(((MinusUser)obj).slug.get()) || auth.getSlug().equals(Slug.ACTIVEUSER)))
+        if ((obj instanceof User) && auth != null && auth.getSlug() != null && (auth.getSlug().equals(((User)obj).slug.get()) || auth.getSlug().equals(Slug.ACTIVEUSER)))
         {
-            mActiveUser = (MinusUser)obj;
+            mActiveUser = (User)obj;
         }
     }
 
     public void updateThreadReadCount(InboxId inboxid, int i)
     {
-        String s = SchemaParser.of(com/minus/ape/MinusMessageThreadBase).getTableName();
+        String s = SchemaParser.of(com/jourwee/ape/JourweeMessageThreadBase).getTableName();
         String s1 = (new StringBuilder("(url = ? OR url IN ( SELECT parent FROM ")).append(s).append(" WHERE url = ?").append(")) ").append("AND incoming=1 AND read=0").toString();
         String as[] = new String[2];
         as[0] = inboxid.get();
         as[1] = inboxid.get();
-        List list = query(com/minus/ape/MinusMessageThreadBase, s1, as);
+        List list = query(com/jourwee/ape/JourweeMessageThreadBase, s1, as);
         SqliteSession sqlitesession = newSession();
         Iterator iterator = list.iterator();
         do
@@ -263,11 +268,11 @@ public class JourweeCache extends SqliteCache
                 sqlitesession.commit();
                 return;
             }
-            MinusMessageThreadBase minusmessagethreadbase = (MinusMessageThreadBase)iterator.next();
-            minusmessagethreadbase.setUnreadCount(i + minusmessagethreadbase.getUnreadCount());
-            minusmessagethreadbase.setRead(true);
-            sqlitesession.attach(minusmessagethreadbase.getUser());
-            sqlitesession.save(minusmessagethreadbase);
+            JourweeMessageThreadBase jourweemessagethreadbase = (JourweeMessageThreadBase)iterator.next();
+            jourweemessagethreadbase.setUnreadCount(i + jourweemessagethreadbase.getUnreadCount());
+            jourweemessagethreadbase.setRead(true);
+            sqlitesession.attach(jourweemessagethreadbase.getUser());
+            sqlitesession.save(jourweemessagethreadbase);
         } while (true);
     }
 }
