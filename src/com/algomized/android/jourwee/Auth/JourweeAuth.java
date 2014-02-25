@@ -93,7 +93,7 @@ public class JourweeAuth
 				InputStreamReader localInputStreamReader = new InputStreamReader(new ByteArrayInputStream(paramAnonymousNetworkResponse.data));
 				try
 				{
-					JourweeAuth.JourweeAuthResponse localJourweeAuthResponse = (JourweeAuthResponse) new Gson().fromJson(localInputStreamReader, JourweeAuth.JourweeAuthResponse.class);
+					JourweeAuth.JourweeAuthResponse localJourweeAuthResponse = null;//(JourweeAuthResponse) new Gson().fromJson(localInputStreamReader, JourweeAuth.JourweeAuthResponse.class);
 					if (localJourweeAuthResponse != null)
 					{
 						mAccessToken = localJourweeAuthResponse.access_token;
@@ -104,9 +104,13 @@ public class JourweeAuth
 					}
 					return Response.success(localJourweeAuthResponse, getCacheEntry());
 				}
-				catch (JsonParseException localJsonParseException)
+//				catch (JsonParseException localJsonParseException)
+//				{
+//					Log.w("jourwee:auth", "Error parsing auth response", localJsonParseException);
+//				}
+				catch(Exception e)
 				{
-					Log.w("jourwee:auth", "Error parsing auth response", localJsonParseException);
+					
 				}
 				return Response.error(new VolleyError("Unexpected server response"));
 			}
