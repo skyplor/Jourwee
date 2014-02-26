@@ -1,8 +1,12 @@
 package com.algomized.android.jourwee.view;
 
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
+import org.androidannotations.annotations.ViewById;
+import org.androidannotations.annotations.res.AnimationRes;
 
 import com.algomized.android.jourwee.R;
 import com.algomized.android.jourwee.Auth.AuthListener;
@@ -14,27 +18,67 @@ import com.algomized.android.jourwee.util.Util;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
 @EActivity(R.layout.start)
-@OptionsMenu(R.menu.start_activity_actions)
+//@OptionsMenu(R.menu.start_activity_actions)
 public class StartActivity extends ActionBarActivity // implements AuthListener
 {
 	EditText login_idBox, passwordBox;
 	String TAG = "Jourwee - StartActivity.class";
-
-	@OptionsItem({ R.id.action_search, R.id.action_search2 })
-	void multipleMenuItems()
+//	private RegisterFragment_ regFragment_;
+	
+	@ViewById(R.id.RegBtn)
+	Button regButton;
+	
+	@ViewById(R.id.signinTxt)
+	TextView signinTxt;
+	
+	@AfterViews
+	void init()
 	{
-		Log.d(TAG, "menu item clicked!");
+		signinTxt.setClickable(true);
+		overridePendingTransition(R.anim.slide_in_from_bottom,R.anim.slide_out_to_bottom);
 	}
+	
+	@Click(R.id.RegBtn)
+	void regBtnClicked()
+	{
+		RegisterActivity_.intent(this).start();
+	}
+	
+	@Click(R.id.signinTxt)
+	void signinTxtClicked()
+	{
+		LoginActivity_.intent(this).start();
+	}
+	
+//	private void InitViewPager() {  
+////        fragments = new ArrayList<BaseFragment>();  
+//  
+//		regFragment_ = new RegisterFragment_();
+//  
+//        vpHospital.setAdapter(new FmtPagerAdapter(getSupportFragmentManager(), fragments));  
+//        vpHospital.setOnPageChangeListener(changeListener);  
+//        tvProfiles.setTextColor(getResources().getColor(R.color.black_txt));  
+//    }  
+
+//	@OptionsItem({ R.id.action_search, R.id.action_search2 })
+//	void multipleMenuItems()
+//	{
+//		Log.d(TAG, "menu item clicked!");
+//		
+//	}
 	// private boolean mAllowRegister;
 
 	/** Called when the activity is first created. */

@@ -7,6 +7,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.http.Header;
 import org.apache.http.cookie.Cookie;
@@ -256,20 +260,20 @@ public class ConnectServer
 		// };
 		client.get(context, Constants.BASE_URL + Constants.TEST_API, getHeaders(fromLogin), null, new AsyncHttpResponseHandler()
 		{
-//			ProgressDialog dialog;
+			// ProgressDialog dialog;
 
 			@Override
 			public void onStart()
 			{
-//				dialog = new ProgressDialog(context);
-//				dialog.setMessage("Retrieving user data...");
-//				dialog.show();
+				// dialog = new ProgressDialog(context);
+				// dialog.setMessage("Retrieving user data...");
+				// dialog.show();
 			}
 
 			@Override
 			public void onSuccess(String response)
 			{
-//				dialog.dismiss();
+				// dialog.dismiss();
 
 				try
 				{
@@ -327,7 +331,7 @@ public class ConnectServer
 			@Override
 			public void onFailure(Throwable e, String response)
 			{
-//				dialog.dismiss();
+				// dialog.dismiss();
 				Toast.makeText(context, "Error Occured ! Please try again.", Toast.LENGTH_SHORT).show();
 				Log.d(LOG_TAG, response);
 			}
@@ -343,5 +347,92 @@ public class ConnectServer
 			return headers;
 		}
 		return null;
+	}
+
+	public void register() throws UnsupportedEncodingException, JsonProcessingException
+	{
+		client = SingleAsyncHttpClient.getInstance();
+
+		client.setCookieStore(myCookieStore);
+
+		User user_reg = new User();
+		user_reg.setUsername(username);
+		user_reg.setPassword(password);
+		user_reg.setEnabled(true);
+		Map<String, String> user_role_map = new HashMap<String, String>();
+		user_role_map.put("authority", "ROLE_USER");
+		List<Map<String, String>> user_role = new ArrayList<Map<String, String>>();
+		user_role.add(user_role_map);
+		user_reg.setUserRoles(user_role);
+		ObjectMapper mapper_reg = new ObjectMapper();
+		mapper_reg.setSerializationInclusion(Include.NON_NULL);
+		String jsonString = mapper_reg.writeValueAsString(user_reg);
+		Log.d(LOG_TAG, jsonString);
+
+		StringEntity sEntity = new StringEntity(jsonString, "UTF-8");
+		client.post(context, Constants.BASE_URL + Constants.REGISTER, sEntity, "application/json", new AsyncHttpResponseHandler()
+		{
+			ProgressDialog dialog;
+
+			@Override
+			public void onStart()
+			{
+				dialog = new ProgressDialog(context);
+				dialog.setMessage("Registering...Get ready for an awesome ride!");
+				dialog.show();
+			}
+
+			@Override
+			public void onSuccess(String response)
+			{
+				dialog.dismiss();
+
+				try
+				{
+					ObjectMapper mapper = new ObjectMapper();
+					user = mapper.readValue(response, User.class);
+					if (!user.isStatus())
+					{
+						// Registration is unsuccessful
+						Toast.makeText(context, "Something is wrong with our server =( Please try again.", Toast.LENGTH_SHORT).show();
+					}
+					else
+					{
+//						Log.d(LOG_TAG, "Cookies number: " + myCookieStore.getCookies().size());
+//						Cookie cookie = myCookieStore.getCookies().get(0);
+//						Log.d(LOG_TAG, "Cookie: " + cookie.getName() + " Value: " + cookie.getValue());
+						Toast.makeText(context, "Registration successful!", Toast.LENGTH_SHORT).show();
+//						Constants.LOGIN_STATUS = true;
+						Log.d(LOG_TAG, "Response: " + response);
+//						Intent locationIntent = new Intent(context, LocationActivity.class);
+//						if (user.getId() == null || user.getUsername() == null)
+//						{
+//							Log.d(LOG_TAG, "User ID is null");
+//						}
+//						else
+//						{
+//							locationIntent.putExtra("userId", "" + user.getId());
+//							locationIntent.putExtra("username", user.getUsername());
+//							((Activity) context).startActivity(locationIntent);
+//							((Activity) context).finish();
+//						}
+					}
+				}
+
+				catch (Exception exc)
+				{
+					Log.e(LOG_TAG, "Caught Exception: Error converting result " + exc.toString());
+				}
+			}
+
+			@Override
+			public void onFailure(Throwable e, String response)
+			{
+				dialog.dismiss();
+				Toast.makeText(context, "Opps, error occured. Please try again.", Toast.LENGTH_SHORT).show();
+				Log.d(LOG_TAG, response);
+//				Constants.LOGIN_STATUS = false;
+			}
+		});
 	}
 }

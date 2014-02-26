@@ -1,5 +1,9 @@
 package com.algomized.android.jourwee.model;
 
+import java.util.List;
+import java.util.Map;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -8,16 +12,25 @@ public class User
 {
 
 	private String name = null;
-	
-	@JsonProperty("userName")
+
+	@JsonProperty("username")
 	private String username = null;
-	
+
 	private String password = "";
+
+	private boolean enabled;
+
+	@JsonIgnore
+	private boolean status;
+
+	private String message = null;
 
 	@JsonProperty("userId")
 	private Integer id = null;
 
 	private Integer age = null;
+
+	private List<Map<String, String>> userRoles = null;
 
 	/**
 	 * @return the age
@@ -95,6 +108,46 @@ public class User
 	public void setPassword(String password)
 	{
 		this.password = password;
+	}
+
+	public boolean isEnabled()
+	{
+		return enabled;
+	}
+
+	public void setEnabled(boolean enabled)
+	{
+		this.enabled = enabled;
+	}
+
+	public boolean isStatus()
+	{
+		return status;
+	}
+
+	public void setStatus(boolean status)
+	{
+		this.status = status;
+	}
+
+	public String getMessage()
+	{
+		return message;
+	}
+
+	public void setMessage(String message)
+	{
+		this.message = message;
+	}
+
+	public List<Map<String, String>> getUserRoles()
+	{
+		return userRoles;
+	}
+
+	public void setUserRoles(List<Map<String, String>> userRoles)
+	{
+		this.userRoles = userRoles;
 	}
 
 	@Override

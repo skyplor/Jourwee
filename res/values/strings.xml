@@ -20,11 +20,12 @@
     <string name="error_password">Please enter a password at least six characters long</string>
     <string name="error_email">Please enter a valid email address</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="empty"/>
-    <string name="create_account">Create Account</string>    
+    <string name="empty" />
+    <string name="create_account">Create Account</string>
     <string name="title_signin">Sign In</string>
     <string name="signin_error">We could not sign you in. Please check your username and password before trying again.</string>
     <string name="error_signin">Error During Sign In</string>
     <string name="ok">Okay</string>
+    <string name="title_activity_register">RegisterActivity</string>
 
 </resources>
