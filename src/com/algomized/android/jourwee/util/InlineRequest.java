@@ -1,6 +1,6 @@
 package com.algomized.android.jourwee.util;
 
-import com.algomized.android.jourwee.Auth.JourweeAuth;
+import com.algomized.android.jourwee.auth.JourweeAuth;
 import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.Response;

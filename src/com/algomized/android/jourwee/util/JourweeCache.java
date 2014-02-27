@@ -5,10 +5,10 @@ import java.util.List;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.algomized.android.jourwee.Auth.CKey;
-import com.algomized.android.jourwee.Auth.CacheResult;
-import com.algomized.android.jourwee.Auth.Cacheable;
-import com.algomized.android.jourwee.Auth.JourweeAuth;
+import com.algomized.android.jourwee.auth.CKey;
+import com.algomized.android.jourwee.auth.CacheResult;
+import com.algomized.android.jourwee.auth.Cacheable;
+import com.algomized.android.jourwee.auth.JourweeAuth;
 import com.algomized.android.jourwee.model.User;
 
 public class JourweeCache //extends SqliteCache

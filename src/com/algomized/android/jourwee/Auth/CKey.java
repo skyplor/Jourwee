@@ -1,4 +1,4 @@
-package com.algomized.android.jourwee.Auth;
+package com.algomized.android.jourwee.auth;
 
 public interface CKey
 {

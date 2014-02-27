@@ -9,9 +9,9 @@ import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.res.AnimationRes;
 
 import com.algomized.android.jourwee.R;
-import com.algomized.android.jourwee.Auth.AuthListener;
-import com.algomized.android.jourwee.Auth.Result;
-import com.algomized.android.jourwee.Auth.UserPassCreds;
+import com.algomized.android.jourwee.auth.AuthListener;
+import com.algomized.android.jourwee.auth.Result;
+import com.algomized.android.jourwee.auth.UserPassCreds;
 import com.algomized.android.jourwee.fragments.SignInFragment;
 import com.algomized.android.jourwee.fragments.StaticFragment;
 import com.algomized.android.jourwee.util.Util;

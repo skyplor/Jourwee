@@ -2,9 +2,9 @@ package com.algomized.android.jourwee.util;
 
 //import com.algomized.android.jourwee.JourweeApplication;
 import com.algomized.android.jourwee.JourweeApplication;
-import com.algomized.android.jourwee.Auth.AuthListener;
-import com.algomized.android.jourwee.Auth.JourweeAuth;
-import com.algomized.android.jourwee.Auth.UserPassCreds;
+import com.algomized.android.jourwee.auth.AuthListener;
+import com.algomized.android.jourwee.auth.JourweeAuth;
+import com.algomized.android.jourwee.auth.UserPassCreds;
 import com.android.volley.RequestQueue;
 
 import android.content.Context;
