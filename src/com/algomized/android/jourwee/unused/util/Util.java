@@ -1,10 +1,10 @@
-package com.algomized.android.jourwee.util;
+package com.algomized.android.jourwee.unused.util;
 
 //import com.algomized.android.jourwee.JourweeApplication;
 import com.algomized.android.jourwee.JourweeApplication;
-import com.algomized.android.jourwee.auth.AuthListener;
-import com.algomized.android.jourwee.auth.JourweeAuth;
-import com.algomized.android.jourwee.auth.UserPassCreds;
+import com.algomized.android.jourwee.unused.AuthListener;
+import com.algomized.android.jourwee.unused.JourweeAuth;
+import com.algomized.android.jourwee.unused.UserPassCreds;
 import com.android.volley.RequestQueue;
 
 import android.content.Context;

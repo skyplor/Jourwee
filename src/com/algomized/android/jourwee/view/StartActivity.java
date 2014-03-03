@@ -9,12 +9,12 @@ import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.res.AnimationRes;
 
 import com.algomized.android.jourwee.R;
-import com.algomized.android.jourwee.auth.AuthListener;
-import com.algomized.android.jourwee.auth.Result;
-import com.algomized.android.jourwee.auth.UserPassCreds;
-import com.algomized.android.jourwee.fragments.SignInFragment;
-import com.algomized.android.jourwee.fragments.StaticFragment;
-import com.algomized.android.jourwee.util.Util;
+import com.algomized.android.jourwee.unused.AuthListener;
+import com.algomized.android.jourwee.unused.Result;
+import com.algomized.android.jourwee.unused.SignInFragment;
+import com.algomized.android.jourwee.unused.StaticFragment;
+import com.algomized.android.jourwee.unused.UserPassCreds;
+import com.algomized.android.jourwee.unused.util.Util;
 
 import android.app.Activity;
 import android.os.Bundle;

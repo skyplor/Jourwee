@@ -1,4 +1,4 @@
-package com.algomized.android.jourwee.fragments;
+package com.algomized.android.jourwee.unused;
 
 import android.app.Activity;
 import android.content.Context;

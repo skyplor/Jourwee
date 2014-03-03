@@ -3,7 +3,6 @@ package com.algomized.android.jourwee.view;
 import java.io.UnsupportedEncodingException;
 
 import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.ViewById;
@@ -11,21 +10,15 @@ import org.androidannotations.annotations.ViewById;
 import com.algomized.android.jourwee.Constants;
 import com.algomized.android.jourwee.R;
 import com.algomized.android.jourwee.controller.ConnectServer;
-import com.algomized.android.jourwee.util.Util;
+import com.android.volley.VolleyLog;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import android.accounts.Account;
 import android.accounts.AccountAuthenticatorActivity;
 import android.accounts.AccountManager;
-import android.app.Activity;
 import android.content.Intent;
-import android.os.Bundle;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -34,7 +27,7 @@ import android.widget.Toast;
 public class LoginActivity extends AccountAuthenticatorActivity
 {
 	String LOG_TAG = "Login";
-//	EditText login_idBox, passwordBox;
+	// EditText login_idBox, passwordBox;
 
 	@ViewById(R.id.loginBtn)
 	Button loginBtn;
@@ -66,8 +59,8 @@ public class LoginActivity extends AccountAuthenticatorActivity
 	{
 		overridePendingTransition(R.anim.abc_fade_in, R.anim.abc_fade_out);
 		ConnectServer cs = new ConnectServer(this);
-		// TODO Check whether we have a valid auth token by going to the accountmanager via jourweeauthenticator and get oauth token 
-		//cs.testRequest(true);
+		// TODO Check whether we have a valid auth token by going to the accountmanager via jourweeauthenticator and get oauth token
+		// cs.testRequest(true);
 	}
 
 	public void onBackPressed()
@@ -137,27 +130,49 @@ public class LoginActivity extends AccountAuthenticatorActivity
 	// }
 	// }
 
-//	@Background
+	// @Background
 	public void authenticate(String username, String password)
 	{
 		// TODO Connect to server to get oauth
 		ConnectServer cs = new ConnectServer(username, password, this);
 		try
 		{
-			String oauth = cs.login();
-			AccountManager mAccountManager = AccountManager.get(getBaseContext());
-			final Account account = new Account(username, Constants.ACCOUNT_TYPE);
-			mAccountManager.addAccountExplicitly(account, "", null);
+			Intent intent = cs.login();
+			if (intent != null)
+			{
+				if (intent.hasExtra("ERROR_MESSAGE"))
+				{
+					Toast.makeText(getBaseContext(), intent.getStringExtra("ERROR_MESSAGE"), Toast.LENGTH_SHORT).show();
+				}
+				else
+				{
+					String oauth = intent.getStringExtra(AccountManager.KEY_AUTHTOKEN);
+					AccountManager mAccountManager = AccountManager.get(getBaseContext());
+					final Account account = new Account(username, Constants.ACCOUNT_TYPE);
+					if (mAccountManager.addAccountExplicitly(account, "", intent.getExtras()))
+					{
+						VolleyLog.d("Successfully added account: %s", username);
+						mAccountManager.setAuthToken(account, Constants.AUTH_TYPE, oauth);
+					}
+					else
+					{
+						VolleyLog.d("Unable to add account");
+					}
+					// Log.d(LOG_TAG, mAccountManager.toString());
 
-			Log.d(LOG_TAG, mAccountManager.toString());
-
-			final Intent intent = new Intent();
-			intent.putExtra(AccountManager.KEY_ACCOUNT_NAME, username);
-			intent.putExtra(AccountManager.KEY_ACCOUNT_TYPE, Constants.ACCOUNT_TYPE);
-			intent.putExtra(AccountManager.KEY_AUTHTOKEN, oauth);//"com.algomized.android.jourwee:$2a$12$H8P4No9L.SiGZmeca94Lte2XGvKJFIU3m9WofWW4O7s1T.YAvgvVm;oauth2");
-			this.setAccountAuthenticatorResult(intent.getExtras());
-			this.setResult(RESULT_OK, intent);
-			this.finish();
+					// final Intent intent = new Intent();
+					// intent.putExtra(AccountManager.KEY_ACCOUNT_NAME, username);
+					// intent.putExtra(AccountManager.KEY_ACCOUNT_TYPE, Constants.ACCOUNT_TYPE);
+					// intent.putExtra(AccountManager.KEY_AUTHTOKEN, oauth);
+					this.setAccountAuthenticatorResult(intent.getExtras());
+					this.setResult(RESULT_OK, intent);
+					this.finish();
+				}
+			}
+			else
+			{
+				VolleyLog.d("Intent is null");
+			}
 		}
 		catch (JsonProcessingException e)
 		{
@@ -168,5 +183,4 @@ public class LoginActivity extends AccountAuthenticatorActivity
 			e.printStackTrace();
 		}
 	}
-
 }

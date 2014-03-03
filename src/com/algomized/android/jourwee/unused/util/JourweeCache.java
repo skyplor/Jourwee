@@ -1,15 +1,15 @@
-package com.algomized.android.jourwee.util;
+package com.algomized.android.jourwee.unused.util;
 
 import java.util.List;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.algomized.android.jourwee.auth.CKey;
-import com.algomized.android.jourwee.auth.CacheResult;
-import com.algomized.android.jourwee.auth.Cacheable;
-import com.algomized.android.jourwee.auth.JourweeAuth;
 import com.algomized.android.jourwee.model.User;
+import com.algomized.android.jourwee.unused.CKey;
+import com.algomized.android.jourwee.unused.CacheResult;
+import com.algomized.android.jourwee.unused.Cacheable;
+import com.algomized.android.jourwee.unused.JourweeAuth;
 
 public class JourweeCache //extends SqliteCache
 {

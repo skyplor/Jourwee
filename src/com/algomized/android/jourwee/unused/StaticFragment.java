@@ -1,6 +1,6 @@
-package com.algomized.android.jourwee.fragments;
+package com.algomized.android.jourwee.unused;
 
-import com.algomized.android.jourwee.util.Util;
+import com.algomized.android.jourwee.unused.util.Util;
 
 import android.app.Activity;
 import android.os.Bundle;

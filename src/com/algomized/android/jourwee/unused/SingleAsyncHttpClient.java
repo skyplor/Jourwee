@@ -1,4 +1,4 @@
-package com.algomized.android.jourwee;
+package com.algomized.android.jourwee.unused;
 
 import org.apache.http.impl.client.DefaultHttpClient;
 import com.loopj.android.http.AsyncHttpClient;

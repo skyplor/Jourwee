@@ -1,4 +1,4 @@
-package com.algomized.android.jourwee.auth;
+package com.algomized.android.jourwee.unused;
 
 import java.io.Serializable;
 
@@ -7,7 +7,7 @@ import org.json.JSONObject;
 
 import android.util.Log;
 
-import com.algomized.android.jourwee.util.SerializableVolleyError;
+import com.algomized.android.jourwee.unused.util.SerializableVolleyError;
 import com.android.volley.VolleyError;
 import com.android.volley.NetworkError;
 

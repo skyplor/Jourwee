@@ -12,4 +12,5 @@ public class Constants
 	public static final String PREF_SPRING_SECURITY_COOKIE = "spring_security_cookie";
 	public static Boolean LOGIN_STATUS;
 	public static final String ACCOUNT_TYPE = "com.algomized.android.jourwee";
+	public static final String AUTH_TYPE = "com.algomized.android.jourwee";
 }

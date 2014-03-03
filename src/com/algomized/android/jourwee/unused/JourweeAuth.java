@@ -1,4 +1,4 @@
-package com.algomized.android.jourwee.auth;
+package com.algomized.android.jourwee.unused;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStreamReader;
@@ -9,8 +9,8 @@ import android.content.Context;
 import android.util.Log;
 
 import com.algomized.android.jourwee.Constants;
-import com.algomized.android.jourwee.util.InlineRequest;
-import com.algomized.android.jourwee.util.TokenStore;
+import com.algomized.android.jourwee.unused.util.InlineRequest;
+import com.algomized.android.jourwee.unused.util.TokenStore;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Network;
 import com.android.volley.NetworkResponse;

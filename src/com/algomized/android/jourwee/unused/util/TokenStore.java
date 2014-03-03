@@ -1,4 +1,4 @@
-package com.algomized.android.jourwee.util;
+package com.algomized.android.jourwee.unused.util;
 
 public abstract interface TokenStore
 {

@@ -1,5 +1,7 @@
 package com.algomized.android.jourwee.auth;
 
+import com.algomized.android.jourwee.Constants;
+import com.algomized.android.jourwee.controller.ConnectServer;
 import com.algomized.android.jourwee.view.LoginActivity_;
 import com.algomized.android.jourwee.view.RegisterActivity_;
 
@@ -50,7 +52,7 @@ public class JourweeAuthenticator extends AbstractAccountAuthenticator
 
 		// If the caller requested an authToken type we don't support, then
 		// return an error
-		if (!authTokenType.equals("Read only") && !authTokenType.equals("Full access"))
+		if (!authTokenType.equals(Constants.AUTH_TYPE))
 		{
 			final Bundle result = new Bundle();
 			result.putString(AccountManager.KEY_ERROR_MESSAGE, "invalid authTokenType");
@@ -74,7 +76,9 @@ public class JourweeAuthenticator extends AbstractAccountAuthenticator
 				try
 				{
 					Log.d(TAG, "> re-authenticating with the existing password");
-					authToken = "$2a$12$H8P4No9L.SiGZmeca94Lte2XGvKJFIU3m9WofWW4O7s1T.YAvgvVm";
+					ConnectServer cs = new ConnectServer(account.name, password, mContext);
+					Intent intent = cs.login();
+					authToken = intent.getStringExtra(AccountManager.KEY_AUTHTOKEN);
 				}
 				catch (Exception e)
 				{
@@ -109,10 +113,9 @@ public class JourweeAuthenticator extends AbstractAccountAuthenticator
 	@Override
 	public String getAuthTokenLabel(String authTokenType)
 	{
-		if ("Full Access".equals(authTokenType))
+		if (Constants.AUTH_TYPE.equals(authTokenType))
 			return "Full access to an Jourwee account";
-		else if ("Read only".equals(authTokenType))
-			return "Read only access to an Jourwee account";
+		
 		else
 			return authTokenType + " (Label)";
 	}

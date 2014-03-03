@@ -1,5 +1,7 @@
 package com.algomized.android.jourwee.controller;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -20,8 +22,8 @@ import org.apache.http.message.BasicHeader;
 import com.algomized.android.jourwee.JourweeApplication;
 import com.algomized.android.jourwee.R;
 import com.algomized.android.jourwee.Constants;
-import com.algomized.android.jourwee.SingleAsyncHttpClient;
 import com.algomized.android.jourwee.model.User;
+import com.algomized.android.jourwee.unused.SingleAsyncHttpClient;
 import com.algomized.android.jourwee.view.LocationActivity;
 import com.algomized.android.jourwee.view.LoginActivity;
 import com.android.volley.Request;
@@ -37,6 +39,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.PersistentCookieStore;
+
+import android.os.Bundle;
+import android.os.Looper;
 import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -55,6 +60,8 @@ public class ConnectServer
 	PersistentCookieStore myCookieStore;
 	SharedPreferences sharedpref;
 	String oauth = "";
+	Intent res;
+	ProgressDialog dialog;
 
 	@Inject
 	AndroidAuthenticator authenticator;
@@ -75,12 +82,17 @@ public class ConnectServer
 		this.password = password;
 		myCookieStore = new PersistentCookieStore(context);
 		sharedpref = context.getSharedPreferences(Constants.SHARED_PREF_NAME, Context.MODE_PRIVATE);
+		res = new Intent();
 	}
 
-	public String login() throws JsonProcessingException, UnsupportedEncodingException
+	public Intent login() throws JsonProcessingException, UnsupportedEncodingException
 	{
-		
+
 		RequestQueue mRequestQueue = JourweeApplication.getInstance().getRequestQueue();
+		final Bundle data = new Bundle();
+		dialog = new ProgressDialog(context);
+		dialog.setMessage("Logging in...");
+		dialog.show();
 
 		StringRequest req = new StringRequest(Request.Method.POST, Constants.BASE_URL + Constants.LOGIN, new Response.Listener<String>()
 		{
@@ -89,6 +101,7 @@ public class ConnectServer
 			{
 				try
 				{
+					dialog.dismiss();
 					VolleyLog.d("Response: %s", response);
 					Toast.makeText(context, "Response: " + response, Toast.LENGTH_LONG).show();
 					ObjectMapper mapper = new ObjectMapper();
@@ -96,12 +109,21 @@ public class ConnectServer
 					oauth = user.getMessage();
 					// oauth = response.getMessage();
 					VolleyLog.d("Oauth %s", oauth);
-
+					data.putString(AccountManager.KEY_ACCOUNT_NAME, username);
+					data.putString(AccountManager.KEY_ACCOUNT_TYPE, Constants.ACCOUNT_TYPE);
+					data.putString(AccountManager.KEY_AUTHTOKEN, oauth);
 				}
 				catch (Exception e)
 				{
-					e.printStackTrace();
+					data.putString("ERROR_MESSAGE", e.getMessage());
 				}
+
+				// res = new Intent();
+				if (data.isEmpty())
+				{
+					VolleyLog.d("Data bundle is empty");
+				}
+				res.putExtras(data);
 			}
 		}, new Response.ErrorListener()
 		{
@@ -118,6 +140,7 @@ public class ConnectServer
 				Map<String, String> params = new HashMap<String, String>();
 				VolleyLog.d("username: %s", username);
 				params.put("j_username", username);
+				VolleyLog.d("password: %s", password);
 				params.put("j_password", password);
 
 				return params;
@@ -128,7 +151,7 @@ public class ConnectServer
 		// add the request object to the queue to be executed
 		mRequestQueue.add(req);
 
-		return oauth;
+		return res;
 	}
 
 	public Boolean checkLoginStatus()
@@ -320,10 +343,12 @@ public class ConnectServer
 		return null;
 	}
 
-	public String register() throws JsonProcessingException, UnsupportedEncodingException
+	public Intent register() throws JsonProcessingException, UnsupportedEncodingException
 	{
 		Log.d(LOG_TAG, "Started authenticating");
-
+		dialog = new ProgressDialog(context);
+		dialog.setMessage("Registering...");
+		dialog.show();
 		User user_reg = new User();
 		user_reg.setUsername(username);
 		user_reg.setPassword(password);
@@ -337,6 +362,7 @@ public class ConnectServer
 		mapper_reg.setSerializationInclusion(Include.NON_NULL);
 		final String jsonString = mapper_reg.writeValueAsString(user_reg);
 		Log.d(LOG_TAG, "JSON STRING: " + jsonString);
+		final Bundle data = new Bundle();
 
 		RequestQueue mRequestQueue = JourweeApplication.getInstance().getRequestQueue();
 
@@ -349,17 +375,23 @@ public class ConnectServer
 
 				try
 				{
+					dialog.dismiss();
 					VolleyLog.v("Response: %s", response.toString());
 					Toast.makeText(context, "Response: " + response.toString(), Toast.LENGTH_LONG).show();
 					oauth = response.getMessage();
 					VolleyLog.d("Oauth %s", oauth);
-
+					data.putString(AccountManager.KEY_ACCOUNT_NAME, username);
+					data.putString(AccountManager.KEY_ACCOUNT_TYPE, Constants.ACCOUNT_TYPE);
+					data.putString(AccountManager.KEY_AUTHTOKEN, oauth);
+					Toast.makeText(context, "Oauth: " + oauth, Toast.LENGTH_LONG).show();
 				}
 				catch (Exception e)
 				{
-					e.printStackTrace();
+					data.putString("ERROR_MESSAGE", e.getMessage());
 				}
 
+				// res = new Intent();
+				res.putExtras(data);
 			}
 		}, new Response.ErrorListener()
 		{
@@ -372,7 +404,20 @@ public class ConnectServer
 
 		// add the request object to the queue to be executed
 		mRequestQueue.add(req);
-		
-		return oauth;
+
+		return res;
+	}
+
+	public void removeAccounts()
+	{
+		AccountManager am = AccountManager.get(context);
+		Account[] accounts = am.getAccounts();
+		if (accounts.length > 0)
+		{
+			for (Account accountToRemove : accounts)
+				// Account accountToRemove = accounts[0];
+				am.removeAccount(accountToRemove, null, null);
+		}
+
 	}
 }

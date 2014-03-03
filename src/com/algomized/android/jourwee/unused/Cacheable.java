@@ -1,4 +1,4 @@
-package com.algomized.android.jourwee.auth;
+package com.algomized.android.jourwee.unused;
 
 public interface Cacheable
 {
