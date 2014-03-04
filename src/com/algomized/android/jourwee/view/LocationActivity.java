@@ -22,8 +22,9 @@ public class LocationActivity extends Activity
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.location);
-		String user_id_value = getIntent().getExtras().getString("userId");
-		String username_value = getIntent().getExtras().getString("username");
+//		String user_id_value = getIntent().getExtras().getString("userId");
+		// TODO AccountManager get username
+//		String username_value = getIntent().getExtras().getString("username");
 		
 		Button logout_button = (Button) findViewById(R.id.logoutBtn);
 		Button test_request_button = (Button) findViewById(R.id.testRequestBtn);
@@ -51,8 +52,8 @@ public class LocationActivity extends Activity
 			}
 		});
 		
-		user_id_text.setText(user_id_value);
-		username_text.setText(username_value);
+//		user_id_text.setText(user_id_value);
+//		username_text.setText(username_value);
 	}
 
 	private void testRequest()

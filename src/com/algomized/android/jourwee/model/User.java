@@ -120,11 +120,13 @@ public class User
 		this.enabled = enabled;
 	}
 
+	@JsonIgnore
 	public boolean isStatus()
 	{
 		return status;
 	}
 
+	@JsonProperty
 	public void setStatus(boolean status)
 	{
 		this.status = status;
@@ -153,12 +155,12 @@ public class User
 	@Override
 	public String toString()
 	{
-		if (id != null && username != null && name != null)
+		if (username != null && message != null)
 		{
 			StringBuilder builder = new StringBuilder();
-			builder.append("id").append(id);
+			builder.append("message").append(message);
+			builder.append("status").append(status);
 			builder.append("username").append(username);
-			builder.append("name").append(name);
 			return builder.toString();
 		}
 		else

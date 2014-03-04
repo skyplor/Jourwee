@@ -18,6 +18,7 @@ import javax.inject.Inject;
 
 import org.apache.http.Header;
 import org.apache.http.cookie.Cookie;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.message.BasicHeader;
 import com.algomized.android.jourwee.JourweeApplication;
 import com.algomized.android.jourwee.R;
@@ -39,6 +40,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.PersistentCookieStore;
+import com.loopj.android.http.RequestParams;
 
 import android.os.Bundle;
 import android.os.Looper;
@@ -88,68 +90,153 @@ public class ConnectServer
 	public Intent login() throws JsonProcessingException, UnsupportedEncodingException
 	{
 
-		RequestQueue mRequestQueue = JourweeApplication.getInstance().getRequestQueue();
+		// Since Volley class has some limitation (runs on background thread), we are not using it for the login.
+		// RequestQueue mRequestQueue = JourweeApplication.getInstance().getRequestQueue();
 		final Bundle data = new Bundle();
-		dialog = new ProgressDialog(context);
-		dialog.setMessage("Logging in...");
-		dialog.show();
+		// dialog = new ProgressDialog(context);
+		// dialog.setMessage("Logging in...");
+		// dialog.show();
 
-		StringRequest req = new StringRequest(Request.Method.POST, Constants.BASE_URL + Constants.LOGIN, new Response.Listener<String>()
-		{
-			@Override
-			public void onResponse(String response)
-			{
-				try
-				{
-					dialog.dismiss();
-					VolleyLog.d("Response: %s", response);
-					Toast.makeText(context, "Response: " + response, Toast.LENGTH_LONG).show();
-					ObjectMapper mapper = new ObjectMapper();
-					user = mapper.readValue(response, User.class);
-					oauth = user.getMessage();
-					// oauth = response.getMessage();
-					VolleyLog.d("Oauth %s", oauth);
-					data.putString(AccountManager.KEY_ACCOUNT_NAME, username);
-					data.putString(AccountManager.KEY_ACCOUNT_TYPE, Constants.ACCOUNT_TYPE);
-					data.putString(AccountManager.KEY_AUTHTOKEN, oauth);
-				}
-				catch (Exception e)
-				{
-					data.putString("ERROR_MESSAGE", e.getMessage());
-				}
+		client = SingleAsyncHttpClient.getInstance();
+		// user = new User();
+		//
+		// user.setUsername(username);
+		// user.setPassword(password);
 
-				// res = new Intent();
-				if (data.isEmpty())
-				{
-					VolleyLog.d("Data bundle is empty");
-				}
-				res.putExtras(data);
-			}
-		}, new Response.ErrorListener()
-		{
-			@Override
-			public void onErrorResponse(VolleyError error)
-			{
-				VolleyLog.e("Error: ", error.getMessage());
-			}
-		})
-		{
-			@Override
-			protected Map<String, String> getParams()
-			{
-				Map<String, String> params = new HashMap<String, String>();
-				VolleyLog.d("username: %s", username);
-				params.put("j_username", username);
-				VolleyLog.d("password: %s", password);
-				params.put("j_password", password);
+		RequestParams params = new RequestParams();
+		params.add("j_username", username);
+		params.add("j_password", password);
 
-				return params;
-			}
+		// ObjectMapper mapper_login = new ObjectMapper();
+		// mapper_login.setSerializationInclusion(Include.NON_NULL);
+		// String jsonString = mapper_login.writeValueAsString(user);
+		// Log.d(LOG_TAG, jsonString);
+		
+		
 
-		};
+		// StringEntity sEntity = new StringEntity(jsonString, "UTF-8");
+//		client.post(context, Constants.BASE_URL + Constants.LOGIN, params, new AsyncHttpResponseHandler()
+//		{
+//			ProgressDialog dialog;
+//
+//			@Override
+//			public void onStart()
+//			{
+//				dialog = new ProgressDialog(context);
+//				dialog.setMessage("Please wait while we log you in...");
+//				dialog.show();
+//			}
+//
+//			@Override
+//			public void onSuccess(String response)
+//			{
+//				dialog.dismiss();
+//
+//				try
+//				{
+//					ObjectMapper mapper = new ObjectMapper();
+//					user = mapper.readValue(response, User.class);
+//					if (!user.isStatus())
+//					{
+//						// login is unsuccessful
+//						Toast.makeText(context, "Username and password do not match. Please try again.", Toast.LENGTH_SHORT).show();
+//					}
+//					else
+//					{
+//						// Log.d(LOG_TAG, "Cookies number: " + myCookieStore.getCookies().size());
+//						// Cookie cookie = myCookieStore.getCookies().get(0);
+//						// Log.d(LOG_TAG, "Cookie: " + cookie.getName() + " Value: " + cookie.getValue());
+//						Toast.makeText(context, "Login successful!", Toast.LENGTH_SHORT).show();
+//						Constants.LOGIN_STATUS = true;
+//						Log.d(LOG_TAG, "Response: " + response);
+//						res = new Intent(context, LocationActivity.class);
+//						data.putString(AccountManager.KEY_ACCOUNT_NAME, username);
+//						data.putString(AccountManager.KEY_ACCOUNT_TYPE, Constants.ACCOUNT_TYPE);
+//						data.putString(AccountManager.KEY_AUTHTOKEN, oauth);
+//						// res.putExtra("userId", "" + user.getId());
+//						// res.putExtra("username", user.getUsername());
+//						// ((Activity) context).startActivity(locationIntent);
+//						// ((Activity) context).finish();
+//					}
+//				}
+//
+//				catch (Exception exc)
+//				{
+//					data.putString(AccountManager.KEY_ERROR_MESSAGE, exc.toString());
+//					Log.e(LOG_TAG, "Caught Exception: Error converting result " + exc.toString());
+//				}
+//
+//				res.putExtras(data);
+//			}
+//
+//			@Override
+//			public void onFailure(Throwable e, String response)
+//			{
+//				dialog.dismiss();
+//				Toast.makeText(context, "Error Occured ! Please try again.", Toast.LENGTH_SHORT).show();
+//				Log.d(LOG_TAG, response);
+//				Constants.LOGIN_STATUS = false;
+//
+//				// cd.goHome(SearchActivity.this);
+//			}
+//		});
+
+		// StringRequest req = new StringRequest(Request.Method.POST, Constants.BASE_URL + Constants.LOGIN, new Response.Listener<String>()
+		// {
+		// @Override
+		// public void onResponse(String response)
+		// {
+		// try
+		// {
+		// dialog.dismiss();
+		// VolleyLog.d("Response: %s", response);
+		// Toast.makeText(context, "Response: " + response, Toast.LENGTH_LONG).show();
+		// ObjectMapper mapper = new ObjectMapper();
+		// user = mapper.readValue(response, User.class);
+		// oauth = user.getMessage();
+		// // oauth = response.getMessage();
+		// VolleyLog.d("Oauth %s", oauth);
+		// data.putString(AccountManager.KEY_ACCOUNT_NAME, username);
+		// data.putString(AccountManager.KEY_ACCOUNT_TYPE, Constants.ACCOUNT_TYPE);
+		// data.putString(AccountManager.KEY_AUTHTOKEN, oauth);
+		// }
+		// catch (Exception e)
+		// {
+		// data.putString("ERROR_MESSAGE", e.getMessage());
+		// }
+		//
+		// // res = new Intent();
+		// if (data.isEmpty())
+		// {
+		// VolleyLog.d("Data bundle is empty");
+		// }
+		// res.putExtras(data);
+		// }
+		// }, new Response.ErrorListener()
+		// {
+		// @Override
+		// public void onErrorResponse(VolleyError error)
+		// {
+		// VolleyLog.e("Error: ", error.getMessage());
+		// }
+		// })
+		// {
+		// @Override
+		// protected Map<String, String> getParams()
+		// {
+		// Map<String, String> params = new HashMap<String, String>();
+		// VolleyLog.d("username: %s", username);
+		// params.put("j_username", username);
+		// VolleyLog.d("password: %s", password);
+		// params.put("j_password", password);
+		//
+		// return params;
+		// }
+		//
+		// };
 
 		// add the request object to the queue to be executed
-		mRequestQueue.add(req);
+		// mRequestQueue.add(req);
 
 		return res;
 	}
@@ -346,64 +433,135 @@ public class ConnectServer
 	public Intent register() throws JsonProcessingException, UnsupportedEncodingException
 	{
 		Log.d(LOG_TAG, "Started authenticating");
-		dialog = new ProgressDialog(context);
-		dialog.setMessage("Registering...");
-		dialog.show();
-		User user_reg = new User();
-		user_reg.setUsername(username);
-		user_reg.setPassword(password);
-		user_reg.setEnabled(true);
+		// dialog = new ProgressDialog(context);
+		// dialog.setMessage("Registering...");
+		// dialog.show();
+		user = new User();
+		user.setUsername(username);
+		user.setPassword(password);
+		user.setEnabled(true);
 		Map<String, String> user_role_map = new HashMap<String, String>();
 		user_role_map.put("authority", "ROLE_USER");
 		List<Map<String, String>> user_role = new ArrayList<Map<String, String>>();
 		user_role.add(user_role_map);
-		user_reg.setUserRoles(user_role);
+		user.setUserRoles(user_role);
 		ObjectMapper mapper_reg = new ObjectMapper();
 		mapper_reg.setSerializationInclusion(Include.NON_NULL);
-		final String jsonString = mapper_reg.writeValueAsString(user_reg);
+		String jsonString = mapper_reg.writeValueAsString(user);
 		Log.d(LOG_TAG, "JSON STRING: " + jsonString);
 		final Bundle data = new Bundle();
 
-		RequestQueue mRequestQueue = JourweeApplication.getInstance().getRequestQueue();
+		client = SingleAsyncHttpClient.getInstance();
 
-		JacksonJsonRequest<User> req = new JacksonJsonRequest<User>(Request.Method.POST, Constants.BASE_URL + Constants.REGISTER, jsonString, User.class, new Response.Listener<User>()
+		StringEntity sEntity = new StringEntity(jsonString, "UTF-8");
+		client.post(context, Constants.BASE_URL + Constants.REGISTER, sEntity, "application/json", new AsyncHttpResponseHandler()
 		{
+			ProgressDialog dialog;
 
 			@Override
-			public void onResponse(User response)
+			public void onStart()
 			{
+				dialog = new ProgressDialog(context);
+				dialog.setMessage("Registering you into the system...");
+				dialog.show();
+			}
+
+			@Override
+			public void onSuccess(String response)
+			{
+				dialog.dismiss();
 
 				try
 				{
-					dialog.dismiss();
-					VolleyLog.v("Response: %s", response.toString());
-					Toast.makeText(context, "Response: " + response.toString(), Toast.LENGTH_LONG).show();
-					oauth = response.getMessage();
-					VolleyLog.d("Oauth %s", oauth);
-					data.putString(AccountManager.KEY_ACCOUNT_NAME, username);
-					data.putString(AccountManager.KEY_ACCOUNT_TYPE, Constants.ACCOUNT_TYPE);
-					data.putString(AccountManager.KEY_AUTHTOKEN, oauth);
-					Toast.makeText(context, "Oauth: " + oauth, Toast.LENGTH_LONG).show();
-				}
-				catch (Exception e)
-				{
-					data.putString("ERROR_MESSAGE", e.getMessage());
+					ObjectMapper mapper = new ObjectMapper();
+					user = mapper.readValue(response, User.class);
+					VolleyLog.d("Response: %s, Message: %s", response, user.getMessage());
+					if (!user.isStatus())
+					{
+						// login is unsuccessful
+						Toast.makeText(context, "User exist in system already.", Toast.LENGTH_SHORT).show();
+					}
+					else
+					{
+						// Log.d(LOG_TAG, "Cookies number: " + myCookieStore.getCookies().size());
+						// Cookie cookie = myCookieStore.getCookies().get(0);
+						// Log.d(LOG_TAG, "Cookie: " + cookie.getName() + " Value: " + cookie.getValue());
+						Toast.makeText(context, "Registration successful!", Toast.LENGTH_SHORT).show();
+						Constants.LOGIN_STATUS = true;
+						Log.d(LOG_TAG, "Response: " + response);
+						res = new Intent(context, LocationActivity.class);
+						data.putString(AccountManager.KEY_ACCOUNT_NAME, username);
+						data.putString(AccountManager.KEY_ACCOUNT_TYPE, Constants.ACCOUNT_TYPE);
+						data.putString(AccountManager.KEY_AUTHTOKEN, oauth);
+						// res.putExtra("userId", "" + user.getId());
+						// res.putExtra("username", user.getUsername());
+						// ((Activity) context).startActivity(locationIntent);
+						// ((Activity) context).finish();
+					}
 				}
 
-				// res = new Intent();
+				catch (Exception exc)
+				{
+					data.putString(AccountManager.KEY_ERROR_MESSAGE, exc.toString());
+					Log.e(LOG_TAG, "Caught Exception: Error converting result " + exc.toString());
+					Toast.makeText(context, "Something went wrong. It's probably our fault. Please try again later.", Toast.LENGTH_SHORT).show();
+				}
+
 				res.putExtras(data);
 			}
-		}, new Response.ErrorListener()
-		{
+
 			@Override
-			public void onErrorResponse(VolleyError error)
+			public void onFailure(Throwable e, String response)
 			{
-				VolleyLog.e("Error: ", error.getMessage());
+				dialog.dismiss();
+				Toast.makeText(context, "Error Occured ! Please try again.", Toast.LENGTH_SHORT).show();
+				Log.d(LOG_TAG, response);
+				Constants.LOGIN_STATUS = false;
+
+				// cd.goHome(SearchActivity.this);
 			}
 		});
 
-		// add the request object to the queue to be executed
-		mRequestQueue.add(req);
+		// RequestQueue mRequestQueue = JourweeApplication.getInstance().getRequestQueue();
+		//
+		// JacksonJsonRequest<User> req = new JacksonJsonRequest<User>(Request.Method.POST, Constants.BASE_URL + Constants.REGISTER, jsonString, User.class, new Response.Listener<User>()
+		// {
+		//
+		// @Override
+		// public void onResponse(User response)
+		// {
+		//
+		// try
+		// {
+		// dialog.dismiss();
+		// VolleyLog.v("Response: %s", response.toString());
+		// Toast.makeText(context, "Response: " + response.toString(), Toast.LENGTH_LONG).show();
+		// oauth = response.getMessage();
+		// VolleyLog.d("Oauth %s", oauth);
+		// data.putString(AccountManager.KEY_ACCOUNT_NAME, username);
+		// data.putString(AccountManager.KEY_ACCOUNT_TYPE, Constants.ACCOUNT_TYPE);
+		// data.putString(AccountManager.KEY_AUTHTOKEN, oauth);
+		// Toast.makeText(context, "Oauth: " + oauth, Toast.LENGTH_LONG).show();
+		// }
+		// catch (Exception e)
+		// {
+		// data.putString("ERROR_MESSAGE", e.getMessage());
+		// }
+		//
+		// // res = new Intent();
+		// res.putExtras(data);
+		// }
+		// }, new Response.ErrorListener()
+		// {
+		// @Override
+		// public void onErrorResponse(VolleyError error)
+		// {
+		// VolleyLog.e("Error: ", error.getMessage());
+		// }
+		// });
+		//
+		// // add the request object to the queue to be executed
+		// mRequestQueue.add(req);
 
 		return res;
 	}

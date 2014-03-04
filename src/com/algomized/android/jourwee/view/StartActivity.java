@@ -17,6 +17,7 @@ import com.algomized.android.jourwee.unused.UserPassCreds;
 import com.algomized.android.jourwee.unused.util.Util;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
@@ -31,54 +32,55 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 @EActivity(R.layout.start)
-//@OptionsMenu(R.menu.start_activity_actions)
+// @OptionsMenu(R.menu.start_activity_actions)
 public class StartActivity extends ActionBarActivity // implements AuthListener
 {
+	private static final int REGISTER = 0, LOGIN = 1;
 	EditText login_idBox, passwordBox;
 	String TAG = "Jourwee - StartActivity.class";
-//	private RegisterFragment_ regFragment_;
-	
+	// private RegisterFragment_ regFragment_;
+
 	@ViewById(R.id.RegBtn)
 	Button regButton;
-	
+
 	@ViewById(R.id.signinTxt)
 	TextView signinTxt;
-	
+
 	@AfterViews
 	void init()
 	{
 		signinTxt.setClickable(true);
-		overridePendingTransition(R.anim.slide_in_from_bottom,R.anim.slide_out_to_bottom);
+		overridePendingTransition(R.anim.slide_in_from_bottom, R.anim.slide_out_to_bottom);
 	}
-	
+
 	@Click(R.id.RegBtn)
 	void regBtnClicked()
 	{
-		RegisterActivity_.intent(this).start();
+		RegisterActivity_.intent(this).startForResult(REGISTER);
 	}
-	
+
 	@Click(R.id.signinTxt)
 	void signinTxtClicked()
 	{
-		LoginActivity_.intent(this).start();
+		LoginActivity_.intent(this).startForResult(LOGIN);
 	}
-	
-//	private void InitViewPager() {  
-////        fragments = new ArrayList<BaseFragment>();  
-//  
-//		regFragment_ = new RegisterFragment_();
-//  
-//        vpHospital.setAdapter(new FmtPagerAdapter(getSupportFragmentManager(), fragments));  
-//        vpHospital.setOnPageChangeListener(changeListener);  
-//        tvProfiles.setTextColor(getResources().getColor(R.color.black_txt));  
-//    }  
 
-//	@OptionsItem({ R.id.action_search, R.id.action_search2 })
-//	void multipleMenuItems()
-//	{
-//		Log.d(TAG, "menu item clicked!");
-//		
-//	}
+	// private void InitViewPager() {
+	// // fragments = new ArrayList<BaseFragment>();
+	//
+	// regFragment_ = new RegisterFragment_();
+	//
+	// vpHospital.setAdapter(new FmtPagerAdapter(getSupportFragmentManager(), fragments));
+	// vpHospital.setOnPageChangeListener(changeListener);
+	// tvProfiles.setTextColor(getResources().getColor(R.color.black_txt));
+	// }
+
+	// @OptionsItem({ R.id.action_search, R.id.action_search2 })
+	// void multipleMenuItems()
+	// {
+	// Log.d(TAG, "menu item clicked!");
+	//
+	// }
 	// private boolean mAllowRegister;
 
 	/** Called when the activity is first created. */
@@ -219,4 +221,18 @@ public class StartActivity extends ActionBarActivity // implements AuthListener
 	// {
 	// }
 	// }
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data)
+	{
+		if (resultCode == RESULT_OK)
+		{
+			// The user picked a contact.
+			// The Intent's data Uri identifies which contact was selected.
+			Intent locationIntent = new Intent(this, LocationActivity.class);
+			startActivity(locationIntent);
+			this.finish();
+			// Do something with the contact here (bigger example below)
+		}
+	}
 }
