@@ -1,7 +1,5 @@
 package com.algomized.android.jourwee.auth;
 
-import com.algomized.android.jourwee.view.LoginActivity_;
-
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
@@ -20,7 +18,7 @@ public class JourweeAuthenticatorService extends Service
 	public IBinder onBind(Intent intent)
 	{
 
-		JourweeAuthenticator authenticator = new JourweeAuthenticator(this);
+		JourweeAuthenticator authenticator = this.getAuthenticator();
 		return authenticator.getIBinder();
 	}
 

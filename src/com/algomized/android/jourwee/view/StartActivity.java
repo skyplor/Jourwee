@@ -38,7 +38,6 @@ public class StartActivity extends ActionBarActivity // implements AuthListener
 	private static final int REGISTER = 0, LOGIN = 1;
 	EditText login_idBox, passwordBox;
 	String TAG = "Jourwee - StartActivity.class";
-	// private RegisterFragment_ regFragment_;
 
 	@ViewById(R.id.RegBtn)
 	Button regButton;
@@ -225,14 +224,13 @@ public class StartActivity extends ActionBarActivity // implements AuthListener
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data)
 	{
+		Bundle bundle = data.getExtras();
 		if (resultCode == RESULT_OK)
 		{
-			// The user picked a contact.
-			// The Intent's data Uri identifies which contact was selected.
-			Intent locationIntent = new Intent(this, LocationActivity.class);
+			Intent locationIntent = new Intent(this, LocationActivity_.class);
+			locationIntent.putExtras(bundle);
 			startActivity(locationIntent);
 			this.finish();
-			// Do something with the contact here (bigger example below)
 		}
 	}
 }

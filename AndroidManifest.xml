@@ -33,7 +33,7 @@
 			</intent-filter>
 		</activity>
 		<activity
-			android:name="com.algomized.android.jourwee.view.LocationActivity"
+			android:name="com.algomized.android.jourwee.view.LocationActivity_"
 			android:label="@string/title_activity_location">
 		</activity>
 		<activity

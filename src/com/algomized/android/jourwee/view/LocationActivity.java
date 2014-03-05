@@ -1,8 +1,22 @@
 package com.algomized.android.jourwee.view;
 
-import com.algomized.android.jourwee.R;
-import com.algomized.android.jourwee.controller.ConnectServer;
+import java.io.IOException;
 
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Click;
+import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.ViewById;
+import org.apache.http.client.ClientProtocolException;
+
+import com.algomized.android.jourwee.Constants;
+import com.algomized.android.jourwee.R;
+import com.algomized.android.jourwee.util.NetworkUtil;
+
+import android.accounts.Account;
+import android.accounts.AccountManager;
+import android.accounts.AccountManagerFuture;
+import android.accounts.AuthenticatorException;
+import android.accounts.OperationCanceledException;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
@@ -13,78 +27,106 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+@EActivity(R.layout.location)
 public class LocationActivity extends Activity
 {
+	String username;
 
-	/** Called when the activity is first created. */
-	@Override
-	public void onCreate(Bundle savedInstanceState)
+	@ViewById(R.id.logoutBtn)
+	Button logout_button;
+
+	@ViewById(R.id.testRequestBtn)
+	Button test_request_button;
+
+	@ViewById(R.id.userIDTxt)
+	TextView user_id_text;
+
+	@ViewById(R.id.usernameTxt)
+	TextView username_text;
+
+	@ViewById(R.id.nameTxt)
+	TextView name_text;
+
+	@Click(R.id.logoutBtn)
+	public void OnLogoutBtnClicked(View v)
 	{
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.location);
-//		String user_id_value = getIntent().getExtras().getString("userId");
+		// Retrieve oauthtoken
+		Account account = new Account(username, Constants.ACCOUNT_TYPE);
+		AccountManagerFuture<Bundle> accFut = AccountManager.get(this).getAuthToken(account, Constants.AUTH_TYPE, null, this, null, null);
+		Bundle authTokenBundle = null;
+		try
+		{
+			authTokenBundle = accFut.getResult();
+
+			String authToken = authTokenBundle.get(AccountManager.KEY_AUTHTOKEN).toString();
+			NetworkUtil nu = new NetworkUtil(this);
+
+			if (nu.logout(username, authToken))
+			{
+				// TODO Also have to logout from AccountManager side. We have to remove only our accountstype.
+				nu.removeAccounts();
+			}
+		}
+		catch (ClientProtocolException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		catch (OperationCanceledException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		catch (AuthenticatorException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
+	@Click(R.id.testRequestBtn)
+	public void OnTestRequestBtnClicked(View v)
+	{
+		NetworkUtil nu = new NetworkUtil(this);
+		nu.testRequest(false);
+	}
+
+	@AfterViews
+	void init()
+	{
+		overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
+
+		// String user_id_value = getIntent().getExtras().getString("userId");
 		// TODO AccountManager get username
-//		String username_value = getIntent().getExtras().getString("username");
-		
-		Button logout_button = (Button) findViewById(R.id.logoutBtn);
-		Button test_request_button = (Button) findViewById(R.id.testRequestBtn);
-		TextView user_id_text = (TextView) findViewById(R.id.userIDTxt);
-		TextView username_text = (TextView) findViewById(R.id.usernameTxt);
-		TextView name_text = (TextView) findViewById(R.id.nameTxt);
-		
-		logout_button.setOnClickListener(new OnClickListener()
-		{
+		username = getIntent().getExtras().getString(AccountManager.KEY_ACCOUNT_NAME);
 
-			@Override
-			public void onClick(View v)
-			{
-				logout();
-			}
-		});
-		
-		test_request_button.setOnClickListener(new OnClickListener()
-		{
-
-			@Override
-			public void onClick(View v)
-			{
-				testRequest();
-			}
-		});
-		
-//		user_id_text.setText(user_id_value);
-//		username_text.setText(username_value);
+		// user_id_text.setText(user_id_value);
+		// username_text.setText(username_value);
 	}
 
-	private void testRequest()
-	{
-		ConnectServer cs = new ConnectServer(this);
-		cs.testRequest(false);
-	}
+	// public static void start(Activity activity)
+	// {
+	// start(activity, null);
+	// }
 
-	private void logout()
-	{
-		ConnectServer cs = new ConnectServer(this);
-		cs.logout();
-	}
-	
-	public static void start(Activity activity)
-    {
-        start(activity, null);
-    }
-
-    public static void start(Activity activity, Uri uri)
-    {
-        Intent intent = new Intent(activity, LocationActivity.class);
-        intent.putExtra("stayalive", true);
-        if (uri != null)
-        {
-            intent.putExtra("uploadAvatarUri", uri);
-        }
-        activity.setResult(-1, null);
-        activity.finish();
-        activity.startActivity(intent);
-        activity.overridePendingTransition(R.anim.abc_slide_in_bottom, R.anim.abc_slide_out_top);
-    }
+	// public static void start(Activity activity, Uri uri)
+	// {
+	// Intent intent = new Intent(activity, LocationActivity_.class);
+	// intent.putExtra("stayalive", true);
+	// if (uri != null)
+	// {
+	// intent.putExtra("uploadAvatarUri", uri);
+	// }
+	// activity.setResult(-1, null);
+	// activity.finish();
+	// activity.startActivity(intent);
+	// activity.overridePendingTransition(R.anim.abc_slide_in_bottom, R.anim.abc_slide_out_top);
+	// }
 
 }

@@ -1,10 +1,9 @@
 package com.algomized.android.jourwee.auth;
 
 import com.algomized.android.jourwee.Constants;
-import com.algomized.android.jourwee.controller.ConnectServer;
+import com.algomized.android.jourwee.model.User;
+import com.algomized.android.jourwee.util.NetworkUtil;
 import com.algomized.android.jourwee.view.LoginActivity_;
-import com.algomized.android.jourwee.view.RegisterActivity_;
-
 import android.accounts.*;
 import android.content.Context;
 import android.content.Intent;
@@ -24,7 +23,6 @@ public class JourweeAuthenticator extends AbstractAccountAuthenticator
 	{
 		super(context);
 
-		// I hate you! Google - set mContext as protected!
 		this.mContext = context;
 	}
 
@@ -76,9 +74,9 @@ public class JourweeAuthenticator extends AbstractAccountAuthenticator
 				try
 				{
 					Log.d(TAG, "> re-authenticating with the existing password");
-					ConnectServer cs = new ConnectServer(account.name, password, mContext);
-					Intent intent = cs.login();
-					authToken = intent.getStringExtra(AccountManager.KEY_AUTHTOKEN);
+					NetworkUtil nu = new NetworkUtil(account.name, password, mContext);
+					User user = nu.login();
+					authToken = user.getMessage();
 				}
 				catch (Exception e)
 				{

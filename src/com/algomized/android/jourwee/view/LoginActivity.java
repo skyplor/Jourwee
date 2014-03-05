@@ -1,29 +1,18 @@
 package com.algomized.android.jourwee.view;
 
-import java.util.ArrayList;
-
+import java.io.IOException;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.util.EntityUtils;
-
+import org.apache.http.client.ClientProtocolException;
 import com.algomized.android.jourwee.Constants;
 import com.algomized.android.jourwee.R;
-import com.algomized.android.jourwee.controller.ConnectServer;
 import com.algomized.android.jourwee.model.User;
+import com.algomized.android.jourwee.util.NetworkUtil;
 import com.android.volley.VolleyLog;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import android.accounts.Account;
 import android.accounts.AccountAuthenticatorActivity;
 import android.accounts.AccountManager;
@@ -41,10 +30,8 @@ public class LoginActivity extends AccountAuthenticatorActivity
 {
 	String LOG_TAG = "Login";
 	ProgressDialog dialog;
-	ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 	Bundle data;
 	Intent intent = null;
-	// EditText login_idBox, passwordBox;
 
 	@ViewById(R.id.loginBtn)
 	Button loginBtn;
@@ -81,9 +68,9 @@ public class LoginActivity extends AccountAuthenticatorActivity
 	{
 		overridePendingTransition(R.anim.abc_fade_in, R.anim.abc_fade_out);
 		data = new Bundle();
-		// ConnectServer cs = new ConnectServer(this);
+		// NetworkUtil nu = new NetworkUtil(this);
 		// TODO Check whether we have a valid auth token by going to the accountmanager via jourweeauthenticator and get oauth token
-		// cs.testRequest(true);
+		// nu.testRequest(true);
 	}
 
 	public void onBackPressed()
@@ -104,8 +91,8 @@ public class LoginActivity extends AccountAuthenticatorActivity
 	// super.onCreate(savedInstanceState);
 	// no matter what, we have to check if user has a session first.
 
-	// ConnectServer cs = new ConnectServer(this);
-	// cs.testRequest(true);
+	// NetworkUtil nu = new NetworkUtil(this);
+	// nu.testRequest(true);
 
 	// setContentView(R.layout.login);
 
@@ -138,10 +125,10 @@ public class LoginActivity extends AccountAuthenticatorActivity
 	// User is not logged in, proceed to try connecting to server for credentials verification
 	// public void connectToServer(String username, String password)
 	// {
-	// ConnectServer cs = new ConnectServer(username, password, this);
+	// NetworkUtil nu = new NetworkUtil(username, password, this);
 	// try
 	// {
-	// cs.login();
+	// nu.login();
 	// }
 	// catch (JsonProcessingException e)
 	// {
@@ -158,11 +145,11 @@ public class LoginActivity extends AccountAuthenticatorActivity
 	// public void authenticate(String username, String password)
 	// {
 	// // TODO Connect to server to get oauth
-	// ConnectServer cs = new ConnectServer(username, password, this);
+	// NetworkUtil nu = new NetworkUtil(username, password, this);
 	// try
 	// {
-	// cs.removeAccounts();
-	// Intent intent = cs.login();
+	// nu.removeAccounts();
+	// Intent intent = nu.login();
 	// if (intent != null)
 	// {
 	// if (intent.hasExtra("ERROR_MESSAGE"))
@@ -212,29 +199,13 @@ public class LoginActivity extends AccountAuthenticatorActivity
 	@Background
 	public void authenticate(String username, String password)
 	{
-		ConnectServer cs = new ConnectServer(username, password, this);
-		cs.removeAccounts();
-		nameValuePairs.add(new BasicNameValuePair("j_username", username));
-		nameValuePairs.add(new BasicNameValuePair("j_password", password));
-
+		User user;
+		NetworkUtil nu = new NetworkUtil(username, password, this);
+		nu.removeAccounts();
+		
 		try
 		{
-			// intent = cs.login();
-			HttpClient httpclient = new DefaultHttpClient();
-
-			HttpPost httppost = new HttpPost(Constants.BASE_URL + Constants.LOGIN);
-
-			httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-
-			HttpResponse response = httpclient.execute(httppost);
-
-			ObjectMapper mapper = new ObjectMapper();
-			String result = EntityUtils.toString(response.getEntity());
-
-			Log.d(LOG_TAG, "Result: " + result);
-
-			User user = mapper.readValue(result, User.class);
-			Log.d(LOG_TAG, "User message: " + user.getMessage());
+			user = nu.login();
 
 			if (!user.isStatus())
 			{
@@ -244,12 +215,6 @@ public class LoginActivity extends AccountAuthenticatorActivity
 			}
 			else
 			{
-				// // Log.d(LOG_TAG, "Cookies number: " + myCookieStore.getCookies().size());
-				// // Cookie cookie = myCookieStore.getCookies().get(0);
-				// // Log.d(LOG_TAG, "Cookie: " + cookie.getName() + " Value: " + cookie.getValue());
-				// Toast.makeText(context, "Login successful!", Toast.LENGTH_SHORT).show();
-				// Constants.LOGIN_STATUS = true;
-				// Log.d(LOG_TAG, "Response: " + response);
 				publishProgress(50);
 				data.putString(AccountManager.KEY_ACCOUNT_NAME, username);
 				data.putString(AccountManager.KEY_ACCOUNT_TYPE, Constants.ACCOUNT_TYPE);
@@ -258,11 +223,25 @@ public class LoginActivity extends AccountAuthenticatorActivity
 			}
 
 		}
+		catch (ClientProtocolException e1)
+		{
+			// TODO Auto-generated catch block
+			publishProgress(-2);
+			data.putString(AccountManager.KEY_ERROR_MESSAGE, e1.toString());
+			e1.printStackTrace();
+		}
+		catch (IOException e1)
+		{
+			// TODO Auto-generated catch block
+			publishProgress(-2);
+			data.putString(AccountManager.KEY_ERROR_MESSAGE, e1.toString());
+			e1.printStackTrace();
+		}
 		catch (Exception e)
 		{
+			publishProgress(-2);
 			data.putString(AccountManager.KEY_ERROR_MESSAGE, e.toString());
-			Log.e(LOG_TAG, "Error in http connection " + e.toString());
-
+			Log.e(LOG_TAG, "Exception: " + e.toString());
 		}
 	}
 
@@ -272,7 +251,7 @@ public class LoginActivity extends AccountAuthenticatorActivity
 		// Update progress views
 		if (progress == 50)
 		{
-			intent = new Intent(this, LocationActivity.class);
+			intent = new Intent(this, LocationActivity_.class);
 		}
 
 		else if (progress == 100)
@@ -302,12 +281,6 @@ public class LoginActivity extends AccountAuthenticatorActivity
 					{
 						VolleyLog.d("Unable to add account");
 					}
-					// Log.d(LOG_TAG, mAccountManager.toString());
-
-					// final Intent intent = new Intent();
-					// intent.putExtra(AccountManager.KEY_ACCOUNT_NAME, username);
-					// intent.putExtra(AccountManager.KEY_ACCOUNT_TYPE, Constants.ACCOUNT_TYPE);
-					// intent.putExtra(AccountManager.KEY_AUTHTOKEN, oauth);
 					LoginActivity.this.setAccountAuthenticatorResult(intent.getExtras());
 					LoginActivity.this.setResult(RESULT_OK, intent);
 					LoginActivity.this.finish();
@@ -317,6 +290,10 @@ public class LoginActivity extends AccountAuthenticatorActivity
 		else if (progress == -1)
 		{
 			Toast.makeText(getBaseContext(), "Username and password do not match. Please try again.", Toast.LENGTH_SHORT).show();
+		}
+		else if (progress == -2)
+		{
+			Toast.makeText(getBaseContext(), "Something went wrong. It's probably our fault. Please try again later.", Toast.LENGTH_SHORT).show();
 		}
 
 	}
@@ -350,10 +327,10 @@ public class LoginActivity extends AccountAuthenticatorActivity
 //		{
 //			// TODO HTTP Post
 //			Intent intent = null;
-//			// ConnectServer cs = new ConnectServer(username, password, context);
+//			// NetworkUtil nu = new NetworkUtil(username, password, context);
 //			try
 //			{
-//				// intent = cs.login();
+//				// intent = nu.login();
 //				HttpClient httpclient = new DefaultHttpClient();
 //
 //				HttpPost httppost = new HttpPost(Constants.BASE_URL + Constants.LOGIN);
