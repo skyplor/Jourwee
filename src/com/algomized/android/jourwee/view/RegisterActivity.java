@@ -96,7 +96,7 @@ public class RegisterActivity extends Activity
 			{
 				publishProgress(50);
 				data.putString(AccountManager.KEY_ACCOUNT_NAME, username);
-				data.putString(AccountManager.KEY_ACCOUNT_TYPE, Constants.ACCOUNT_TYPE);
+				data.putString(AccountManager.KEY_ACCOUNT_TYPE, Constants.AM_ACCOUNT_TYPE);
 				data.putString(AccountManager.KEY_AUTHTOKEN, user_reg.getMessage());
 				publishProgress(100);
 			}
@@ -152,11 +152,11 @@ public class RegisterActivity extends Activity
 					String oauth = intent.getStringExtra(AccountManager.KEY_AUTHTOKEN);
 					AccountManager mAccountManager = AccountManager.get(getBaseContext());
 					String username = intent.getExtras().getString(AccountManager.KEY_ACCOUNT_NAME);
-					final Account account = new Account(username, Constants.ACCOUNT_TYPE);
+					final Account account = new Account(username, Constants.AM_ACCOUNT_TYPE);
 					if (mAccountManager.addAccountExplicitly(account, "", intent.getExtras()))
 					{
 						VolleyLog.d("Successfully added account: %s", username);
-						mAccountManager.setAuthToken(account, Constants.AUTH_TYPE, oauth);
+						mAccountManager.setAuthToken(account, Constants.AM_AUTH_TYPE, oauth);
 					}
 					else
 					{

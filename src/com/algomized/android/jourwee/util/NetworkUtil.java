@@ -36,12 +36,13 @@ import com.algomized.android.jourwee.Constants;
 import com.algomized.android.jourwee.model.User;
 import com.algomized.android.jourwee.unused.SingleAsyncHttpClient;
 import com.algomized.android.jourwee.view.LocationActivity_;
-import com.algomized.android.jourwee.view.LoginActivity;
 import com.android.volley.toolbox.AndroidAuthenticator;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.PersistentCookieStore;
+import com.squareup.okhttp.internal.Base64;
+
 import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -90,12 +91,25 @@ public class NetworkUtil
 	{
 		user = new User();
 		nameValuePairs = new ArrayList<NameValuePair>();
-		nameValuePairs.add(new BasicNameValuePair("j_username", username));
-		nameValuePairs.add(new BasicNameValuePair("j_password", password));
+		nameValuePairs.add(new BasicNameValuePair(Constants.KEY_GRANT_TYPE, Constants.GRANT_PASSWORD));
+		// nameValuePairs.add(new BasicNameValuePair(Constants.KEY_CLIENT_ID, Constants.CLIENT_ID));
+		// nameValuePairs.add(new BasicNameValuePair(Constants.KEY_CLIENT_SECRET, Constants.CLIENT_SECRET));
+		nameValuePairs.add(new BasicNameValuePair(Constants.KEY_USERNAME, username));
+		nameValuePairs.add(new BasicNameValuePair(Constants.KEY_PASSWORD, password));
+
+		String encodedHeader = encodeHeader(Constants.CLIENT_ID, Constants.CLIENT_SECRET);
 
 		HttpClient httpclient = new DefaultHttpClient();
 
-		HttpPost httppost = new HttpPost(Constants.BASE_URL + Constants.LOGIN);
+		HttpPost httppost = new HttpPost(Constants.BASE_URL + Constants.URL_TOKEN);
+		
+		String headerValue = Constants.HEADER_BASIC + " " + encodedHeader;
+		
+		Log.d(LOG_TAG, "Header Value: " + headerValue);
+
+		httppost.addHeader(Constants.KEY_HEADER_AUTH, headerValue);
+		
+		Log.d(LOG_TAG, "Header: " + httppost.getHeaders(Constants.KEY_HEADER_AUTH).toString());
 
 		httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
@@ -107,9 +121,27 @@ public class NetworkUtil
 		Log.d(LOG_TAG, "Result: " + result);
 
 		User user = mapper.readValue(result, User.class);
-		Log.d(LOG_TAG, "User message: " + user.getMessage());
+		Log.d(LOG_TAG, "User Response: " + user.toString());
 
 		return user;
+	}
+
+	private String encodeHeader(String clientId, String clientSecret)
+	{
+		byte[] clientBytes = null;
+		try
+		{
+			clientBytes = (clientId + ":" + clientSecret).getBytes("UTF-8");
+		}
+		catch (UnsupportedEncodingException e)
+		{
+			e.printStackTrace();
+			return "null";
+		}
+		String encodedHeader = Base64.encode(clientBytes);
+		Log.d(LOG_TAG, "EncodedHeader: " + encodedHeader);
+
+		return encodedHeader;
 	}
 
 	public Boolean checkLoginStatus()
@@ -130,7 +162,7 @@ public class NetworkUtil
 
 	public boolean logout(String username, String oauthtoken) throws ClientProtocolException, IOException
 	{
-		
+
 		user = new User();
 		nameValuePairs = new ArrayList<NameValuePair>();
 		nameValuePairs.add(new BasicNameValuePair("j_username", username));
@@ -138,7 +170,7 @@ public class NetworkUtil
 
 		HttpClient httpclient = new DefaultHttpClient();
 
-		HttpPost httppost = new HttpPost(Constants.BASE_URL + Constants.LOGOUT);
+		HttpPost httppost = new HttpPost(Constants.BASE_URL + Constants.URL_LOGOUT);
 
 		httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
@@ -151,62 +183,62 @@ public class NetworkUtil
 
 		User user = mapper.readValue(result, User.class);
 		Log.d(LOG_TAG, "User message: " + user.getMessage());
-		return true;
-//		client = SingleAsyncHttpClient.getInstance();
-//		client.get(context, Constants.BASE_URL + Constants.LOGOUT, new AsyncHttpResponseHandler()
-//		{
-//			ProgressDialog dialog;
-//
-//			@Override
-//			public void onStart()
-//			{
-//				dialog = new ProgressDialog(context);
-//				dialog.setMessage("Logging out...");
-//				dialog.show();
-//			}
-//
-//			@Override
-//			public void onSuccess(String response)
-//			{
-//				dialog.dismiss();
-//
-//				try
-//				{
-//
-//					if (response.equals("completed"))
-//					{
-//						// logout is successful
-//						Toast.makeText(context, "Logout successfully!", Toast.LENGTH_SHORT).show();
-//						// Go back to login page.
-//						Intent loginIntent = new Intent(context, LoginActivity.class);
-//						loginIntent.putExtra("logout", true);
-//						((Activity) context).startActivity(loginIntent);
-//						((Activity) context).finish();
-//
-//						myCookieStore.clear();
-//					}
-//					else
-//					{
-//						Toast.makeText(context, "Something is wrong. Please try again.", Toast.LENGTH_SHORT).show();
-//						Log.d(LOG_TAG, "Response: " + response);
-//					}
-//
-//				}
-//
-//				catch (Exception exc)
-//				{
-//					Log.e(LOG_TAG, "Caught Exception in logout(): Error converting result " + exc.toString());
-//				}
-//			}
-//
-//			@Override
-//			public void onFailure(Throwable e, String response)
-//			{
-//				dialog.dismiss();
-//				Toast.makeText(context, "Error Occured ! Please try again.", Toast.LENGTH_SHORT).show();
-//				Log.d(LOG_TAG, response);
-//			}
-//		});
+		return user.isStatus();
+		// client = SingleAsyncHttpClient.getInstance();
+		// client.get(context, Constants.BASE_URL + Constants.LOGOUT, new AsyncHttpResponseHandler()
+		// {
+		// ProgressDialog dialog;
+		//
+		// @Override
+		// public void onStart()
+		// {
+		// dialog = new ProgressDialog(context);
+		// dialog.setMessage("Logging out...");
+		// dialog.show();
+		// }
+		//
+		// @Override
+		// public void onSuccess(String response)
+		// {
+		// dialog.dismiss();
+		//
+		// try
+		// {
+		//
+		// if (response.equals("completed"))
+		// {
+		// // logout is successful
+		// Toast.makeText(context, "Logout successfully!", Toast.LENGTH_SHORT).show();
+		// // Go back to login page.
+		// Intent loginIntent = new Intent(context, LoginActivity.class);
+		// loginIntent.putExtra("logout", true);
+		// ((Activity) context).startActivity(loginIntent);
+		// ((Activity) context).finish();
+		//
+		// myCookieStore.clear();
+		// }
+		// else
+		// {
+		// Toast.makeText(context, "Something is wrong. Please try again.", Toast.LENGTH_SHORT).show();
+		// Log.d(LOG_TAG, "Response: " + response);
+		// }
+		//
+		// }
+		//
+		// catch (Exception exc)
+		// {
+		// Log.e(LOG_TAG, "Caught Exception in logout(): Error converting result " + exc.toString());
+		// }
+		// }
+		//
+		// @Override
+		// public void onFailure(Throwable e, String response)
+		// {
+		// dialog.dismiss();
+		// Toast.makeText(context, "Error Occured ! Please try again.", Toast.LENGTH_SHORT).show();
+		// Log.d(LOG_TAG, response);
+		// }
+		// });
 	}
 
 	public String printUserDetails()
@@ -232,7 +264,7 @@ public class NetworkUtil
 		// ,new BasicHeader("keep-alive", "115")
 		// ,new BasicHeader("User-Agent", "Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.2) Gecko/20100316 Firefox/3.6.2")
 		// };
-		client.get(context, Constants.BASE_URL + Constants.TEST_API, getHeaders(fromLogin), null, new AsyncHttpResponseHandler()
+		client.get(context, Constants.BASE_URL + Constants.URL_TEST_API, getHeaders(fromLogin), null, new AsyncHttpResponseHandler()
 		{
 			// ProgressDialog dialog;
 
@@ -348,7 +380,7 @@ public class NetworkUtil
 		// intent = cs.login();
 		HttpClient httpclient = new DefaultHttpClient();
 
-		HttpPost httppost = new HttpPost(Constants.BASE_URL + Constants.REGISTER);
+		HttpPost httppost = new HttpPost(Constants.BASE_URL + Constants.URL_REGISTER);
 
 		httppost.setHeader("Content-Type", "application/json");
 

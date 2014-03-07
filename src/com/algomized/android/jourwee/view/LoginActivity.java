@@ -207,7 +207,7 @@ public class LoginActivity extends AccountAuthenticatorActivity
 		{
 			user = nu.login();
 
-			if (!user.isStatus())
+			if(user.getAccess_token() == null || user.getAccess_token() == "")
 			{
 				// login is unsuccessful
 				publishProgress(-1);
@@ -217,8 +217,10 @@ public class LoginActivity extends AccountAuthenticatorActivity
 			{
 				publishProgress(50);
 				data.putString(AccountManager.KEY_ACCOUNT_NAME, username);
-				data.putString(AccountManager.KEY_ACCOUNT_TYPE, Constants.ACCOUNT_TYPE);
-				data.putString(AccountManager.KEY_AUTHTOKEN, user.getMessage());
+				data.putString(AccountManager.KEY_ACCOUNT_TYPE, Constants.AM_ACCOUNT_TYPE);
+				data.putString(AccountManager.KEY_AUTHTOKEN, user.getAccess_token());
+				data.putString(Constants.AM_KEY_REFRESH_TOKEN, user.getRefresh_token());
+				data.putString(Constants.AM_KEY_EXPIRES_IN, user.getExpires_in());
 				publishProgress(100);
 			}
 
@@ -269,13 +271,17 @@ public class LoginActivity extends AccountAuthenticatorActivity
 				else
 				{
 					String oauth = intent.getStringExtra(AccountManager.KEY_AUTHTOKEN);
+					String refresh_token = intent.getStringExtra(Constants.AM_KEY_REFRESH_TOKEN);
+					String expires_in = intent.getStringExtra(Constants.AM_KEY_EXPIRES_IN);
 					AccountManager mAccountManager = AccountManager.get(getBaseContext());
 					String username = intent.getExtras().getString(AccountManager.KEY_ACCOUNT_NAME);
-					final Account account = new Account(username, Constants.ACCOUNT_TYPE);
-					if (mAccountManager.addAccountExplicitly(account, "", intent.getExtras()))
+					final Account account = new Account(username, Constants.AM_ACCOUNT_TYPE);
+					if (mAccountManager.addAccountExplicitly(account, "", null))
 					{
 						VolleyLog.d("Successfully added account: %s", username);
-						mAccountManager.setAuthToken(account, Constants.AUTH_TYPE, oauth);
+						mAccountManager.setAuthToken(account, Constants.AM_AUTH_TYPE, oauth);
+						mAccountManager.setUserData(account, Constants.AM_KEY_REFRESH_TOKEN, refresh_token);
+						mAccountManager.setUserData(account, Constants.AM_KEY_EXPIRES_IN, expires_in);
 					}
 					else
 					{
@@ -289,10 +295,12 @@ public class LoginActivity extends AccountAuthenticatorActivity
 		}
 		else if (progress == -1)
 		{
+			dialog.dismiss();
 			Toast.makeText(getBaseContext(), "Username and password do not match. Please try again.", Toast.LENGTH_SHORT).show();
 		}
 		else if (progress == -2)
 		{
+			dialog.dismiss();
 			Toast.makeText(getBaseContext(), "Something went wrong. It's probably our fault. Please try again later.", Toast.LENGTH_SHORT).show();
 		}
 

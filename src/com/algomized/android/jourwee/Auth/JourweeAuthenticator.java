@@ -50,7 +50,7 @@ public class JourweeAuthenticator extends AbstractAccountAuthenticator
 
 		// If the caller requested an authToken type we don't support, then
 		// return an error
-		if (!authTokenType.equals(Constants.AUTH_TYPE))
+		if (!authTokenType.equals(Constants.AM_AUTH_TYPE))
 		{
 			final Bundle result = new Bundle();
 			result.putString(AccountManager.KEY_ERROR_MESSAGE, "invalid authTokenType");
@@ -111,7 +111,7 @@ public class JourweeAuthenticator extends AbstractAccountAuthenticator
 	@Override
 	public String getAuthTokenLabel(String authTokenType)
 	{
-		if (Constants.AUTH_TYPE.equals(authTokenType))
+		if (Constants.AM_AUTH_TYPE.equals(authTokenType))
 			return "Full access to an Jourwee account";
 		
 		else
