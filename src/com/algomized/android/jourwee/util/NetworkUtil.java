@@ -2,6 +2,9 @@ package com.algomized.android.jourwee.util;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.accounts.AccountManagerFuture;
+import android.accounts.AuthenticatorException;
+import android.accounts.OperationCanceledException;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -36,6 +39,7 @@ import com.algomized.android.jourwee.Constants;
 import com.algomized.android.jourwee.model.User;
 import com.algomized.android.jourwee.unused.SingleAsyncHttpClient;
 import com.algomized.android.jourwee.view.LocationActivity_;
+import com.algomized.android.jourwee.view.StartActivity_;
 import com.android.volley.toolbox.AndroidAuthenticator;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -43,6 +47,7 @@ import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.PersistentCookieStore;
 import com.squareup.okhttp.internal.Base64;
 
+import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -92,8 +97,6 @@ public class NetworkUtil
 		user = new User();
 		nameValuePairs = new ArrayList<NameValuePair>();
 		nameValuePairs.add(new BasicNameValuePair(Constants.KEY_GRANT_TYPE, Constants.GRANT_PASSWORD));
-		// nameValuePairs.add(new BasicNameValuePair(Constants.KEY_CLIENT_ID, Constants.CLIENT_ID));
-		// nameValuePairs.add(new BasicNameValuePair(Constants.KEY_CLIENT_SECRET, Constants.CLIENT_SECRET));
 		nameValuePairs.add(new BasicNameValuePair(Constants.KEY_USERNAME, username));
 		nameValuePairs.add(new BasicNameValuePair(Constants.KEY_PASSWORD, password));
 
@@ -102,13 +105,13 @@ public class NetworkUtil
 		HttpClient httpclient = new DefaultHttpClient();
 
 		HttpPost httppost = new HttpPost(Constants.BASE_URL + Constants.URL_TOKEN);
-		
+
 		String headerValue = Constants.HEADER_BASIC + " " + encodedHeader;
-		
+
 		Log.d(LOG_TAG, "Header Value: " + headerValue);
 
 		httppost.addHeader(Constants.KEY_HEADER_AUTH, headerValue);
-		
+
 		Log.d(LOG_TAG, "Header: " + httppost.getHeaders(Constants.KEY_HEADER_AUTH).toString());
 
 		httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
@@ -120,7 +123,7 @@ public class NetworkUtil
 
 		Log.d(LOG_TAG, "Result: " + result);
 
-		User user = mapper.readValue(result, User.class);
+		user = mapper.readValue(result, User.class);
 		Log.d(LOG_TAG, "User Response: " + user.toString());
 
 		return user;
@@ -144,20 +147,134 @@ public class NetworkUtil
 		return encodedHeader;
 	}
 
-	public Boolean checkLoginStatus()
+	public Bundle checkLoginStatus(Activity activity)
 	{
-		if (myCookieStore.getCookies().size() != 0)
+		AccountManager am = AccountManager.get(context);
+		Account[] accounts = am.getAccountsByType(Constants.AM_ACCOUNT_TYPE);
+		Bundle resultBundle = null;
+		if (accounts.length > 0)
 		{
-			Cookie cookie = myCookieStore.getCookies().get(0);
-			Log.d(LOG_TAG, "Cookie: " + cookie.getName() + " Value: " + cookie.getValue());
-			if (myCookieStore.getCookies().size() != 0)
+			Log.d(LOG_TAG, "Accounts is not empty");
+			// // Get current auth token stored. Refresh token if available.
+			AccountManagerFuture<Bundle> future = am.getAuthToken(accounts[0], Constants.AM_AUTH_TYPE, null, activity, null, null);
+			try
 			{
-				Constants.LOGIN_STATUS = true;
+				Bundle bundle = future.getResult();
+				String old_authToken = bundle.getString(AccountManager.KEY_AUTHTOKEN);
+
+				// invalidate the token since it may have expired.
+				am.invalidateAuthToken(Constants.AM_ACCOUNT_TYPE, old_authToken);
+
+				// Get token again
+				future = am.getAuthToken(accounts[0], Constants.AM_AUTH_TYPE, null, activity, null, null);
+				// String old_authToken = am.peekAuthToken(accounts[0], Constants.AM_AUTH_TYPE);
+				// am.invalidateAuthToken(Constants.AM_ACCOUNT_TYPE, old_authToken);
+//				AccountManagerFuture<Bundle> accountBundle = am.getAuthToken(accounts[0], Constants.AM_AUTH_TYPE, null, activity, null, null);
+				String oauth = "", refresh_token = "", expires_in = "";
+
+				resultBundle = future.getResult();
+				oauth = resultBundle.getString(AccountManager.KEY_AUTHTOKEN);
+				refresh_token = resultBundle.getString(Constants.AM_KEY_REFRESH_TOKEN);
+				expires_in = resultBundle.getString(Constants.AM_KEY_EXPIRES_IN);
+				if (oauth != "")
+				{
+					Log.d(LOG_TAG, "oauth: " + oauth + "\n refresh_token: " + refresh_token + "\n expires_in: " + expires_in);
+					am.setAuthToken(accounts[0], Constants.AM_AUTH_TYPE, oauth);
+					am.setUserData(accounts[0], Constants.AM_KEY_REFRESH_TOKEN, refresh_token);
+					am.setUserData(accounts[0], Constants.AM_KEY_EXPIRES_IN, expires_in);
+				}
 			}
-			return true;
+			catch (OperationCanceledException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			catch (AuthenticatorException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			catch (IOException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		else
-			return false;
+		{
+			Log.d(LOG_TAG, "AccountManager's account is empty!");
+		}
+		// if (myCookieStore.getCookies().size() != 0)
+		// {
+		// Cookie cookie = myCookieStore.getCookies().get(0);
+		// Log.d(LOG_TAG, "Cookie: " + cookie.getName() + " Value: " + cookie.getValue());
+		// if (myCookieStore.getCookies().size() != 0)
+		// {
+		// Constants.LOGIN_STATUS = true;
+		// }
+		// return true;
+		// }
+		// else
+		// return false;
+		return resultBundle;
+	}
+
+	public Bundle refreshToken(Account account, String refreshToken)
+	{
+		Bundle bundleResult = new Bundle();
+
+		user = new User();
+		try
+		{
+			nameValuePairs = new ArrayList<NameValuePair>();
+			nameValuePairs.add(new BasicNameValuePair(Constants.KEY_GRANT_TYPE, Constants.GRANT_REFRESH));
+			nameValuePairs.add(new BasicNameValuePair(Constants.KEY_REFRESH_TOKEN, refreshToken));
+
+			String encodedHeader = encodeHeader(Constants.CLIENT_ID, Constants.CLIENT_SECRET);
+
+			HttpClient httpclient = new DefaultHttpClient();
+
+			HttpPost httppost = new HttpPost(Constants.BASE_URL + Constants.URL_TOKEN);
+
+			String headerValue = Constants.HEADER_BASIC + " " + encodedHeader;
+
+			Log.d(LOG_TAG, "Header Value: " + headerValue);
+
+			httppost.addHeader(Constants.KEY_HEADER_AUTH, headerValue);
+
+			Log.d(LOG_TAG, "Header: " + httppost.getHeaders(Constants.KEY_HEADER_AUTH).toString());
+
+			httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+
+			HttpResponse response = httpclient.execute(httppost);
+
+			ObjectMapper mapper = new ObjectMapper();
+			String result = EntityUtils.toString(response.getEntity());
+
+			Log.d(LOG_TAG, "Result: " + result);
+
+			user = mapper.readValue(result, User.class);
+			Log.d(LOG_TAG, "User Response: " + user.toString());
+		}
+		catch (ClientProtocolException cpe)
+		{
+			Log.d(LOG_TAG, "Encountered ClientProtocolException: " + cpe);
+		}
+		catch (IOException ie)
+		{
+			Log.d(LOG_TAG, "Encountered IOException: " + ie);
+		}
+		
+		bundleResult.putString(AccountManager.KEY_ACCOUNT_NAME, account.name);
+		bundleResult.putString(AccountManager.KEY_ACCOUNT_TYPE, account.type);
+		Log.d(LOG_TAG, "In Refresh Token, accessToken: " + user.getAccess_token());
+		bundleResult.putString(AccountManager.KEY_AUTHTOKEN, user.getAccess_token());
+		Log.d(LOG_TAG, "In Refresh Token, refreshToken: " + user.getRefresh_token());
+		bundleResult.putString(Constants.AM_KEY_REFRESH_TOKEN, user.getRefresh_token());
+		Log.d(LOG_TAG, "In Refresh Token, expiresIn: " + user.getExpires_in());
+		bundleResult.putString(Constants.AM_KEY_EXPIRES_IN, user.getExpires_in());
+		
+		return bundleResult;
 	}
 
 	public boolean logout(String username, String oauthtoken) throws ClientProtocolException, IOException
@@ -181,7 +298,7 @@ public class NetworkUtil
 
 		Log.d(LOG_TAG, "Result: " + result);
 
-		User user = mapper.readValue(result, User.class);
+		user = mapper.readValue(result, User.class);
 		Log.d(LOG_TAG, "User message: " + user.getMessage());
 		return user.isStatus();
 		// client = SingleAsyncHttpClient.getInstance();

@@ -19,6 +19,7 @@ import android.accounts.AuthenticatorException;
 import android.accounts.OperationCanceledException;
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -26,6 +27,8 @@ import android.widget.TextView;
 @EActivity(R.layout.location)
 public class LocationActivity extends Activity
 {
+	private static final String LOG_TAG = "LocationActivity";
+
 	String username;
 
 	@ViewById(R.id.logoutBtn)
@@ -57,11 +60,14 @@ public class LocationActivity extends Activity
 			String authToken = authTokenBundle.get(AccountManager.KEY_AUTHTOKEN).toString();
 			NetworkUtil nu = new NetworkUtil(this);
 
-			if (nu.logout(username, authToken))
-			{
+//			if (nu.logout(username, authToken))
+//			{
 				// TODO Also have to logout from AccountManager side. We have to remove only our accountstype.
 				nu.removeAccounts();
-			}
+				StartActivity_.intent(this).start();
+				this.finish();
+				
+//			}
 		}
 		catch (ClientProtocolException e)
 		{
@@ -101,6 +107,7 @@ public class LocationActivity extends Activity
 		// String user_id_value = getIntent().getExtras().getString("userId");
 		// TODO AccountManager get username
 		username = getIntent().getExtras().getString(AccountManager.KEY_ACCOUNT_NAME);
+		Log.d(LOG_TAG, "username: " + username);
 
 		// user_id_text.setText(user_id_value);
 		// username_text.setText(username_value);

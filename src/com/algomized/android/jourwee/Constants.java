@@ -17,7 +17,7 @@ public class Constants
 	public static final String AM_ACCOUNT_TYPE = "com.algomized.android.jourwee";
 	public static final String AM_AUTH_TYPE = "com.algomized.android.jourwee";
 	public static final String GRANT_PASSWORD = "password";
-	public static final String GRANT_REFRESH = "refresh";
+	public static final String GRANT_REFRESH = "refresh_token";
 	public static final String CLIENT_ID = "jourwee-android";
 	public static final String CLIENT_SECRET = "GetStarted87";
 	public static final String TOKEN_TYPE = "bearer";

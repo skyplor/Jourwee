@@ -46,10 +46,9 @@ public class JourweeAuthenticator extends AbstractAccountAuthenticator
 	public Bundle getAuthToken(AccountAuthenticatorResponse response, Account account, String authTokenType, Bundle options) throws NetworkErrorException
 	{
 
-		Log.d(TAG,"> getAuthToken");
+		Log.d(TAG, "> getAuthToken");
 
-		// If the caller requested an authToken type we don't support, then
-		// return an error
+		// If the caller requested an authToken type we don't support, then return an error
 		if (!authTokenType.equals(Constants.AM_AUTH_TYPE))
 		{
 			final Bundle result = new Bundle();
@@ -57,8 +56,7 @@ public class JourweeAuthenticator extends AbstractAccountAuthenticator
 			return result;
 		}
 
-		// Extract the username and password from the Account Manager, and ask
-		// the server for an appropriate AuthToken.
+		// Extract the username and password from the Account Manager, and ask the server for an appropriate AuthToken.
 		final AccountManager am = AccountManager.get(mContext);
 
 		String authToken = am.peekAuthToken(account, authTokenType);
@@ -68,30 +66,41 @@ public class JourweeAuthenticator extends AbstractAccountAuthenticator
 		// Lets give another try to authenticate the user
 		if (TextUtils.isEmpty(authToken))
 		{
-			final String password = am.getPassword(account);
-			if (password != null)
-			{
-				try
-				{
-					Log.d(TAG, "> re-authenticating with the existing password");
-					NetworkUtil nu = new NetworkUtil(account.name, password, mContext);
-					User user = nu.login();
-					authToken = user.getMessage();
-				}
-				catch (Exception e)
-				{
-					e.printStackTrace();
-				}
-			}
+			// final String password = am.getPassword(account);
+			// if (password != null)
+			// {
+			// try
+			// {
+			// Log.d(TAG, "> re-authenticating with the existing password");
+			// NetworkUtil nu = new NetworkUtil(account.name, password, mContext);
+			// User user = nu.login();
+			// authToken = user.getAccess_token();
+			// }
+			// catch (Exception e)
+			// {
+			// e.printStackTrace();
+			// }
+			// }
+			// else
+			// {
+			Log.d(TAG, "Refreshing Token...");
+			final Bundle result;
+			String refreshToken = am.getUserData(account, Constants.AM_KEY_REFRESH_TOKEN);
+			NetworkUtil nu = new NetworkUtil(mContext);
+			result = nu.refreshToken(account, refreshToken);
+			Log.d(TAG, "Returning result: " + result.getString(AccountManager.KEY_AUTHTOKEN));
+			return result;
+			// }
 		}
 
 		// If we get an authToken - we return it
 		if (!TextUtils.isEmpty(authToken))
 		{
-			final Bundle result = new Bundle();
-			result.putString(AccountManager.KEY_ACCOUNT_NAME, account.name);
-			result.putString(AccountManager.KEY_ACCOUNT_TYPE, account.type);
-			result.putString(AccountManager.KEY_AUTHTOKEN, authToken);
+			final Bundle result;
+			Log.d(TAG, "Inside authToken not null loop.");
+			String refreshToken = am.getUserData(account, Constants.AM_KEY_REFRESH_TOKEN);
+			NetworkUtil nu = new NetworkUtil(mContext);
+			result = nu.refreshToken(account, refreshToken);
 			return result;
 		}
 
@@ -99,6 +108,7 @@ public class JourweeAuthenticator extends AbstractAccountAuthenticator
 		// need to re-prompt them for their credentials. We do that by creating
 		// an intent to display our AuthenticatorActivity.
 		final Intent intent = new Intent(mContext, LoginActivity_.class);
+		Log.d(TAG, "Need to start Login Activity to get user's password");
 		intent.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE, response);
 		intent.putExtra("ACCOUNT_TYPE", account.type);
 		intent.putExtra("AUTH_TYPE", authTokenType);
@@ -113,7 +123,7 @@ public class JourweeAuthenticator extends AbstractAccountAuthenticator
 	{
 		if (Constants.AM_AUTH_TYPE.equals(authTokenType))
 			return "Full access to an Jourwee account";
-		
+
 		else
 			return authTokenType + " (Label)";
 	}

@@ -1,10 +1,15 @@
 package com.algomized.android.jourwee.view;
 
 import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import com.algomized.android.jourwee.R;
+import com.algomized.android.jourwee.util.NetworkUtil;
+
+import android.accounts.AccountManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -31,6 +36,31 @@ public class StartActivity extends ActionBarActivity // implements AuthListener
 	{
 		signinTxt.setClickable(true);
 		overridePendingTransition(R.anim.slide_in_from_bottom, R.anim.slide_out_to_bottom);
+		// Check if a valid token is in AccountManager. If yes, go to LocationActivity_.class. If no, stay here.
+		doFirstCheck();
+	}
+
+	@Background
+	void doFirstCheck()
+	{
+		NetworkUtil nu = new NetworkUtil(this);
+		Bundle bundle = nu.checkLoginStatus(this);
+		if(bundle != null && bundle.getString(AccountManager.KEY_AUTHTOKEN) != null)
+		{
+			startLocationActivity(bundle);
+		}
+		
+	}
+
+	@UiThread
+	void startLocationActivity(Bundle bundle)
+	{
+		Intent locationIntent = new Intent(this, LocationActivity_.class);
+		locationIntent.putExtras(bundle);
+		// Go to LocationActivity
+		startActivity(locationIntent);
+		this.finish();
+		
 	}
 
 	@Click(R.id.RegBtn)
