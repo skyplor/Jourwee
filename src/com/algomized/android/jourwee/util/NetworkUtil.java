@@ -26,6 +26,7 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.cookie.Cookie;
 import org.apache.http.entity.StringEntity;
@@ -33,6 +34,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
+import org.apache.http.util.TextUtils;
 
 import com.algomized.android.jourwee.R;
 import com.algomized.android.jourwee.Constants;
@@ -169,7 +171,7 @@ public class NetworkUtil
 				future = am.getAuthToken(accounts[0], Constants.AM_AUTH_TYPE, null, activity, null, null);
 				// String old_authToken = am.peekAuthToken(accounts[0], Constants.AM_AUTH_TYPE);
 				// am.invalidateAuthToken(Constants.AM_ACCOUNT_TYPE, old_authToken);
-//				AccountManagerFuture<Bundle> accountBundle = am.getAuthToken(accounts[0], Constants.AM_AUTH_TYPE, null, activity, null, null);
+				// AccountManagerFuture<Bundle> accountBundle = am.getAuthToken(accounts[0], Constants.AM_AUTH_TYPE, null, activity, null, null);
 				String oauth = "", refresh_token = "", expires_in = "";
 
 				resultBundle = future.getResult();
@@ -264,7 +266,7 @@ public class NetworkUtil
 		{
 			Log.d(LOG_TAG, "Encountered IOException: " + ie);
 		}
-		
+
 		bundleResult.putString(AccountManager.KEY_ACCOUNT_NAME, account.name);
 		bundleResult.putString(AccountManager.KEY_ACCOUNT_TYPE, account.type);
 		Log.d(LOG_TAG, "In Refresh Token, accessToken: " + user.getAccess_token());
@@ -273,13 +275,12 @@ public class NetworkUtil
 		bundleResult.putString(Constants.AM_KEY_REFRESH_TOKEN, user.getRefresh_token());
 		Log.d(LOG_TAG, "In Refresh Token, expiresIn: " + user.getExpires_in());
 		bundleResult.putString(Constants.AM_KEY_EXPIRES_IN, user.getExpires_in());
-		
+
 		return bundleResult;
 	}
 
 	public boolean logout(String username, String oauthtoken) throws ClientProtocolException, IOException
 	{
-
 		user = new User();
 		nameValuePairs = new ArrayList<NameValuePair>();
 		nameValuePairs.add(new BasicNameValuePair("j_username", username));
@@ -366,99 +367,163 @@ public class NetworkUtil
 			return user.toString();
 	}
 
-	public void testRequest(final Boolean fromLogin)
+	public Boolean testRequest(boolean fromLogin)
 	{
-		client = SingleAsyncHttpClient.getInstance();
 
-		client.setCookieStore(myCookieStore);
-		user = new User();
-
-		// Header[] headers = {
-		// new BasicHeader("Content-type", "application/x-www-form-urlencoded")
-		// ,new BasicHeader("Content-type", "application/x-www-form-urlencoded")
-		// ,new BasicHeader("Accep", "text/html,text/xml,application/xml")
-		// ,new BasicHeader("Connection", "keep-alive")
-		// ,new BasicHeader("keep-alive", "115")
-		// ,new BasicHeader("User-Agent", "Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.2) Gecko/20100316 Firefox/3.6.2")
-		// };
-		client.get(context, Constants.BASE_URL + Constants.URL_TEST_API, getHeaders(fromLogin), null, new AsyncHttpResponseHandler()
+		AccountManager am = AccountManager.get(context);
+		Account[] accounts = am.getAccountsByType(Constants.AM_ACCOUNT_TYPE);
+		if (accounts.length > 0)
 		{
-			// ProgressDialog dialog;
-
-			@Override
-			public void onStart()
+			Account account = accounts[0];
+			String accessToken = am.peekAuthToken(account, Constants.AM_AUTH_TYPE);
+			try
 			{
-				// dialog = new ProgressDialog(context);
-				// dialog.setMessage("Retrieving user data...");
-				// dialog.show();
-			}
+				user = new User();
 
-			@Override
-			public void onSuccess(String response)
-			{
-				// dialog.dismiss();
+				HttpClient httpclient = new DefaultHttpClient();
 
-				try
+				HttpGet httpget = new HttpGet(Constants.BASE_URL + Constants.URL_GET_USER);
+
+				String headerValue = Constants.HEADER_BEARER + " " + accessToken;
+
+				Log.d(LOG_TAG, "Header Value: " + headerValue);
+
+				httpget.addHeader(Constants.KEY_HEADER_AUTH, headerValue);
+
+				Log.d(LOG_TAG, "Header: " + httpget.getHeaders(Constants.KEY_HEADER_AUTH).toString());
+
+				HttpResponse response = httpclient.execute(httpget);
+
+				ObjectMapper mapper = new ObjectMapper();
+				String result = EntityUtils.toString(response.getEntity());
+
+				Log.d(LOG_TAG, "Result: " + result);
+				
+//				if(result.contains("\"error\": \"invalid_token\""))
+				if(response.getStatusLine().getStatusCode() == 401)
 				{
-
-					ObjectMapper mapper = new ObjectMapper();
-					user = mapper.readValue(response, User.class);
-
-					if (user.getId() <= 0)
-					{
-						// login is unsuccessful
-						// Toast.makeText(context, "Cookie has expired. Please login again.", Toast.LENGTH_SHORT).show();
-						// Go back to login page.
-					}
-					else
-					{
-						Toast.makeText(context, "Retrieval successful!", Toast.LENGTH_SHORT).show();
-						Log.d(LOG_TAG, "Response: " + response);
-						if (!fromLogin)
-						{
-							// Change textviews text.
-							TextView user_idText = (TextView) ((Activity) context).findViewById(R.id.userIDTxt);
-							user_idText.setText("ID: " + user.getId());
-							TextView usernameText = (TextView) ((Activity) context).findViewById(R.id.usernameTxt);
-							usernameText.setText("Username: " + user.getUsername());
-							// TextView nameText = (TextView) ((Activity)context).findViewById(R.id.nameTxt);
-							// nameText.setText(user_request.getName());
-							// if (activity != null) {
-							// TextView text = activity.findViewById(R.id.text);
-						}
-						else
-						{
-							if (user.getId() == null || user.getUsername() == null)
-							{
-								Log.d(LOG_TAG, "User ID is null");
-							}
-							else
-							{
-								Intent locationIntent = new Intent(context, LocationActivity_.class);
-								locationIntent.putExtra("userId", "" + user.getId());
-								locationIntent.putExtra("username", user.getUsername());
-								((Activity) context).startActivity(locationIntent);
-								((Activity) context).finish();
-							}
-						}
-					}
-
+					user = mapper.readValue(result, User.class);
+					Log.d(LOG_TAG, "User Response Error: " + user.getError());
+					return false;
 				}
 
-				catch (Exception exc)
+
+//				if (!TextUtils.isEmpty(user.getError()))
+//				{
+//					Log.d(LOG_TAG, "User Response Error: " + user.getError());
+//					return false;
+					
+//				}
+				else
 				{
-					Log.e(LOG_TAG, "Caught Exception in TestRequest: Error converting result " + exc.toString());
+					Log.d(LOG_TAG, "No error in retrieving user. Result: " + result);
+					return true;
 				}
 			}
-
-			@Override
-			public void onFailure(Throwable e, String response)
+			catch (ClientProtocolException cpe)
 			{
-				// dialog.dismiss();
-				Toast.makeText(context, "Error Occured ! Please try again.", Toast.LENGTH_SHORT).show();
-				Log.d(LOG_TAG, response);
+				Log.d(LOG_TAG, "Encountered ClientProtocolException: " + cpe);
 			}
-		});
+			catch (IOException ie)
+			{
+				Log.d(LOG_TAG, "Encountered IOException: " + ie);
+			}
+			
+		}
+
+		return false;
+
+		// client = SingleAsyncHttpClient.getInstance();
+		//
+		// client.setCookieStore(myCookieStore);
+		// user = new User();
+		//
+		// // Header[] headers = {
+		// // new BasicHeader("Content-type", "application/x-www-form-urlencoded")
+		// // ,new BasicHeader("Content-type", "application/x-www-form-urlencoded")
+		// // ,new BasicHeader("Accep", "text/html,text/xml,application/xml")
+		// // ,new BasicHeader("Connection", "keep-alive")
+		// // ,new BasicHeader("keep-alive", "115")
+		// // ,new BasicHeader("User-Agent", "Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.2) Gecko/20100316 Firefox/3.6.2")
+		// // };
+		// client.get(context, Constants.BASE_URL + Constants.URL_TEST_API, getHeaders(fromLogin), null, new AsyncHttpResponseHandler()
+		// {
+		// // ProgressDialog dialog;
+		//
+		// @Override
+		// public void onStart()
+		// {
+		// // dialog = new ProgressDialog(context);
+		// // dialog.setMessage("Retrieving user data...");
+		// // dialog.show();
+		// }
+		//
+		// @Override
+		// public void onSuccess(String response)
+		// {
+		// // dialog.dismiss();
+		//
+		// try
+		// {
+		//
+		// ObjectMapper mapper = new ObjectMapper();
+		// user = mapper.readValue(response, User.class);
+		//
+		// if (user.getId() <= 0)
+		// {
+		// // login is unsuccessful
+		// // Toast.makeText(context, "Cookie has expired. Please login again.", Toast.LENGTH_SHORT).show();
+		// // Go back to login page.
+		// }
+		// else
+		// {
+		// Toast.makeText(context, "Retrieval successful!", Toast.LENGTH_SHORT).show();
+		// Log.d(LOG_TAG, "Response: " + response);
+		// if (!fromLogin)
+		// {
+		// // Change textviews text.
+		// TextView user_idText = (TextView) ((Activity) context).findViewById(R.id.userIDTxt);
+		// user_idText.setText("ID: " + user.getId());
+		// TextView usernameText = (TextView) ((Activity) context).findViewById(R.id.usernameTxt);
+		// usernameText.setText("Username: " + user.getUsername());
+		// // TextView nameText = (TextView) ((Activity)context).findViewById(R.id.nameTxt);
+		// // nameText.setText(user_request.getName());
+		// // if (activity != null) {
+		// // TextView text = activity.findViewById(R.id.text);
+		// }
+		// else
+		// {
+		// if (user.getId() == null || user.getUsername() == null)
+		// {
+		// Log.d(LOG_TAG, "User ID is null");
+		// }
+		// else
+		// {
+		// Intent locationIntent = new Intent(context, LocationActivity_.class);
+		// locationIntent.putExtra("userId", "" + user.getId());
+		// locationIntent.putExtra("username", user.getUsername());
+		// ((Activity) context).startActivity(locationIntent);
+		// ((Activity) context).finish();
+		// }
+		// }
+		// }
+		//
+		// }
+		//
+		// catch (Exception exc)
+		// {
+		// Log.e(LOG_TAG, "Caught Exception in TestRequest: Error converting result " + exc.toString());
+		// }
+		// }
+		//
+		// @Override
+		// public void onFailure(Throwable e, String response)
+		// {
+		// // dialog.dismiss();
+		// Toast.makeText(context, "Error Occured ! Please try again.", Toast.LENGTH_SHORT).show();
+		// Log.d(LOG_TAG, response);
+		// }
+		// });
 	}
 
 	private Header[] getHeaders(Boolean fromLogin)

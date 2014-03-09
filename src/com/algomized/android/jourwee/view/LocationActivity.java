@@ -3,6 +3,7 @@ package com.algomized.android.jourwee.view;
 import java.io.IOException;
 
 import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.ViewById;
@@ -60,14 +61,14 @@ public class LocationActivity extends Activity
 			String authToken = authTokenBundle.get(AccountManager.KEY_AUTHTOKEN).toString();
 			NetworkUtil nu = new NetworkUtil(this);
 
-//			if (nu.logout(username, authToken))
-//			{
-				// TODO Also have to logout from AccountManager side. We have to remove only our accountstype.
-				nu.removeAccounts();
-				StartActivity_.intent(this).start();
-				this.finish();
-				
-//			}
+			// if (nu.logout(username, authToken))
+			// {
+			// TODO Also have to logout from AccountManager side. We have to remove only our accountstype.
+			nu.removeAccounts();
+			StartActivity_.intent(this).start();
+			this.finish();
+
+			// }
 		}
 		catch (ClientProtocolException e)
 		{
@@ -95,8 +96,32 @@ public class LocationActivity extends Activity
 	@Click(R.id.testRequestBtn)
 	public void OnTestRequestBtnClicked(View v)
 	{
+		testRequest();
+	}
+
+	@Background
+	void testRequest()
+	{
 		NetworkUtil nu = new NetworkUtil(this);
-		nu.testRequest(false);
+		boolean flag = false;
+		for (int i = 0; i < 10; i++)
+		{
+			if(nu.testRequest(false))
+			{
+				Log.d(LOG_TAG, "Get user successful");
+				flag = true;
+				break;
+			}
+			else
+			{
+				nu.checkLoginStatus(this);
+			}
+		}
+		if(!flag)
+		{
+			Log.d(LOG_TAG, "Unable to get the user. Please try again later.");
+		}
+
 	}
 
 	@AfterViews
@@ -104,32 +129,12 @@ public class LocationActivity extends Activity
 	{
 		overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
 
-		// String user_id_value = getIntent().getExtras().getString("userId");
 		// TODO AccountManager get username
 		username = getIntent().getExtras().getString(AccountManager.KEY_ACCOUNT_NAME);
 		Log.d(LOG_TAG, "username: " + username);
 
 		// user_id_text.setText(user_id_value);
-		// username_text.setText(username_value);
+		username_text.setText(username);
 	}
-
-	// public static void start(Activity activity)
-	// {
-	// start(activity, null);
-	// }
-
-	// public static void start(Activity activity, Uri uri)
-	// {
-	// Intent intent = new Intent(activity, LocationActivity_.class);
-	// intent.putExtra("stayalive", true);
-	// if (uri != null)
-	// {
-	// intent.putExtra("uploadAvatarUri", uri);
-	// }
-	// activity.setResult(-1, null);
-	// activity.finish();
-	// activity.startActivity(intent);
-	// activity.overridePendingTransition(R.anim.abc_slide_in_bottom, R.anim.abc_slide_out_top);
-	// }
 
 }

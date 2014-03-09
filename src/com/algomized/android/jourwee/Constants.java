@@ -21,6 +21,7 @@ public class Constants
 	public static final String CLIENT_ID = "jourwee-android";
 	public static final String CLIENT_SECRET = "GetStarted87";
 	public static final String TOKEN_TYPE = "bearer";
+	public static final String HEADER_BEARER = "Bearer";
 	public static final String HEADER_BASIC = "Basic";
 	public static final String KEY_USERNAME = "username";
 	public static final String KEY_PASSWORD = "password";

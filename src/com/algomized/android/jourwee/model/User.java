@@ -33,6 +33,10 @@ public class User
 	private String refresh_token = "";
 	
 	private String expires_in = "";
+	
+	private String error = "";
+	
+	private String error_description = "";
 
 	@JsonProperty("userId")
 	private Integer id = null;
@@ -223,6 +227,38 @@ public class User
 	public void setExpires_in(String expires_in)
 	{
 		this.expires_in = expires_in;
+	}
+
+	/**
+	 * @return the error
+	 */
+	public String getError()
+	{
+		return error;
+	}
+
+	/**
+	 * @param error the error to set
+	 */
+	public void setError(String error)
+	{
+		this.error = error;
+	}
+
+	/**
+	 * @return the error_description
+	 */
+	public String getError_description()
+	{
+		return error_description;
+	}
+
+	/**
+	 * @param error_description the error_description to set
+	 */
+	public void setError_description(String error_description)
+	{
+		this.error_description = error_description;
 	}
 
 	@Override
