@@ -106,15 +106,22 @@ public class LocationActivity extends Activity
 		boolean flag = false;
 		for (int i = 0; i < 10; i++)
 		{
-			if(nu.testRequest(false))
+			try
 			{
-				Log.d(LOG_TAG, "Get user successful");
-				flag = true;
-				break;
+				if(nu.testRequest(false))
+				{
+					Log.d(LOG_TAG, "Get user successful");
+					flag = true;
+					break;
+				}
+				else
+				{
+					nu.checkLoginStatus(this);
+				}
 			}
-			else
+			catch (IOException e)
 			{
-				nu.checkLoginStatus(this);
+				Log.d(LOG_TAG, "Encountered IOException: " + e);
 			}
 		}
 		if(!flag)

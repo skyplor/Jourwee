@@ -11,8 +11,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -47,6 +56,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.PersistentCookieStore;
+import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.internal.Base64;
 
 import android.os.Bundle;
@@ -63,10 +73,12 @@ public class NetworkUtil
 	static final int GET = 0, POST = 1, PUT = 2, DELETE = 3, HEAD = 4, OPTIONS = 5, TRACE = 6, PATCH = 7;
 	String result = "";
 	User user;
-	private static SingleAsyncHttpClient client;
+	OutputStream out = null;
+	InputStream in = null;
+	// private static SingleAsyncHttpClient client;
 	Context context;
-	PersistentCookieStore myCookieStore;
-	SharedPreferences sharedpref;
+	// PersistentCookieStore myCookieStore;
+	// SharedPreferences sharedpref;
 	String oauth = "";
 	Intent res;
 	ProgressDialog dialog;
@@ -79,8 +91,8 @@ public class NetworkUtil
 	public NetworkUtil(Context context)
 	{
 		this.context = context;
-		sharedpref = context.getSharedPreferences(Constants.SHARED_PREF_NAME, Context.MODE_PRIVATE);
-		myCookieStore = new PersistentCookieStore(context);
+		// sharedpref = context.getSharedPreferences(Constants.SHARED_PREF_NAME, Context.MODE_PRIVATE);
+		// myCookieStore = new PersistentCookieStore(context);
 	}
 
 	// When user logs in for the first time or when user was logged out
@@ -89,8 +101,8 @@ public class NetworkUtil
 		this.context = context;
 		this.username = username;
 		this.password = password;
-		myCookieStore = new PersistentCookieStore(context);
-		sharedpref = context.getSharedPreferences(Constants.SHARED_PREF_NAME, Context.MODE_PRIVATE);
+		// myCookieStore = new PersistentCookieStore(context);
+		// sharedpref = context.getSharedPreferences(Constants.SHARED_PREF_NAME, Context.MODE_PRIVATE);
 		res = new Intent();
 	}
 
@@ -104,31 +116,83 @@ public class NetworkUtil
 
 		String encodedHeader = encodeHeader(Constants.CLIENT_ID, Constants.CLIENT_SECRET);
 
-		HttpClient httpclient = new DefaultHttpClient();
+		OkHttpClient httpclient = new OkHttpClient();
+		HttpURLConnection connection = httpclient.open(new URL(Constants.BASE_URL + Constants.URL_TOKEN));
 
-		HttpPost httppost = new HttpPost(Constants.BASE_URL + Constants.URL_TOKEN);
+		try
+		{
+			// Write the request.
+			connection.setRequestMethod("POST");
+			connection.addRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 
-		String headerValue = Constants.HEADER_BASIC + " " + encodedHeader;
+			String headerValue = Constants.HEADER_BASIC + " " + encodedHeader;
 
-		Log.d(LOG_TAG, "Header Value: " + headerValue);
+			Log.d(LOG_TAG, "Header Value: " + headerValue);
 
-		httppost.addHeader(Constants.KEY_HEADER_AUTH, headerValue);
+			connection.addRequestProperty(Constants.KEY_HEADER_AUTH, headerValue);
 
-		Log.d(LOG_TAG, "Header: " + httppost.getHeaders(Constants.KEY_HEADER_AUTH).toString());
+			out = connection.getOutputStream();
+			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out, "UTF-8"));
+			writer.write(getQuery(nameValuePairs));
+			writer.flush();
+			writer.close();
+			out.close();
 
-		httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+			// Read the response.
+			if (connection.getResponseCode() != HttpURLConnection.HTTP_OK)
+			{
+				throw new IOException("Unexpected HTTP response: " + connection.getResponseCode() + " " + connection.getResponseMessage());
+			}
+			in = connection.getInputStream();
 
-		HttpResponse response = httpclient.execute(httppost);
+			ObjectMapper mapper = new ObjectMapper();
 
-		ObjectMapper mapper = new ObjectMapper();
-		String result = EntityUtils.toString(response.getEntity());
+			String result = readFirstLine(in);
 
-		Log.d(LOG_TAG, "Result: " + result);
+			Log.d(LOG_TAG, "Result: " + result);
 
-		user = mapper.readValue(result, User.class);
-		Log.d(LOG_TAG, "User Response: " + user.toString());
+			user = mapper.readValue(result, User.class);
+			Log.d(LOG_TAG, "User Response: " + user.toString());
 
-		return user;
+			return user;
+		}
+		finally
+		{
+			// Clean up.
+			if (out != null)
+				out.close();
+			if (in != null)
+				in.close();
+		}
+	}
+
+	String readFirstLine(InputStream in) throws IOException
+	{
+		BufferedReader reader = new BufferedReader(new InputStreamReader(in, "UTF-8"));
+		Log.d(LOG_TAG, "After bufferedreader");
+		String result = reader.readLine();
+		Log.d(LOG_TAG, "result in readfirstline: " + result);
+		return result;
+	}
+
+	private String getQuery(List<NameValuePair> params) throws UnsupportedEncodingException
+	{
+		StringBuilder result = new StringBuilder();
+		boolean first = true;
+
+		for (NameValuePair pair : params)
+		{
+			if (first)
+				first = false;
+			else
+				result.append("&");
+
+			result.append(URLEncoder.encode(pair.getName(), "UTF-8"));
+			result.append("=");
+			result.append(URLEncoder.encode(pair.getValue(), "UTF-8"));
+		}
+
+		return result.toString();
 	}
 
 	private String encodeHeader(String clientId, String clientSecret)
@@ -157,7 +221,7 @@ public class NetworkUtil
 		if (accounts.length > 0)
 		{
 			Log.d(LOG_TAG, "Accounts is not empty");
-			// // Get current auth token stored. Refresh token if available.
+			// Get current auth token stored. Refresh token if available.
 			AccountManagerFuture<Bundle> future = am.getAuthToken(accounts[0], Constants.AM_AUTH_TYPE, null, activity, null, null);
 			try
 			{
@@ -169,9 +233,6 @@ public class NetworkUtil
 
 				// Get token again
 				future = am.getAuthToken(accounts[0], Constants.AM_AUTH_TYPE, null, activity, null, null);
-				// String old_authToken = am.peekAuthToken(accounts[0], Constants.AM_AUTH_TYPE);
-				// am.invalidateAuthToken(Constants.AM_ACCOUNT_TYPE, old_authToken);
-				// AccountManagerFuture<Bundle> accountBundle = am.getAuthToken(accounts[0], Constants.AM_AUTH_TYPE, null, activity, null, null);
 				String oauth = "", refresh_token = "", expires_in = "";
 
 				resultBundle = future.getResult();
@@ -188,17 +249,14 @@ public class NetworkUtil
 			}
 			catch (OperationCanceledException e)
 			{
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			catch (AuthenticatorException e)
 			{
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			catch (IOException e)
 			{
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -206,22 +264,10 @@ public class NetworkUtil
 		{
 			Log.d(LOG_TAG, "AccountManager's account is empty!");
 		}
-		// if (myCookieStore.getCookies().size() != 0)
-		// {
-		// Cookie cookie = myCookieStore.getCookies().get(0);
-		// Log.d(LOG_TAG, "Cookie: " + cookie.getName() + " Value: " + cookie.getValue());
-		// if (myCookieStore.getCookies().size() != 0)
-		// {
-		// Constants.LOGIN_STATUS = true;
-		// }
-		// return true;
-		// }
-		// else
-		// return false;
 		return resultBundle;
 	}
 
-	public Bundle refreshToken(Account account, String refreshToken)
+	public Bundle refreshToken(Account account, String refreshToken) throws IOException
 	{
 		Bundle bundleResult = new Bundle();
 
@@ -234,24 +280,36 @@ public class NetworkUtil
 
 			String encodedHeader = encodeHeader(Constants.CLIENT_ID, Constants.CLIENT_SECRET);
 
-			HttpClient httpclient = new DefaultHttpClient();
+			OkHttpClient httpclient = new OkHttpClient();
+			HttpURLConnection connection = httpclient.open(new URL(Constants.BASE_URL + Constants.URL_TOKEN));
 
-			HttpPost httppost = new HttpPost(Constants.BASE_URL + Constants.URL_TOKEN);
+			// Write the request.
+			connection.setRequestMethod("POST");
+			connection.addRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 
 			String headerValue = Constants.HEADER_BASIC + " " + encodedHeader;
 
 			Log.d(LOG_TAG, "Header Value: " + headerValue);
 
-			httppost.addHeader(Constants.KEY_HEADER_AUTH, headerValue);
+			connection.addRequestProperty(Constants.KEY_HEADER_AUTH, headerValue);
 
-			Log.d(LOG_TAG, "Header: " + httppost.getHeaders(Constants.KEY_HEADER_AUTH).toString());
+			out = connection.getOutputStream();
+			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out, "UTF-8"));
+			writer.write(getQuery(nameValuePairs));
+			writer.flush();
+			writer.close();
+			out.close();
 
-			httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-
-			HttpResponse response = httpclient.execute(httppost);
+			// Read the response.
+			if (connection.getResponseCode() != HttpURLConnection.HTTP_OK)
+			{
+				throw new IOException("Unexpected HTTP response: " + connection.getResponseCode() + " " + connection.getResponseMessage());
+			}
+			in = connection.getInputStream();
 
 			ObjectMapper mapper = new ObjectMapper();
-			String result = EntityUtils.toString(response.getEntity());
+
+			String result = readFirstLine(in);
 
 			Log.d(LOG_TAG, "Result: " + result);
 
@@ -262,9 +320,13 @@ public class NetworkUtil
 		{
 			Log.d(LOG_TAG, "Encountered ClientProtocolException: " + cpe);
 		}
-		catch (IOException ie)
+		finally
 		{
-			Log.d(LOG_TAG, "Encountered IOException: " + ie);
+			// Clean up.
+			if (out != null)
+				out.close();
+			if (in != null)
+				in.close();
 		}
 
 		bundleResult.putString(AccountManager.KEY_ACCOUNT_NAME, account.name);
@@ -286,22 +348,47 @@ public class NetworkUtil
 		nameValuePairs.add(new BasicNameValuePair("j_username", username));
 		nameValuePairs.add(new BasicNameValuePair("j_oauth", oauthtoken));
 
-		HttpClient httpclient = new DefaultHttpClient();
+		try
+		{
+			OkHttpClient httpclient = new OkHttpClient();
+			HttpURLConnection connection = httpclient.open(new URL(Constants.BASE_URL + Constants.URL_LOGOUT));
 
-		HttpPost httppost = new HttpPost(Constants.BASE_URL + Constants.URL_LOGOUT);
+			// Write the request.
+			connection.setRequestMethod("POST");
+			connection.addRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 
-		httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+			out = connection.getOutputStream();
+			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out, "UTF-8"));
+			writer.write(getQuery(nameValuePairs));
+			writer.flush();
+			writer.close();
+			out.close();
 
-		HttpResponse response = httpclient.execute(httppost);
+			// Read the response.
+			if (connection.getResponseCode() != HttpURLConnection.HTTP_OK)
+			{
+				throw new IOException("Unexpected HTTP response: " + connection.getResponseCode() + " " + connection.getResponseMessage());
+			}
+			in = connection.getInputStream();
 
-		ObjectMapper mapper = new ObjectMapper();
-		String result = EntityUtils.toString(response.getEntity());
+			ObjectMapper mapper = new ObjectMapper();
 
-		Log.d(LOG_TAG, "Result: " + result);
+			String result = readFirstLine(in);
 
-		user = mapper.readValue(result, User.class);
-		Log.d(LOG_TAG, "User message: " + user.getMessage());
-		return user.isStatus();
+			Log.d(LOG_TAG, "Result: " + result);
+
+			user = mapper.readValue(result, User.class);
+			Log.d(LOG_TAG, "User message: " + user.getMessage());
+			return user.isStatus();
+		}
+		finally
+		{
+			// Clean up.
+			if (out != null)
+				out.close();
+			if (in != null)
+				in.close();
+		}
 		// client = SingleAsyncHttpClient.getInstance();
 		// client.get(context, Constants.BASE_URL + Constants.LOGOUT, new AsyncHttpResponseHandler()
 		// {
@@ -367,7 +454,7 @@ public class NetworkUtil
 			return user.toString();
 	}
 
-	public Boolean testRequest(boolean fromLogin)
+	public Boolean testRequest(boolean fromLogin) throws IOException
 	{
 
 		AccountManager am = AccountManager.get(context);
@@ -380,55 +467,67 @@ public class NetworkUtil
 			{
 				user = new User();
 
-				HttpClient httpclient = new DefaultHttpClient();
+				OkHttpClient httpclient = new OkHttpClient();
+				HttpURLConnection connection = httpclient.open(new URL(Constants.BASE_URL + Constants.URL_GET_USER));
 
-				HttpGet httpget = new HttpGet(Constants.BASE_URL + Constants.URL_GET_USER);
+				// Write the request.
+				connection.setRequestMethod("GET");
 
 				String headerValue = Constants.HEADER_BEARER + " " + accessToken;
 
 				Log.d(LOG_TAG, "Header Value: " + headerValue);
 
-				httpget.addHeader(Constants.KEY_HEADER_AUTH, headerValue);
+				connection.addRequestProperty(Constants.KEY_HEADER_AUTH, headerValue);
 
-				Log.d(LOG_TAG, "Header: " + httpget.getHeaders(Constants.KEY_HEADER_AUTH).toString());
-
-				HttpResponse response = httpclient.execute(httpget);
-
-				ObjectMapper mapper = new ObjectMapper();
-				String result = EntityUtils.toString(response.getEntity());
-
-				Log.d(LOG_TAG, "Result: " + result);
-				
-//				if(result.contains("\"error\": \"invalid_token\""))
-				if(response.getStatusLine().getStatusCode() == 401)
+				// Read the response.
+				if (connection.getResponseCode() == HttpURLConnection.HTTP_OK || connection.getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED)
 				{
-					user = mapper.readValue(result, User.class);
-					Log.d(LOG_TAG, "User Response Error: " + user.getError());
-					return false;
+					Log.d(LOG_TAG, "We got either http ok or unauthorized: " + connection.getResponseCode());
+
+					ObjectMapper mapper = new ObjectMapper();
+
+					if (connection.getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED)
+					{
+						// If get error response, we have to get error stream instead of input stream
+						in = connection.getErrorStream();
+						Log.d(LOG_TAG, "After getting error stream");
+						String result = readFirstLine(in);
+						user = mapper.readValue(result, User.class);
+						Log.d(LOG_TAG, "User Response Error: " + user.getError());
+						return false;
+					}
+					else
+					{
+
+						in = connection.getInputStream();
+						Log.d(LOG_TAG, "After getting input stream");
+						String result = readFirstLine(in);
+						Log.d(LOG_TAG, "Result: " + result);
+						Log.d(LOG_TAG, "No error in retrieving user. Result: " + result);
+						return true;
+					}
+
 				}
-
-
-//				if (!TextUtils.isEmpty(user.getError()))
-//				{
-//					Log.d(LOG_TAG, "User Response Error: " + user.getError());
-//					return false;
-					
-//				}
 				else
 				{
-					Log.d(LOG_TAG, "No error in retrieving user. Result: " + result);
-					return true;
+					Log.d(LOG_TAG, "We got unexpected HTTP response");
+					throw new IOException("Unexpected HTTP response: " + connection.getResponseCode() + " " + connection.getResponseMessage());
 				}
+
 			}
 			catch (ClientProtocolException cpe)
 			{
 				Log.d(LOG_TAG, "Encountered ClientProtocolException: " + cpe);
 			}
-			catch (IOException ie)
+			finally
 			{
-				Log.d(LOG_TAG, "Encountered IOException: " + ie);
+				// Clean up.
+				if (out != null)
+					out.close();
+				if (in != null)
+					in.close();
 			}
-			
+
 		}
 
 		return false;
@@ -526,16 +625,16 @@ public class NetworkUtil
 		// });
 	}
 
-	private Header[] getHeaders(Boolean fromLogin)
-	{
-		if (!fromLogin)
-		{
-			Cookie cookie = myCookieStore.getCookies().get(0);
-			Header[] headers = { new BasicHeader("Cookie", cookie.toString()) };
-			return headers;
-		}
-		return null;
-	}
+	// private Header[] getHeaders(Boolean fromLogin)
+	// {
+	// if (!fromLogin)
+	// {
+	// Cookie cookie = myCookieStore.getCookies().get(0);
+	// Header[] headers = { new BasicHeader("Cookie", cookie.toString()) };
+	// return headers;
+	// }
+	// return null;
+	// }
 
 	public User register() throws ClientProtocolException, IOException
 	{
