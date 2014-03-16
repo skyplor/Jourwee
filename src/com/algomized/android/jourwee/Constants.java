@@ -9,7 +9,7 @@ public class Constants
 	public static final String URL_TOKEN = "oauth/token";
 	public static final String URL_GET_USER = "resource/username";
 	public static final String URL_LOGIN = "login";
-	public static final String URL_REGISTER = "register";
+	public static final String URL_REGISTER = "oauth/register";
 	public static final String URL_TEST_API = "test";
 	public static final String URL_LOGOUT = "logout";
 	public static final String SHARED_PREF_NAME = "com.algomized.android.jourwee";

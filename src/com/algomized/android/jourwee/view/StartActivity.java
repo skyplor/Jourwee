@@ -45,11 +45,11 @@ public class StartActivity extends ActionBarActivity // implements AuthListener
 	{
 		NetworkUtil nu = new NetworkUtil(this);
 		Bundle bundle = nu.checkLoginStatus(this);
-		if(bundle != null && bundle.getString(AccountManager.KEY_AUTHTOKEN) != null)
+		if (bundle != null && bundle.getString(AccountManager.KEY_AUTHTOKEN) != null)
 		{
 			startLocationActivity(bundle);
 		}
-		
+
 	}
 
 	@UiThread
@@ -60,7 +60,7 @@ public class StartActivity extends ActionBarActivity // implements AuthListener
 		// Go to LocationActivity
 		startActivity(locationIntent);
 		this.finish();
-		
+
 	}
 
 	@Click(R.id.RegBtn)
@@ -235,13 +235,16 @@ public class StartActivity extends ActionBarActivity // implements AuthListener
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data)
 	{
-		Bundle bundle = data.getExtras();
-		if (resultCode == RESULT_OK)
+		if (data != null)
 		{
-			Intent locationIntent = new Intent(this, LocationActivity_.class);
-			locationIntent.putExtras(bundle);
-			startActivity(locationIntent);
-			this.finish();
+			Bundle bundle = data.getExtras();
+			if (resultCode == RESULT_OK)
+			{
+				Intent locationIntent = new Intent(this, LocationActivity_.class);
+				locationIntent.putExtras(bundle);
+				startActivity(locationIntent);
+				this.finish();
+			}
 		}
 	}
 }

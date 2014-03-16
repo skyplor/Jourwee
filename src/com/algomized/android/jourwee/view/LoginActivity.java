@@ -202,6 +202,7 @@ public class LoginActivity extends AccountAuthenticatorActivity
 		User user;
 		NetworkUtil nu = new NetworkUtil(username, password, this);
 		nu.removeAccounts();
+		data.clear();
 		
 		try
 		{

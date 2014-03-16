@@ -8,6 +8,7 @@ import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.util.TextUtils;
 
 import com.algomized.android.jourwee.R;
 import com.algomized.android.jourwee.model.User;
@@ -34,6 +35,7 @@ public class RegisterActivity extends Activity
 	ProgressDialog dialog;
 	Bundle data;
 	Intent intent = null;
+	String error = "";
 
 	@ViewById(R.id.registrationBtn)
 	Button registrationBtn;
@@ -80,15 +82,17 @@ public class RegisterActivity extends Activity
 	{
 		NetworkUtil nu = new NetworkUtil(username, password, this);
 		nu.removeAccounts();
+		data.clear();
 
-		User user_reg;
+		User user;
 		try
 		{
-			user_reg = nu.register();
+			user = nu.register();
 
-			if (!user_reg.isStatus())
+			if (!TextUtils.isEmpty(user.getError()))
 			{
-				// login is unsuccessful
+				// registration is unsuccessful
+				error = user.getError();
 				publishProgress(-1);
 
 			}
@@ -97,7 +101,9 @@ public class RegisterActivity extends Activity
 				publishProgress(50);
 				data.putString(AccountManager.KEY_ACCOUNT_NAME, username);
 				data.putString(AccountManager.KEY_ACCOUNT_TYPE, Constants.AM_ACCOUNT_TYPE);
-				data.putString(AccountManager.KEY_AUTHTOKEN, user_reg.getMessage());
+				data.putString(AccountManager.KEY_AUTHTOKEN, user.getAccess_token());
+				data.putString(Constants.AM_KEY_REFRESH_TOKEN, user.getRefresh_token());
+				data.putString(Constants.AM_KEY_EXPIRES_IN, user.getExpires_in());
 				publishProgress(100);
 			}
 
@@ -150,13 +156,17 @@ public class RegisterActivity extends Activity
 				else
 				{
 					String oauth = intent.getStringExtra(AccountManager.KEY_AUTHTOKEN);
+					String refresh_token = intent.getStringExtra(Constants.AM_KEY_REFRESH_TOKEN);
+					String expires_in = intent.getStringExtra(Constants.AM_KEY_EXPIRES_IN);
 					AccountManager mAccountManager = AccountManager.get(getBaseContext());
 					String username = intent.getExtras().getString(AccountManager.KEY_ACCOUNT_NAME);
 					final Account account = new Account(username, Constants.AM_ACCOUNT_TYPE);
-					if (mAccountManager.addAccountExplicitly(account, "", intent.getExtras()))
+					if (mAccountManager.addAccountExplicitly(account, "", null))
 					{
 						VolleyLog.d("Successfully added account: %s", username);
 						mAccountManager.setAuthToken(account, Constants.AM_AUTH_TYPE, oauth);
+						mAccountManager.setUserData(account, Constants.AM_KEY_REFRESH_TOKEN, refresh_token);
+						mAccountManager.setUserData(account, Constants.AM_KEY_EXPIRES_IN, expires_in);
 					}
 					else
 					{
@@ -169,10 +179,12 @@ public class RegisterActivity extends Activity
 		}
 		else if (progress == -1)
 		{
-			Toast.makeText(getBaseContext(), "Username and password do not match. Please try again.", Toast.LENGTH_SHORT).show();
+			dialog.dismiss();
+			Toast.makeText(getBaseContext(), error, Toast.LENGTH_SHORT).show();
 		}
 		else if (progress == -2)
 		{
+			dialog.dismiss();
 			Toast.makeText(getBaseContext(), "Something went wrong. It's probably our fault. Please try again later.", Toast.LENGTH_SHORT).show();
 		}
 

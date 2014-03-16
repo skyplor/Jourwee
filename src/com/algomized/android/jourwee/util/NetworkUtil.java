@@ -108,6 +108,8 @@ public class NetworkUtil
 
 	public User login() throws ClientProtocolException, IOException
 	{
+		Log.d(LOG_TAG, "Username: " + username);
+		Log.d(LOG_TAG, "Password: " + password);
 		user = new User();
 		nameValuePairs = new ArrayList<NameValuePair>();
 		nameValuePairs.add(new BasicNameValuePair(Constants.KEY_GRANT_TYPE, Constants.GRANT_PASSWORD));
@@ -138,21 +140,50 @@ public class NetworkUtil
 			writer.close();
 			out.close();
 
+			// // Read the response.
+			// if (connection.getResponseCode() != HttpURLConnection.HTTP_OK)
+			// {
+			// throw new IOException("Unexpected HTTP response: " + connection.getResponseCode() + " " + connection.getResponseMessage());
+			// }
+			// in = connection.getInputStream();
+			//
+			// ObjectMapper mapper = new ObjectMapper();
+			//
+			// String result = readFirstLine(in);
+			//
+			// Log.d(LOG_TAG, "Result: " + result);
+			//
+			// user = mapper.readValue(result, User.class);
+			// Log.d(LOG_TAG, "User Response: " + user.toString());
 			// Read the response.
-			if (connection.getResponseCode() != HttpURLConnection.HTTP_OK)
+			if (connection.getResponseCode() == HttpURLConnection.HTTP_OK || connection.getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED || connection.getResponseCode() == HttpURLConnection.HTTP_BAD_REQUEST)
 			{
+				Log.d(LOG_TAG, "We got either http ok or unauthorized: " + connection.getResponseCode());
+
+				ObjectMapper mapper = new ObjectMapper();
+
+				if (connection.getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED || connection.getResponseCode() == HttpURLConnection.HTTP_BAD_REQUEST)
+				{
+					// If get error response, we have to get error stream instead of input stream
+					in = connection.getErrorStream();
+					Log.d(LOG_TAG, "After getting error stream");
+				}
+				else
+				{
+
+					in = connection.getInputStream();
+					Log.d(LOG_TAG, "After getting input stream");
+				}
+				String result = readFirstLine(in);
+				user = mapper.readValue(result, User.class);
+				Log.d(LOG_TAG, "User Response: " + user.toString());
+
+			}
+			else
+			{
+				Log.d(LOG_TAG, "We got unexpected HTTP response");
 				throw new IOException("Unexpected HTTP response: " + connection.getResponseCode() + " " + connection.getResponseMessage());
 			}
-			in = connection.getInputStream();
-
-			ObjectMapper mapper = new ObjectMapper();
-
-			String result = readFirstLine(in);
-
-			Log.d(LOG_TAG, "Result: " + result);
-
-			user = mapper.readValue(result, User.class);
-			Log.d(LOG_TAG, "User Response: " + user.toString());
 
 			return user;
 		}
@@ -191,6 +222,7 @@ public class NetworkUtil
 			result.append("=");
 			result.append(URLEncoder.encode(pair.getValue(), "UTF-8"));
 		}
+		Log.d(LOG_TAG, "Get Query: " + result.toString());
 
 		return result.toString();
 	}
@@ -300,21 +332,53 @@ public class NetworkUtil
 			writer.close();
 			out.close();
 
+			// // Read the response.
+			// if (connection.getResponseCode() != HttpURLConnection.HTTP_OK)
+			// {
+			// throw new IOException("Unexpected HTTP response: " + connection.getResponseCode() + " " + connection.getResponseMessage());
+			// }
+			// in = connection.getInputStream();
+			//
+			// ObjectMapper mapper = new ObjectMapper();
+			//
+			// String result = readFirstLine(in);
+			//
+			// Log.d(LOG_TAG, "Result: " + result);
+			//
+			// user = mapper.readValue(result, User.class);
+			// Log.d(LOG_TAG, "User Response: " + user.toString());
 			// Read the response.
-			if (connection.getResponseCode() != HttpURLConnection.HTTP_OK)
+			if (connection.getResponseCode() == HttpURLConnection.HTTP_OK || connection.getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED)
 			{
+				Log.d(LOG_TAG, "We got either http ok or unauthorized: " + connection.getResponseCode());
+
+				ObjectMapper mapper = new ObjectMapper();
+
+				if (connection.getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED)
+				{
+					// If get error response, we have to get error stream instead of input stream
+					in = connection.getErrorStream();
+					Log.d(LOG_TAG, "After getting error stream");
+				}
+				else
+				{
+
+					in = connection.getInputStream();
+					Log.d(LOG_TAG, "After getting input stream");
+				}
+				String result = readFirstLine(in);
+
+				Log.d(LOG_TAG, "Result: " + result);
+
+				user = mapper.readValue(result, User.class);
+				Log.d(LOG_TAG, "User Response: " + user.toString());
+
+			}
+			else
+			{
+				Log.d(LOG_TAG, "We got unexpected HTTP response");
 				throw new IOException("Unexpected HTTP response: " + connection.getResponseCode() + " " + connection.getResponseMessage());
 			}
-			in = connection.getInputStream();
-
-			ObjectMapper mapper = new ObjectMapper();
-
-			String result = readFirstLine(in);
-
-			Log.d(LOG_TAG, "Result: " + result);
-
-			user = mapper.readValue(result, User.class);
-			Log.d(LOG_TAG, "User Response: " + user.toString());
 		}
 		catch (ClientProtocolException cpe)
 		{
@@ -638,46 +702,137 @@ public class NetworkUtil
 
 	public User register() throws ClientProtocolException, IOException
 	{
-		User user_reg = new User();
-		user_reg.setUsername(username);
-		user_reg.setPassword(password);
-		user_reg.setEnabled(true);
-		Map<String, String> user_role_map = new HashMap<String, String>();
-		user_role_map.put("authority", "ROLE_USER");
-		List<Map<String, String>> user_role = new ArrayList<Map<String, String>>();
-		user_role.add(user_role_map);
-		user_reg.setUserRoles(user_role);
-		ObjectMapper mapper_reg = new ObjectMapper();
-		mapper_reg.setSerializationInclusion(Include.NON_NULL);
-		String jsonString;
+		user = new User();
+		// User user_reg = new User();
+		// user_reg.setUsername(username);
+		// user_reg.setPassword(password);
+		// user_reg.setEnabled(true);
+		// Map<String, String> user_role_map = new HashMap<String, String>();
+		// user_role_map.put("authority", "ROLE_USER");
+		// List<Map<String, String>> user_role = new ArrayList<Map<String, String>>();
+		// user_role.add(user_role_map);
+		// user_reg.setUserRoles(user_role);
+		// ObjectMapper mapper_reg = new ObjectMapper();
+		// mapper_reg.setSerializationInclusion(Include.NON_NULL);
+		// String jsonString;
 
-		jsonString = mapper_reg.writeValueAsString(user_reg);
+		// jsonString = mapper_reg.writeValueAsString(user_reg);
 
-		Log.d(LOG_TAG, "JSON STRING: " + jsonString);
-		StringEntity sEntity;
-
-		sEntity = new StringEntity(jsonString, "UTF-8");
+		// Log.d(LOG_TAG, "JSON STRING: " + jsonString);
+		// StringEntity sEntity;
+		//
+		// sEntity = new StringEntity(jsonString, "UTF-8");
 
 		// intent = cs.login();
-		HttpClient httpclient = new DefaultHttpClient();
 
-		HttpPost httppost = new HttpPost(Constants.BASE_URL + Constants.URL_REGISTER);
+		try
+		{
+			nameValuePairs = new ArrayList<NameValuePair>();
+			nameValuePairs.add(new BasicNameValuePair(Constants.KEY_GRANT_TYPE, Constants.GRANT_PASSWORD));
+			nameValuePairs.add(new BasicNameValuePair(Constants.KEY_CLIENT_ID, Constants.CLIENT_ID));
+			nameValuePairs.add(new BasicNameValuePair(Constants.KEY_CLIENT_SECRET, Constants.CLIENT_SECRET));
+			nameValuePairs.add(new BasicNameValuePair(Constants.KEY_USERNAME, username));
+			nameValuePairs.add(new BasicNameValuePair(Constants.KEY_PASSWORD, password));
 
-		httppost.setHeader("Content-Type", "application/json");
+			// String encodedHeader = encodeHeader(Constants.CLIENT_ID, Constants.CLIENT_SECRET);
 
-		httppost.setEntity(sEntity);
+			OkHttpClient httpclient = new OkHttpClient();
+			HttpURLConnection connection = httpclient.open(new URL(Constants.BASE_URL + Constants.URL_REGISTER));
 
-		HttpResponse response = httpclient.execute(httppost);
+			// Write the request.
+			connection.setRequestMethod("POST");
+			connection.addRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 
-		ObjectMapper mapper = new ObjectMapper();
-		String result = EntityUtils.toString(response.getEntity());
+			out = connection.getOutputStream();
+			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out, "UTF-8"));
+			writer.write(getQuery(nameValuePairs));
+			writer.flush();
+			writer.close();
+			out.close();
 
-		Log.d(LOG_TAG, "Result: " + result);
+			// // Read the response.
+			// if (connection.getResponseCode() != HttpURLConnection.HTTP_OK)
+			// {
+			// throw new IOException("Unexpected HTTP response: " + connection.getResponseCode() + " " + connection.getResponseMessage());
+			// }
+			// in = connection.getInputStream();
+			//
+			ObjectMapper mapper = new ObjectMapper();
+			//
+			// String result = readFirstLine(in);
+			//
+			// Log.d(LOG_TAG, "Result: " + result);
+			//
+			// user = mapper.readValue(result, User.class);
+			// Log.d(LOG_TAG, "User Response: " + user.toString());
 
-		User user = mapper.readValue(result, User.class);
-		Log.d(LOG_TAG, "User message: " + user.getMessage());
+			// Read the response.
+			if (connection.getResponseCode() == HttpURLConnection.HTTP_OK || connection.getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED)
+			{
+				Log.d(LOG_TAG, "We got either http ok or unauthorized: " + connection.getResponseCode());
 
-		return user_reg;
+				if (connection.getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED)
+				{
+					// If get error response, we have to get error stream instead of input stream
+					in = connection.getErrorStream();
+					Log.d(LOG_TAG, "After getting error stream");
+
+					String result = readFirstLine(in);
+					user = mapper.readValue(result, User.class);
+
+				}
+				else
+				{
+
+					in = connection.getInputStream();
+					Log.d(LOG_TAG, "After getting input stream");
+
+					String result = readFirstLine(in);
+					user = mapper.readValue(result, User.class);
+					if (TextUtils.isEmpty(user.getError()))
+					{
+						user = login();
+					}
+				}
+
+			}
+			else
+			{
+				Log.d(LOG_TAG, "We got unexpected HTTP response");
+				throw new IOException("Unexpected HTTP response: " + connection.getResponseCode() + " " + connection.getResponseMessage());
+			}
+		}
+		catch (ClientProtocolException cpe)
+		{
+			Log.d(LOG_TAG, "Encountered ClientProtocolException: " + cpe);
+		}
+		finally
+		{
+			// Clean up.
+			if (out != null)
+				out.close();
+			if (in != null)
+				in.close();
+		}
+		// HttpClient httpclient = new DefaultHttpClient();
+		//
+		// HttpPost httppost = new HttpPost(Constants.BASE_URL + Constants.URL_REGISTER);
+		//
+		// httppost.setHeader("Content-Type", "application/json");
+		//
+		// httppost.setEntity(sEntity);
+		//
+		// HttpResponse response = httpclient.execute(httppost);
+
+		// ObjectMapper mapper = new ObjectMapper();
+		// String result = EntityUtils.toString(response.getEntity());
+
+		// Log.d(LOG_TAG, "Result: " + result);
+		//
+		// User user = mapper.readValue(result, User.class);
+		// Log.d(LOG_TAG, "User message: " + user.getMessage());
+
+		return user;
 	}
 
 	public void removeAccounts()
