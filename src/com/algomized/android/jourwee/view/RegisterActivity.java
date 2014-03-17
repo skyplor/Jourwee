@@ -110,14 +110,12 @@ public class RegisterActivity extends Activity
 		}
 		catch (ClientProtocolException e1)
 		{
-			// TODO Auto-generated catch block
 			publishProgress(-2);
 			data.putString(AccountManager.KEY_ERROR_MESSAGE, e1.toString());
 			e1.printStackTrace();
 		}
 		catch (IOException e1)
 		{
-			// TODO Auto-generated catch block
 			publishProgress(-2);
 			data.putString(AccountManager.KEY_ERROR_MESSAGE, e1.toString());
 			e1.printStackTrace();

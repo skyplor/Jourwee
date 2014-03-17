@@ -72,22 +72,18 @@ public class LocationActivity extends Activity
 		}
 		catch (ClientProtocolException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		catch (IOException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		catch (OperationCanceledException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		catch (AuthenticatorException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 

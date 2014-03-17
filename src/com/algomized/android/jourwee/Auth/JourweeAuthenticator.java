@@ -3,7 +3,6 @@ package com.algomized.android.jourwee.auth;
 import java.io.IOException;
 
 import com.algomized.android.jourwee.Constants;
-import com.algomized.android.jourwee.model.User;
 import com.algomized.android.jourwee.util.NetworkUtil;
 import com.algomized.android.jourwee.view.LoginActivity_;
 import android.accounts.*;
@@ -65,26 +64,9 @@ public class JourweeAuthenticator extends AbstractAccountAuthenticator
 
 		Log.d(LOG_TAG, "> peekAuthToken returned - " + authToken);
 
-		// Lets give another try to authenticate the user
+		// Lets try to authenticate the user
 		if (TextUtils.isEmpty(authToken))
 		{
-			// final String password = am.getPassword(account);
-			// if (password != null)
-			// {
-			// try
-			// {
-			// Log.d(TAG, "> re-authenticating with the existing password");
-			// NetworkUtil nu = new NetworkUtil(account.name, password, mContext);
-			// User user = nu.login();
-			// authToken = user.getAccess_token();
-			// }
-			// catch (Exception e)
-			// {
-			// e.printStackTrace();
-			// }
-			// }
-			// else
-			// {
 			Log.d(LOG_TAG, "Refreshing Token...");
 			Bundle result = null;
 			String refreshToken = am.getUserData(account, Constants.AM_KEY_REFRESH_TOKEN);
@@ -97,9 +79,7 @@ public class JourweeAuthenticator extends AbstractAccountAuthenticator
 			{
 				Log.d(LOG_TAG, "Encountered IOException: " + e);
 			}
-			// Log.d(TAG, "Returning result: " + result.getString(AccountManager.KEY_AUTHTOKEN));
 			return result;
-			// }
 		}
 
 		// If we get an authToken - we return it
