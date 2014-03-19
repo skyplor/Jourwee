@@ -5,6 +5,8 @@
     <string name="login_id">Username</string>
     <string name="app_name">Jourwee</string>
     <string name="login">Login</string>
+    <string name="register_driver">I\'m a Driver</string>
+    <string name="register_rider">I need a ride</string>
     <string name="register">Register</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>

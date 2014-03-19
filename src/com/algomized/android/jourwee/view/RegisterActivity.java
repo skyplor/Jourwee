@@ -37,8 +37,11 @@ public class RegisterActivity extends Activity
 	Intent intent = null;
 	String error = "";
 
-	@ViewById(R.id.registrationBtn)
-	Button registrationBtn;
+	@ViewById(R.id.regDriverBtn)
+	Button regDriverBtn;
+	
+	@ViewById(R.id.regRiderBtn)
+	Button regRiderBtn;
 
 	@ViewById(R.id.usernameTxtBox)
 	EditText usernameTxtBox;
@@ -46,8 +49,8 @@ public class RegisterActivity extends Activity
 	@ViewById(R.id.passwordTxtBox)
 	EditText passwordTxtBox;
 
-	@Click(R.id.registrationBtn)
-	void onRegistrationBtnClick(View v)
+	@Click(R.id.regDriverBtn)
+	void onRegDriverBtnClick(View v)
 	{
 		String username = usernameTxtBox.getText().toString();
 		String password = passwordTxtBox.getText().toString();
@@ -60,7 +63,25 @@ public class RegisterActivity extends Activity
 			dialog = new ProgressDialog(this);
 			dialog.setMessage("Registering into the system...");
 			dialog.show();
-			createAccount(username, password);
+			createAccount(username, password, Constants.REGTYPE.DRIVER);
+		}
+	}
+	
+	@Click(R.id.regRiderBtn)
+	void onRegRiderBtnClick(View v)
+	{
+		String username = usernameTxtBox.getText().toString();
+		String password = passwordTxtBox.getText().toString();
+		if (username.equals("") || password.equals(""))
+		{
+			Toast.makeText(getApplicationContext(), "Oops,  please check your username and password", Toast.LENGTH_LONG).show();
+		}
+		else
+		{
+			dialog = new ProgressDialog(this);
+			dialog.setMessage("Registering into the system...");
+			dialog.show();
+			createAccount(username, password, Constants.REGTYPE.RIDER);
 		}
 	}
 
@@ -78,9 +99,9 @@ public class RegisterActivity extends Activity
 	}
 
 	@Background
-	public void createAccount(String username, String password)
+	public void createAccount(String username, String password, Constants.REGTYPE regtype)
 	{
-		NetworkUtil nu = new NetworkUtil(username, password, this);
+		NetworkUtil nu = new NetworkUtil(username, password, this, regtype);
 		nu.removeAccounts();
 		data.clear();
 

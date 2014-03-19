@@ -45,7 +45,7 @@ public class NetworkUtil
 	String username = "";
 	String password = "";
 	int age = 0;
-	static final int GET = 0, POST = 1, PUT = 2, DELETE = 3, HEAD = 4, OPTIONS = 5, TRACE = 6, PATCH = 7;
+	Constants.REGTYPE regtype;
 	String result = "";
 	User user;
 	OutputStream out = null;
@@ -57,6 +57,7 @@ public class NetworkUtil
 	Intent res;
 	ProgressDialog dialog;
 	ArrayList<NameValuePair> nameValuePairs;
+	String GET= "GET", POST="POST", PUT="PUT", DELETE="DELETE", HEAD="HEAD", OPTIONS="OPTIONS", TRACE="TRACE", PATCH="PATCH";
 
 	@Inject
 	AndroidAuthenticator authenticator;
@@ -80,6 +81,15 @@ public class NetworkUtil
 		res = new Intent();
 	}
 
+	public NetworkUtil(String username, String password, Context context, Constants.REGTYPE regtype)
+	{
+		this.context = context;
+		this.username = username;
+		this.password = password;
+		this.regtype = regtype;
+		res = new Intent();
+	}
+
 	public User login() throws ClientProtocolException, IOException
 	{
 		Log.d(LOG_TAG, "Username: " + username);
@@ -98,7 +108,7 @@ public class NetworkUtil
 		try
 		{
 			// Write the request.
-			connection.setRequestMethod("POST");
+			connection.setRequestMethod(POST);
 			connection.addRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 
 			String headerValue = Constants.HEADER_BASIC + " " + encodedHeader;
@@ -275,7 +285,7 @@ public class NetworkUtil
 			HttpURLConnection connection = httpclient.open(new URL(Constants.BASE_URL + Constants.URL_TOKEN));
 
 			// Write the request.
-			connection.setRequestMethod("POST");
+			connection.setRequestMethod(POST);
 			connection.addRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 
 			String headerValue = Constants.HEADER_BASIC + " " + encodedHeader;
@@ -362,7 +372,7 @@ public class NetworkUtil
 			HttpURLConnection connection = httpclient.open(new URL(Constants.BASE_URL + Constants.URL_LOGOUT));
 
 			// Write the request.
-			connection.setRequestMethod("POST");
+			connection.setRequestMethod(POST);
 			connection.addRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 
 			out = connection.getOutputStream();
@@ -424,7 +434,7 @@ public class NetworkUtil
 				HttpURLConnection connection = httpclient.open(new URL(Constants.BASE_URL + Constants.URL_GET_USER));
 
 				// Write the request.
-				connection.setRequestMethod("GET");
+				connection.setRequestMethod(GET);
 
 				String headerValue = Constants.HEADER_BEARER + " " + accessToken;
 
@@ -503,7 +513,7 @@ public class NetworkUtil
 			HttpURLConnection connection = httpclient.open(new URL(Constants.BASE_URL + Constants.URL_REGISTER));
 
 			// Write the request.
-			connection.setRequestMethod("POST");
+			connection.setRequestMethod(POST);
 			connection.addRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 
 			out = connection.getOutputStream();
