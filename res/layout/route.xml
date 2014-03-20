@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent">
+	<EditText
+		android:id="@+id/editText2"
+		android:layout_width="200dp"
+		android:layout_height="wrap_content"
+		android:layout_alignLeft="@+id/editText1"
+		android:layout_below="@+id/editText1"
+		android:layout_marginTop="40dp"
+		android:ems="10" />
+	<ImageView
+		android:id="@+id/imageView2"
+		android:layout_width="35dp"
+		android:layout_height="35dp"
+		android:layout_alignBottom="@+id/editText2"
+		android:layout_alignLeft="@+id/imageView1"
+		android:src="@drawable/route_start_b" />
+	<EditText
+		android:id="@+id/editText1"
+		android:layout_width="200dp"
+		android:layout_height="wrap_content"
+		android:layout_alignParentTop="true"
+		android:layout_marginTop="54dp"
+		android:layout_toRightOf="@+id/imageView1"
+		android:ems="10" />
+	<ImageView
+		android:id="@+id/imageView1"
+		android:layout_width="35dp"
+		android:layout_height="35dp"
+		android:layout_above="@+id/editText2"
+		android:layout_alignParentLeft="true"
+		android:layout_marginLeft="48dp"
+		android:src="@drawable/route_start_a" />
+	<Button android:id="@+id/button1" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignLeft="@+id/imageView2" android:layout_alignRight="@+id/editText2" android:layout_centerVertical="true" android:text="@string/rider_route"/>
+
+</RelativeLayout>

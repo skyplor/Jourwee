@@ -29,5 +29,7 @@
     <string name="error_signin">Error During Sign In</string>
     <string name="ok">Okay</string>
     <string name="title_activity_register">RegisterActivity</string>
+    <string name="rider_route">Find a driver</string>
+    <string name="driver_route">Find a rider</string>
 
 </resources>
