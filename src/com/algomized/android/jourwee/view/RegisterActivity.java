@@ -11,7 +11,7 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.util.TextUtils;
 
 import com.algomized.android.jourwee.R;
-import com.algomized.android.jourwee.model.User;
+import com.algomized.android.jourwee.model.JourUser;
 import com.algomized.android.jourwee.util.NetworkUtil;
 import com.algomized.android.jourwee.Constants;
 import com.android.volley.VolleyLog;
@@ -63,7 +63,7 @@ public class RegisterActivity extends Activity
 			dialog = new ProgressDialog(this);
 			dialog.setMessage("Registering into the system...");
 			dialog.show();
-			createAccount(username, password, Constants.REGTYPE.DRIVER);
+			createAccount(username, password, Constants.USERTYPE.DRIVER);
 		}
 	}
 	
@@ -81,7 +81,7 @@ public class RegisterActivity extends Activity
 			dialog = new ProgressDialog(this);
 			dialog.setMessage("Registering into the system...");
 			dialog.show();
-			createAccount(username, password, Constants.REGTYPE.RIDER);
+			createAccount(username, password, Constants.USERTYPE.RIDER);
 		}
 	}
 
@@ -99,13 +99,13 @@ public class RegisterActivity extends Activity
 	}
 
 	@Background
-	public void createAccount(String username, String password, Constants.REGTYPE regtype)
+	public void createAccount(String username, String password, Constants.USERTYPE usertype)
 	{
-		NetworkUtil nu = new NetworkUtil(username, password, this, regtype);
+		NetworkUtil nu = new NetworkUtil(username, password, this, usertype);
 		nu.removeAccounts();
 		data.clear();
 
-		User user;
+		JourUser user;
 		try
 		{
 			user = nu.register();

@@ -5,7 +5,7 @@ import java.util.List;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.algomized.android.jourwee.model.User;
+import com.algomized.android.jourwee.model.JourUser;
 import com.algomized.android.jourwee.unused.CKey;
 import com.algomized.android.jourwee.unused.CacheResult;
 import com.algomized.android.jourwee.unused.Cacheable;
@@ -37,12 +37,12 @@ public class JourweeCache //extends SqliteCache
 //
 //    private static final int VERSION = 1;
 //    private final JourweeAuth auth;
-//    private User mActiveUser;
+//    private JourUser mActiveUser;
 //
 //    public JourweeCache(Context context, JourweeAuth jourweeauth)
 //    {
 //        super(context, JourweeGson.newInstance(), new Class[] {
-//            com/jourwee/ape/User, com/jourwee/ape/UserList, com/jourwee/ape/JourweeNearbyUser, com/jourwee/ape/JourweeNearbyUserList, com/jourwee/ape/JourweeMessage, com/jourwee/ape/JourweeMessageList, com/jourwee/ape/JourweeMessageThreadBase, com/jourwee/ape/JourweeMessageThreadList, com/jourwee/ape/JourweeFile, com/jourwee/ape/JourweeFeedItem, 
+//            com/jourwee/ape/JourUser, com/jourwee/ape/UserList, com/jourwee/ape/JourweeNearbyUser, com/jourwee/ape/JourweeNearbyUserList, com/jourwee/ape/JourweeMessage, com/jourwee/ape/JourweeMessageList, com/jourwee/ape/JourweeMessageThreadBase, com/jourwee/ape/JourweeMessageThreadList, com/jourwee/ape/JourweeFile, com/jourwee/ape/JourweeFeedItem, 
 //            com/jourwee/ape/JourweeFeed, com/jourwee/ape/JourweeAsset, com/jourwee/ape/JourweeAssetBundle, com/jourwee/ape/JourweeAssetBundleList, com/jourwee/ape/JourweeAssetHistory, com/jourwee/ape/JourweePromotion, com/jourwee/ape/JourweeRelationshipChoices, com/jourwee/ape/JourweeDeactivationFeedback
 //        });
 //        auth = jourweeauth;
@@ -108,7 +108,7 @@ public class JourweeCache //extends SqliteCache
 //        super.dispatchInfo(changeinfo);
 //    }
 //
-//    public User getActiveUserIfCached()
+//    public JourUser getActiveUserIfCached()
 //    {
 //        if (mActiveUser != null && mActiveUser.slug.get().equals(auth.getSlug()))
 //        {
@@ -132,15 +132,15 @@ public class JourweeCache //extends SqliteCache
 //        return query(com/jourwee/ape/JourweeAssetBundle, "installed = ?", as);
 //    }
 //
-//    public User getOrLoadActiveUser()
+//    public JourUser getOrLoadActiveUser()
 //    {
-//        User jourweeuser = getActiveUserIfCached();
+//        JourUser jourweeuser = getActiveUserIfCached();
 //        if (jourweeuser != null)
 //        {
 //            return jourweeuser;
 //        } else
 //        {
-//            return (User)load(com/jourwee/ape/User, Slug.ACTIVEUSER);
+//            return (JourUser)load(com/jourwee/ape/JourUser, Slug.ACTIVEUSER);
 //        }
 //    }
 //
@@ -245,9 +245,9 @@ public class JourweeCache //extends SqliteCache
 //
 //    void tryCacheActiveUser(Object obj)
 //    {
-//        if ((obj instanceof User) && auth != null && auth.getSlug() != null && (auth.getSlug().equals(((User)obj).slug.get()) || auth.getSlug().equals(Slug.ACTIVEUSER)))
+//        if ((obj instanceof JourUser) && auth != null && auth.getSlug() != null && (auth.getSlug().equals(((JourUser)obj).slug.get()) || auth.getSlug().equals(Slug.ACTIVEUSER)))
 //        {
-//            mActiveUser = (User)obj;
+//            mActiveUser = (JourUser)obj;
 //        }
 //    }
 //

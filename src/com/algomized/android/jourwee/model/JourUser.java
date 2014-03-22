@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class User
+public class JourUser
 {
 
 	private String name = null;
@@ -20,6 +20,8 @@ public class User
 	private String password = "";
 
 	private boolean enabled;
+	
+	private int user_type = 0;
 
 	@JsonIgnore
 	private boolean status;
@@ -259,6 +261,22 @@ public class User
 	public void setError_description(String error_description)
 	{
 		this.error_description = error_description;
+	}
+
+	/**
+	 * @return the user_type
+	 */
+	public int getUser_type()
+	{
+		return user_type;
+	}
+
+	/**
+	 * @param user_type the user_type to set
+	 */
+	public void setUser_type(int user_type)
+	{
+		this.user_type = user_type;
 	}
 
 	@Override

@@ -33,14 +33,15 @@ public class Constants
 	public static final String KEY_REFRESH_TOKEN = "refresh_token";
 	public static final String KEY_EXPIRES_IN = "expires_in";
 	public static final String KEY_HEADER_AUTH = "Authorization";
+	public static final String KEY_USERTYPE = "user_type";
 	public static final String AM_KEY_REFRESH_TOKEN = BASE_URL + "refresh";
 	public static final String AM_KEY_EXPIRES_IN = BASE_URL + "expires";
 
-	public static enum REGTYPE {
+	public static enum USERTYPE {
 		DRIVER(0), RIDER(1);
 		private int type;
 
-		private REGTYPE(int type)
+		private USERTYPE(int type)
 		{
 			this.type = type;
 		};

@@ -31,5 +31,8 @@
     <string name="title_activity_register">RegisterActivity</string>
     <string name="rider_route">Find a driver</string>
     <string name="driver_route">Find a rider</string>
+    <string name="destination">Destination</string>
+    <string name="origin">Origin</string>
+    <string name="google_maps_api_key">AIzaSyB1ZwZar2ns4u_6lA_jV2ODr3cpA5hWs5I</string>
 
 </resources>

@@ -4,37 +4,48 @@
 	android:orientation="vertical"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent">
+	<!-- android:background="#27a7df"> -->
+
 	<EditText
-		android:id="@+id/editText2"
+		android:id="@+id/destInput"
 		android:layout_width="200dp"
 		android:layout_height="wrap_content"
-		android:layout_alignLeft="@+id/editText1"
-		android:layout_below="@+id/editText1"
+		android:layout_alignLeft="@+id/originInput"
+		android:layout_below="@+id/originInput"
 		android:layout_marginTop="40dp"
-		android:ems="10" />
+		android:ems="10"
+		android:inputType="text" />
 	<ImageView
-		android:id="@+id/imageView2"
+		android:id="@+id/routeBicn"
 		android:layout_width="35dp"
 		android:layout_height="35dp"
-		android:layout_alignBottom="@+id/editText2"
-		android:layout_alignLeft="@+id/imageView1"
+		android:layout_alignBottom="@+id/destInput"
+		android:layout_alignLeft="@+id/routeAicn"
+		android:contentDescription="@string/destination"
 		android:src="@drawable/route_start_b" />
 	<EditText
-		android:id="@+id/editText1"
+		android:id="@+id/originInput"
 		android:layout_width="200dp"
 		android:layout_height="wrap_content"
 		android:layout_alignParentTop="true"
+		android:layout_centerHorizontal="true"
 		android:layout_marginTop="54dp"
-		android:layout_toRightOf="@+id/imageView1"
-		android:ems="10" />
+		android:ems="10"
+		android:inputType="text" />
 	<ImageView
-		android:id="@+id/imageView1"
+		android:id="@+id/routeAicn"
 		android:layout_width="35dp"
 		android:layout_height="35dp"
-		android:layout_above="@+id/editText2"
-		android:layout_alignParentLeft="true"
-		android:layout_marginLeft="48dp"
+		android:layout_above="@+id/destInput"
+		android:layout_toLeftOf="@+id/originInput"
+		android:contentDescription="@string/origin"
 		android:src="@drawable/route_start_a" />
-	<Button android:id="@+id/button1" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignLeft="@+id/imageView2" android:layout_alignRight="@+id/editText2" android:layout_centerVertical="true" android:text="@string/rider_route"/>
+	<Button
+		android:id="@+id/searchBtn"
+		android:layout_width="200dp"
+		android:layout_height="wrap_content"
+		android:layout_centerHorizontal="true"
+		android:layout_centerVertical="true"
+		android:text="@string/rider_route" />
 
 </RelativeLayout>

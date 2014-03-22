@@ -17,6 +17,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
+import java.net.ContentHandler;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -30,7 +31,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.TextUtils;
 
 import com.algomized.android.jourwee.Constants;
-import com.algomized.android.jourwee.model.User;
+import com.algomized.android.jourwee.model.JourUser;
 import com.android.volley.toolbox.AndroidAuthenticator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.squareup.okhttp.OkHttpClient;
@@ -45,9 +46,9 @@ public class NetworkUtil
 	String username = "";
 	String password = "";
 	int age = 0;
-	Constants.REGTYPE regtype;
+	Constants.USERTYPE usertype;
 	String result = "";
-	User user;
+	JourUser user;
 	OutputStream out = null;
 	InputStream in = null;
 	Context context;
@@ -57,7 +58,7 @@ public class NetworkUtil
 	Intent res;
 	ProgressDialog dialog;
 	ArrayList<NameValuePair> nameValuePairs;
-	String GET= "GET", POST="POST", PUT="PUT", DELETE="DELETE", HEAD="HEAD", OPTIONS="OPTIONS", TRACE="TRACE", PATCH="PATCH";
+	String GET = "GET", POST = "POST", PUT = "PUT", DELETE = "DELETE", HEAD = "HEAD", OPTIONS = "OPTIONS", TRACE = "TRACE", PATCH = "PATCH";
 
 	@Inject
 	AndroidAuthenticator authenticator;
@@ -81,20 +82,20 @@ public class NetworkUtil
 		res = new Intent();
 	}
 
-	public NetworkUtil(String username, String password, Context context, Constants.REGTYPE regtype)
+	public NetworkUtil(String username, String password, Context context, Constants.USERTYPE usertype)
 	{
 		this.context = context;
 		this.username = username;
 		this.password = password;
-		this.regtype = regtype;
+		this.usertype = usertype;
 		res = new Intent();
 	}
 
-	public User login() throws ClientProtocolException, IOException
+	public JourUser login() throws ClientProtocolException, IOException
 	{
 		Log.d(LOG_TAG, "Username: " + username);
 		Log.d(LOG_TAG, "Password: " + password);
-		user = new User();
+		user = new JourUser();
 		nameValuePairs = new ArrayList<NameValuePair>();
 		nameValuePairs.add(new BasicNameValuePair(Constants.KEY_GRANT_TYPE, Constants.GRANT_PASSWORD));
 		nameValuePairs.add(new BasicNameValuePair(Constants.KEY_USERNAME, username));
@@ -144,8 +145,8 @@ public class NetworkUtil
 					Log.d(LOG_TAG, "After getting input stream");
 				}
 				String result = readFirstLine(in);
-				user = mapper.readValue(result, User.class);
-				Log.d(LOG_TAG, "User Response: " + user.toString());
+				user = mapper.readValue(result, JourUser.class);
+				Log.d(LOG_TAG, "JourUser Response: " + user.toString());
 
 			}
 			else
@@ -272,7 +273,7 @@ public class NetworkUtil
 	{
 		Bundle bundleResult = new Bundle();
 
-		user = new User();
+		user = new JourUser();
 		try
 		{
 			nameValuePairs = new ArrayList<NameValuePair>();
@@ -324,8 +325,8 @@ public class NetworkUtil
 
 				Log.d(LOG_TAG, "Result: " + result);
 
-				user = mapper.readValue(result, User.class);
-				Log.d(LOG_TAG, "User Response: " + user.toString());
+				user = mapper.readValue(result, JourUser.class);
+				Log.d(LOG_TAG, "JourUser Response: " + user.toString());
 
 			}
 			else
@@ -361,7 +362,7 @@ public class NetworkUtil
 
 	public boolean logout(String username, String oauthtoken) throws ClientProtocolException, IOException
 	{
-		user = new User();
+		user = new JourUser();
 		nameValuePairs = new ArrayList<NameValuePair>();
 		nameValuePairs.add(new BasicNameValuePair("j_username", username));
 		nameValuePairs.add(new BasicNameValuePair("j_oauth", oauthtoken));
@@ -395,8 +396,8 @@ public class NetworkUtil
 
 			Log.d(LOG_TAG, "Result: " + result);
 
-			user = mapper.readValue(result, User.class);
-			Log.d(LOG_TAG, "User message: " + user.getMessage());
+			user = mapper.readValue(result, JourUser.class);
+			Log.d(LOG_TAG, "JourUser message: " + user.getMessage());
 			return user.isStatus();
 		}
 		finally
@@ -428,7 +429,7 @@ public class NetworkUtil
 			String accessToken = am.peekAuthToken(account, Constants.AM_AUTH_TYPE);
 			try
 			{
-				user = new User();
+				user = new JourUser();
 
 				OkHttpClient httpclient = new OkHttpClient();
 				HttpURLConnection connection = httpclient.open(new URL(Constants.BASE_URL + Constants.URL_GET_USER));
@@ -455,8 +456,8 @@ public class NetworkUtil
 						in = connection.getErrorStream();
 						Log.d(LOG_TAG, "After getting error stream");
 						String result = readFirstLine(in);
-						user = mapper.readValue(result, User.class);
-						Log.d(LOG_TAG, "User Response Error: " + user.getError());
+						user = mapper.readValue(result, JourUser.class);
+						Log.d(LOG_TAG, "JourUser Response Error: " + user.getError());
 						return false;
 					}
 					else
@@ -496,9 +497,9 @@ public class NetworkUtil
 		return false;
 	}
 
-	public User register() throws ClientProtocolException, IOException
+	public JourUser register() throws ClientProtocolException, IOException
 	{
-		user = new User();
+		user = new JourUser();
 
 		try
 		{
@@ -538,7 +539,7 @@ public class NetworkUtil
 					Log.d(LOG_TAG, "After getting error stream");
 
 					String result = readFirstLine(in);
-					user = mapper.readValue(result, User.class);
+					user = mapper.readValue(result, JourUser.class);
 
 				}
 				else
@@ -548,7 +549,7 @@ public class NetworkUtil
 					Log.d(LOG_TAG, "After getting input stream");
 
 					String result = readFirstLine(in);
-					user = mapper.readValue(result, User.class);
+					user = mapper.readValue(result, JourUser.class);
 					if (TextUtils.isEmpty(user.getError()))
 					{
 						user = login();
@@ -585,7 +586,8 @@ public class NetworkUtil
 		if (accounts.length > 0)
 		{
 			for (Account accountToRemove : accounts)
-				am.removeAccount(accountToRemove, null, null);
+				if (accountToRemove.type.equals(Constants.AM_ACCOUNT_TYPE))
+					am.removeAccount(accountToRemove, null, null);
 		}
 
 	}

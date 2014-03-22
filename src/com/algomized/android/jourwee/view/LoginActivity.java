@@ -10,7 +10,7 @@ import org.androidannotations.annotations.ViewById;
 import org.apache.http.client.ClientProtocolException;
 import com.algomized.android.jourwee.Constants;
 import com.algomized.android.jourwee.R;
-import com.algomized.android.jourwee.model.User;
+import com.algomized.android.jourwee.model.JourUser;
 import com.algomized.android.jourwee.util.NetworkUtil;
 import com.android.volley.VolleyLog;
 import android.accounts.Account;
@@ -76,7 +76,7 @@ public class LoginActivity extends AccountAuthenticatorActivity
 	@Background
 	public void authenticate(String username, String password)
 	{
-		User user;
+		JourUser user;
 		NetworkUtil nu = new NetworkUtil(username, password, this);
 		nu.removeAccounts();
 		data.clear();
@@ -99,6 +99,7 @@ public class LoginActivity extends AccountAuthenticatorActivity
 				data.putString(AccountManager.KEY_AUTHTOKEN, user.getAccess_token());
 				data.putString(Constants.AM_KEY_REFRESH_TOKEN, user.getRefresh_token());
 				data.putString(Constants.AM_KEY_EXPIRES_IN, user.getExpires_in());
+				data.putInt(Constants.KEY_USERTYPE, user.getUser_type());
 				publishProgress(100);
 			}
 

@@ -47,7 +47,8 @@ public class StartActivity extends ActionBarActivity // implements AuthListener
 		Bundle bundle = nu.checkLoginStatus(this);
 		if (bundle != null && bundle.getString(AccountManager.KEY_AUTHTOKEN) != null)
 		{
-			startLocationActivity(bundle);
+//			startLocationActivity(bundle);
+			startRouteActivity(bundle);
 		}
 
 	}
@@ -60,7 +61,16 @@ public class StartActivity extends ActionBarActivity // implements AuthListener
 		// Start LocationActivity
 		startActivity(locationIntent);
 		this.finish();
-
+	}
+	
+	@UiThread
+	void startRouteActivity(Bundle bundle)
+	{
+		Intent routeIntent = new Intent(this, RouteActivity_.class);
+		routeIntent.putExtras(bundle);
+		// Start RouteActivity
+		startActivity(routeIntent);
+		this.finish();
 	}
 
 	@Click(R.id.RegBtn)
@@ -83,10 +93,8 @@ public class StartActivity extends ActionBarActivity // implements AuthListener
 			Bundle bundle = data.getExtras();
 			if (resultCode == RESULT_OK)
 			{
-				Intent locationIntent = new Intent(this, LocationActivity_.class);
-				locationIntent.putExtras(bundle);
-				startActivity(locationIntent);
-				this.finish();
+//				startLocationActivity(bundle);
+				startRouteActivity(bundle);
 			}
 		}
 	}
