@@ -3,33 +3,28 @@
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	android:orientation="vertical"
 	android:layout_width="match_parent"
-	android:layout_height="match_parent">
+	android:layout_height="match_parent"
+	android:focusable="true"
+	android:focusableInTouchMode="true">
 	<!-- android:background="#27a7df"> -->
 
-	<EditText
-		android:id="@+id/destInput"
-		android:layout_width="200dp"
-		android:layout_height="wrap_content"
-		android:layout_alignLeft="@+id/originInput"
-		android:layout_below="@+id/originInput"
-		android:layout_marginTop="40dp"
-		android:ems="10"
-		android:inputType="text" />
-	<ImageView
-		android:id="@+id/routeBicn"
-		android:layout_width="35dp"
-		android:layout_height="35dp"
-		android:layout_alignBottom="@+id/destInput"
-		android:layout_alignLeft="@+id/routeAicn"
-		android:contentDescription="@string/destination"
-		android:src="@drawable/route_start_b" />
-	<EditText
+	<AutoCompleteTextView
 		android:id="@+id/originInput"
 		android:layout_width="200dp"
 		android:layout_height="wrap_content"
 		android:layout_alignParentTop="true"
 		android:layout_centerHorizontal="true"
 		android:layout_marginTop="54dp"
+		android:ems="10"
+		android:inputType="text"
+		android:singleLine="true" />
+	<AutoCompleteTextView
+		android:id="@+id/destInput"
+		android:layout_width="200dp"
+		android:layout_height="wrap_content"
+		android:layout_alignLeft="@+id/originInput"
+		android:layout_below="@+id/originInput"
+		android:layout_marginTop="40dp"
 		android:ems="10"
 		android:inputType="text" />
 	<ImageView
@@ -40,12 +35,22 @@
 		android:layout_toLeftOf="@+id/originInput"
 		android:contentDescription="@string/origin"
 		android:src="@drawable/route_start_a" />
+	<ImageView
+		android:id="@+id/routeBicn"
+		android:layout_width="35dp"
+		android:layout_height="35dp"
+		android:layout_alignBottom="@+id/destInput"
+		android:layout_alignLeft="@+id/routeAicn"
+		android:contentDescription="@string/destination"
+		android:src="@drawable/route_start_b" />
 	<Button
 		android:id="@+id/searchBtn"
 		android:layout_width="200dp"
 		android:layout_height="wrap_content"
 		android:layout_centerHorizontal="true"
 		android:layout_centerVertical="true"
-		android:text="@string/rider_route" />
+		android:text="@string/rider_route"
+		android:background="#27a7df"
+		android:textColor="@android:color/white" />
 
 </RelativeLayout>

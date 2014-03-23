@@ -5,6 +5,7 @@ import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.apache.http.client.ClientProtocolException;
@@ -22,8 +23,6 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -31,17 +30,11 @@ import android.widget.Toast;
 public class RegisterActivity extends Activity
 {
 
-	private static final String LOG_TAG = "RegisterActivity";
+	private static final String LOG_TAG = RegisterActivity.class.getName();
 	ProgressDialog dialog;
 	Bundle data;
 	Intent intent = null;
 	String error = "";
-
-	@ViewById(R.id.regDriverBtn)
-	Button regDriverBtn;
-	
-	@ViewById(R.id.regRiderBtn)
-	Button regRiderBtn;
 
 	@ViewById(R.id.usernameTxtBox)
 	EditText usernameTxtBox;
@@ -49,8 +42,8 @@ public class RegisterActivity extends Activity
 	@ViewById(R.id.passwordTxtBox)
 	EditText passwordTxtBox;
 
-	@Click(R.id.regDriverBtn)
-	void onRegDriverBtnClick(View v)
+	@Click
+	void regDriverBtn()
 	{
 		String username = usernameTxtBox.getText().toString();
 		String password = passwordTxtBox.getText().toString();
@@ -67,8 +60,8 @@ public class RegisterActivity extends Activity
 		}
 	}
 	
-	@Click(R.id.regRiderBtn)
-	void onRegRiderBtnClick(View v)
+	@Click
+	void regRiderBtn()
 	{
 		String username = usernameTxtBox.getText().toString();
 		String password = passwordTxtBox.getText().toString();
@@ -150,7 +143,7 @@ public class RegisterActivity extends Activity
 		}
 
 	}
-
+	
 	@UiThread
 	public void publishProgress(int progress)
 	{

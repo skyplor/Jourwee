@@ -6,7 +6,7 @@
 	android:versionName="1.0">
 
 	<uses-sdk
-		android:minSdkVersion="9"
+		android:minSdkVersion="11"
 		android:targetSdkVersion="19" />
 	<permission
 		android:name="com.algomized.android.jourwee.permission.MAPS_RECEIVE"
@@ -29,7 +29,7 @@
 		android:required="true" />
 
 	<application
-		android:name="com.algomized.android.jourwee.JourweeApplication"
+		android:name="com.algomized.android.jourwee.JourweeApplication_"
 		android:allowBackup="true"
 		android:icon="@drawable/ic_launcher"
 		android:label="@string/app_name"
@@ -65,7 +65,7 @@
 		</activity>
 
 		<service
-			android:name="com.algomized.android.jourwee.auth.JourweeAuthenticatorService"
+			android:name="com.algomized.android.jourwee.auth.JourweeAuthenticatorService_"
 			android:exported="false">
 			<intent-filter>
 				<action android:name="android.accounts.AccountAuthenticator" />

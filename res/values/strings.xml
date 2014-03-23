@@ -34,5 +34,7 @@
     <string name="destination">Destination</string>
     <string name="origin">Origin</string>
     <string name="google_maps_api_key">AIzaSyB1ZwZar2ns4u_6lA_jV2ODr3cpA5hWs5I</string>
+    <string name="google_browser_api_key">AIzaSyCoQowbIAVI-hzlKp6kRn4rzJUmVWn_lgs</string>
+    
 
 </resources>

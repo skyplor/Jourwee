@@ -32,12 +32,6 @@ public class LocationActivity extends Activity
 
 	String username;
 
-	@ViewById(R.id.logoutBtn)
-	Button logout_button;
-
-	@ViewById(R.id.testRequestBtn)
-	Button test_request_button;
-
 	@ViewById(R.id.userIDTxt)
 	TextView user_id_text;
 
@@ -47,8 +41,8 @@ public class LocationActivity extends Activity
 	@ViewById(R.id.nameTxt)
 	TextView name_text;
 
-	@Click(R.id.logoutBtn)
-	public void OnLogoutBtnClicked(View v)
+	@Click
+	public void logoutBtn()
 	{
 		// Retrieve oauthtoken
 		Account account = new Account(username, Constants.AM_ACCOUNT_TYPE);
@@ -89,14 +83,9 @@ public class LocationActivity extends Activity
 
 	}
 
-	@Click(R.id.testRequestBtn)
-	public void OnTestRequestBtnClicked(View v)
-	{
-		testRequest();
-	}
-
+	@Click
 	@Background
-	void testRequest()
+	void testRequestBtn()
 	{
 		NetworkUtil nu = new NetworkUtil(this);
 		boolean flag = false;

@@ -1,5 +1,7 @@
 package com.algomized.android.jourwee;
 
+import org.androidannotations.annotations.EApplication;
+
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.VolleyLog;
@@ -8,6 +10,7 @@ import com.android.volley.toolbox.Volley;
 import android.app.Application;
 import android.text.TextUtils;
 
+@EApplication
 public class JourweeApplication extends Application
 {
 //	private static JourweeApplication _instance;

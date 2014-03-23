@@ -1,12 +1,14 @@
 package com.algomized.android.jourwee.auth;
 
+import org.androidannotations.annotations.EService;
+
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 
+@EService
 public class JourweeAuthenticatorService extends Service
 {
-	private static final String TAG = "AccountAuthenticatorService";
 	private static JourweeAuthenticator jAccountAuthenticator = null;
 
 	public JourweeAuthenticatorService()

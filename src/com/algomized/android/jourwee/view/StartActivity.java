@@ -13,7 +13,6 @@ import android.accounts.AccountManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -23,10 +22,7 @@ public class StartActivity extends ActionBarActivity // implements AuthListener
 {
 	private static final int REGISTER = 0, LOGIN = 1;
 	EditText login_idBox, passwordBox;
-	String TAG = "Jourwee - StartActivity.class";
-
-	@ViewById(R.id.RegBtn)
-	Button regButton;
+	String LOG_TAG = StartActivity.class.getName();
 
 	@ViewById(R.id.signinTxt)
 	TextView signinTxt;
@@ -73,8 +69,8 @@ public class StartActivity extends ActionBarActivity // implements AuthListener
 		this.finish();
 	}
 
-	@Click(R.id.RegBtn)
-	void regBtnClicked()
+	@Click
+	void RegBtn()
 	{
 		RegisterActivity_.intent(this).startForResult(REGISTER);
 	}

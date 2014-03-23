@@ -20,8 +20,6 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -33,17 +31,14 @@ public class LoginActivity extends AccountAuthenticatorActivity
 	Bundle data;
 	Intent intent = null;
 
-	@ViewById(R.id.loginBtn)
-	Button loginBtn;
-
 	@ViewById(R.id.loginTxtBox)
 	EditText loginTxtBox;
 
 	@ViewById(R.id.pwTxtBox)
 	EditText pwTxtBox;
 
-	@Click(R.id.loginBtn)
-	void onLoginBtnClick(View v)
+	@Click
+	void loginBtn()
 	{
 		String username = loginTxtBox.getText().toString();
 		String password = pwTxtBox.getText().toString();
