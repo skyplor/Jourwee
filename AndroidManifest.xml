@@ -8,22 +8,32 @@
 	<uses-sdk
 		android:minSdkVersion="11"
 		android:targetSdkVersion="19" />
+	<!-- Protect the map component of the application using application signature -->
 	<permission
 		android:name="com.algomized.android.jourwee.permission.MAPS_RECEIVE"
 		android:protectionLevel="signature"></permission>
 
+	<!-- Allows to receive map -->
 	<uses-permission android:name="com.algomized.android.jourwee.permission.MAPS_RECEIVE" />
+	<!-- Used to access the internet -->
 	<uses-permission android:name="android.permission.INTERNET" />
+	<!-- Allows the Google Maps Android API V2 to cache map tile data in the device's external storage area -->
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+	<!-- Allows application to manage user account via AccountManager -->
 	<uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
 	<uses-permission android:name="android.permission.GET_ACCOUNTS" />
 	<uses-permission android:name="android.permission.MANAGE_ACCOUNTS" />
 	<uses-permission android:name="android.permission.USE_CREDENTIALS" />
+	<!-- Allows application to check phone network status -->
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+	<!-- Allows to contact Google Serves -->
 	<uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
+	<!-- Allows the Google Maps Android API V2 to use WiFi or mobile cell data (or both) to determine the device's location -->
 	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+	<!-- Allows the Google Maps Android API V2 to use the Global Positioning System (GPS) to determine the device's location to within a very small area -->
 	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
+	<!-- Google Maps Android API V2 requires OpenGL ES version 2 -->
 	<uses-feature
 		android:glEsVersion="0x00020000"
 		android:required="true" />
@@ -74,8 +84,34 @@
 				android:name="android.accounts.AccountAuthenticator"
 				android:resource="@xml/authenticator" />
 		</service>
-		<activity android:name="com.algomized.android.jourwee.view.RouteActivity_"></activity>
 		<activity android:name="com.algomized.android.jourwee.view.MapsActivity_"></activity>
+		<activity
+			android:name="com.algomized.android.jourwee.view.SearchLocationActivity_"
+			android:launchMode="singleTop"
+			android:theme="@style/Theme.AppCompat.Light">
+			<intent-filter>
+				<action android:name="android.intent.action.SEARCH" />
+			</intent-filter>
+
+			<meta-data
+				android:name="android.app.searchable"
+				android:resource="@xml/searchable" />
+		</activity>
+		<activity
+			android:name="com.algomized.android.jourwee.view.RouteActivity_">
+			<!-- android:theme="@style/Theme.AppCompat.Light"> -->
+			<!-- enable the search dialog to send searches to SearchLocationActivity -->
+			<meta-data
+				android:name="android.app.default_searchable"
+				android:value="com.algomized.android.jourwee.view.SearchLocationActivity_" />
+
+		</activity>
+
+		<provider
+			android:name="com.algomized.android.jourwee.util.location.PlacesSuggestionProvider"
+			android:authorities="com.algomized.android.jourwee.PlacesSuggestionProvider"
+			android:exported="false"
+			android:syncable="false" />
 
 	</application>
 

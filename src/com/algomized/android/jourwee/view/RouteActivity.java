@@ -12,6 +12,10 @@ import java.util.ArrayList;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.Extra;
+import org.androidannotations.annotations.FragmentById;
+import org.androidannotations.annotations.OnActivityResult;
+import org.androidannotations.annotations.Touch;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.res.StringRes;
 import org.json.JSONArray;
@@ -20,36 +24,50 @@ import org.json.JSONObject;
 
 import com.algomized.android.jourwee.Constants;
 import com.algomized.android.jourwee.R;
+import com.algomized.android.jourwee.util.Communicator;
+import com.algomized.android.jourwee.view.fragment.LocationListFragment;
+import com.algomized.android.jourwee.view.fragment.RouteLocationFragment;
 
 import android.app.Activity;
+import android.app.Fragment;
+import android.app.SearchManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MotionEvent;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Filter;
 import android.widget.Filterable;
 
 @EActivity(R.layout.route)
-public class RouteActivity extends Activity
+public class RouteActivity extends Activity implements Communicator
 {
 	public static final String LOG_TAG = RouteActivity.class.getName();
 	int userType;
-	private final String driverStr = "Find a rider";
-	private final String riderStr = "Find a driver";
 
-	@ViewById
-	AutoCompleteTextView originInput;
+	// @ViewById
+	// AutoCompleteTextView originInput;
+	//
+	// @ViewById
+	// AutoCompleteTextView destInput;
+	//
+	// @ViewById
+	// Button searchBtn;
 
-	@ViewById
-	AutoCompleteTextView destInput;
+	@FragmentById
+	RouteLocationFragment fragment1;
 
-	@ViewById
-	Button searchBtn;
-	
+	@FragmentById
+	LocationListFragment fragment2;
+
 	@StringRes
 	static String google_browser_api_key;
 
@@ -58,30 +76,121 @@ public class RouteActivity extends Activity
 	{
 		overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
 		Bundle bundle = getIntent().getExtras();
-		if (bundle != null)
-		{
-			userType = bundle.getInt(Constants.KEY_USERTYPE);
-			if (userType == 0)
-				searchBtn.setText(driverStr);
-			else
-				searchBtn.setText(riderStr);
-		}
-		else
-			searchBtn.setText("Do a search");
 
-		originInput.setAdapter(new PlacesAutoCompleteAdapter(this, R.layout.item_list));
+		// BroadcastReceiver receiver = new BroadcastReceiver()
+		// {
+		// @Override
+		// public void onReceive(Context context, Intent intent)
+		// {
+		// String action = intent.getAction();
+		// if (action != null)
+		// {
+		// if (action.equals("SEARCH_ORIGIN"))
+		// {
+		// startActionBarSearch(Constants.ORIGIN);
+		// }
+		// else if (action.equals("SEARCH_DEST"))
+		// {
+		// startActionBarSearch(Constants.DESTINATION);
+		// }
+		// }
+		// }
+		// };
+		// if (bundle != null)
+		// {
+		// userType = bundle.getInt(Constants.KEY_USERTYPE);
+		// if (userType == 0)
+		// searchBtn.setText(driverStr);
+		// else
+		// searchBtn.setText(riderStr);
+		// }
+		// else
+		// searchBtn.setText("Do a search");
+		//
+		// originInput.setAdapter(new PlacesAutoCompleteAdapter(this, R.layout.item_list));
 	}
 
-	@Click
-	void searchBtn()
+	@Override
+	public void respond(String data, int inputType)
 	{
-		// Button is clicked...
-		Log.d(LOG_TAG, "Search Button is clicked!");
-		// Go to MapActivity
-		Intent mapIntent = new Intent(this, MapsActivity_.class);
-		startActivity(mapIntent);
-		// this.finish();
+		fragment1.insertText(data, inputType);
+
 	}
+
+	@Override
+	public void startActionBarSearch(int inputType)
+	{
+		Log.d(LOG_TAG, "startActionBarSearch");
+		// onSearchRequested();
+		SearchLocationActivity_.intent(this).startForResult(inputType);
+		// Intent intent = new Intent(this, SearchLocationActivity_.class);
+		// intent.setAction(Intent.ACTION_SEARCH).putExtra(SearchManager.QUERY, "");
+		// startActivityForResult(intent, inputType);
+
+		// Catch the result back and insert into fragment1
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu)
+	{
+		// Inflate the options menu from XML
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.options_menu, menu);
+
+		// Get the SearchView and set the searchable configuration
+		SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+		SearchView searchView = (SearchView) menu.findItem(R.id.location_action_search).getActionView();
+		// Tells your app's SearchView to use this activity's searchable configuration
+		searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+		// Do not iconify the widget; expand it by default
+		searchView.setIconifiedByDefault(false);
+
+		return true;
+	}
+
+	// @Touch
+	// void originInput(View v, MotionEvent event)
+	// {
+	// if (MotionEvent.ACTION_UP == event.getAction())
+	// {
+	// // SearchLocationActivity_.intent(this).searchExtra("").startForResult(ORIGIN);
+	// Intent intent = new Intent(this, SearchLocationActivity_.class);
+	// intent.setAction(Intent.ACTION_SEARCH).putExtra(SearchManager.QUERY, "");
+	// startActivityForResult(intent, ORIGIN);
+	// }
+	// }
+	//
+	// @Touch
+	// void destInput(View v, MotionEvent event)
+	// {
+	// if (MotionEvent.ACTION_UP == event.getAction())
+	// {
+	// SearchLocationActivity_.intent(this).startForResult(DESTINATION);
+	// }
+	// }
+	//
+	// @Click
+	// void searchBtn()
+	// {
+	// // Button is clicked...
+	// Log.d(LOG_TAG, "Search Button is clicked!");
+	// // Go to MapActivity
+	// MapsActivity_.intent(this).start();
+	// }
+	//
+	// @OnActivityResult(ORIGIN)
+	// void onOriginResult(Intent data)
+	// {
+	// String origin = data.getStringExtra("origin");
+	// originInput.setText(origin);
+	// }
+	//
+	// @OnActivityResult(DESTINATION)
+	// void onDestResult(Intent data)
+	// {
+	// String destination = data.getStringExtra("destination");
+	// destInput.setText(destination);
+	// }
 
 }
 

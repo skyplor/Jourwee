@@ -36,6 +36,9 @@ public class Constants
 	public static final String KEY_USERTYPE = "user_type";
 	public static final String AM_KEY_REFRESH_TOKEN = BASE_URL + "refresh";
 	public static final String AM_KEY_EXPIRES_IN = BASE_URL + "expires";
+	public static final String BROWSER_KEY = "AIzaSyCoQowbIAVI-hzlKp6kRn4rzJUmVWn_lgs";
+	public static final int ORIGIN = 0;
+	public static final int DESTINATION = 1;
 
 	public static enum USERTYPE {
 		DRIVER(0), RIDER(1);

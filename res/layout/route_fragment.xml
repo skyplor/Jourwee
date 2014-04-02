@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent">
+	<RelativeLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content">
+		<ImageView
+			android:id="@+id/routeAicn"
+			android:layout_width="35dp"
+			android:layout_height="35dp"
+			android:layout_marginTop="23dp"
+			android:layout_marginRight="23dp"
+			android:layout_marginLeft="25dp"
+			android:contentDescription="@string/origin"
+			android:src="@drawable/route_start_a" />
+		<AutoCompleteTextView
+			android:id="@+id/originInput"
+			android:layout_width="200dp"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="23dp"
+			android:layout_toRightOf="@+id/routeAicn"
+			android:ems="10"
+			android:inputType="text"
+			android:singleLine="true">
+		</AutoCompleteTextView>
+	</RelativeLayout>
+	<RelativeLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content">
+		<ImageView
+			android:id="@+id/routeBicn"
+			android:layout_width="35dp"
+			android:layout_height="35dp"
+			android:layout_marginTop="23dp"
+			android:layout_marginRight="23dp"
+			android:layout_marginLeft="25dp"
+			android:contentDescription="@string/destination"
+			android:src="@drawable/route_start_b" />
+		<AutoCompleteTextView
+			android:id="@+id/destInput"
+			android:layout_width="200dp"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="23dp"
+			android:layout_toRightOf="@+id/routeBicn"
+			android:ems="10"
+			android:inputType="text"
+			android:singleLine="true">
+		</AutoCompleteTextView>
+	</RelativeLayout>
+
+</LinearLayout>

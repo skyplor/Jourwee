@@ -1,49 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
 	xmlns:android="http://schemas.android.com/apk/res/android"
+
 	android:orientation="vertical"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
 	android:focusable="true"
 	android:focusableInTouchMode="true">
 	<!-- android:background="#27a7df"> -->
+	<!-- xmlns:bootstrapbutton="http://schemas.android.com/apk/res-auto" xmlns:fontawesometext="http://schemas.android.com/apk/res-auto" -->
 
-	<AutoCompleteTextView
-		android:id="@+id/originInput"
-		android:layout_width="200dp"
-		android:layout_height="wrap_content"
-		android:layout_alignParentTop="true"
-		android:layout_centerHorizontal="true"
-		android:layout_marginTop="54dp"
-		android:ems="10"
-		android:inputType="text"
-		android:singleLine="true" />
-	<AutoCompleteTextView
-		android:id="@+id/destInput"
-		android:layout_width="200dp"
-		android:layout_height="wrap_content"
-		android:layout_alignLeft="@+id/originInput"
-		android:layout_below="@+id/originInput"
-		android:layout_marginTop="40dp"
-		android:ems="10"
-		android:inputType="text" />
-	<ImageView
-		android:id="@+id/routeAicn"
-		android:layout_width="35dp"
-		android:layout_height="35dp"
-		android:layout_above="@+id/destInput"
-		android:layout_toLeftOf="@+id/originInput"
-		android:contentDescription="@string/origin"
-		android:src="@drawable/route_start_a" />
-	<ImageView
-		android:id="@+id/routeBicn"
-		android:layout_width="35dp"
-		android:layout_height="35dp"
-		android:layout_alignBottom="@+id/destInput"
-		android:layout_alignLeft="@+id/routeAicn"
-		android:contentDescription="@string/destination"
-		android:src="@drawable/route_start_b" />
-	<Button
+
+
+	<!-- <AutoCompleteTextView android:id="@+id/originInput" android:layout_width="200dp" android:layout_height="wrap_content" android:layout_alignParentTop="true" android:layout_centerHorizontal="true" android:layout_marginTop="54dp" 
+		android:ems="10" android:inputType="text" android:singleLine="true" /> <AutoCompleteTextView android:id="@+id/destInput" android:layout_width="200dp" android:layout_height="wrap_content" android:layout_alignLeft="@+id/originInput" 
+		android:layout_below="@+id/originInput" android:layout_marginTop="40dp" android:ems="10" android:inputType="text" /> <ImageView android:id="@+id/routeAicn" android:layout_width="35dp" android:layout_height="35dp" 
+		android:layout_above="@+id/destInput" android:layout_toLeftOf="@+id/originInput" android:contentDescription="@string/origin" android:src="@drawable/route_start_a" /> <ImageView android:id="@+id/routeBicn" 
+		android:layout_width="35dp" android:layout_height="35dp" android:layout_alignBottom="@+id/destInput" android:layout_alignLeft="@+id/routeAicn" android:contentDescription="@string/destination" android:src="@drawable/route_start_b" 
+		/> -->
+	<!-- <Button
 		android:id="@+id/searchBtn"
 		android:layout_width="200dp"
 		android:layout_height="wrap_content"
@@ -51,6 +26,23 @@
 		android:layout_centerVertical="true"
 		android:text="@string/rider_route"
 		android:background="#27a7df"
-		android:textColor="@android:color/white" />
+		android:textColor="@android:color/white" /> -->
+	<!-- <com.beardedhen.androidbootstrap.BootstrapButton android:id="@+id/btnTwo" android:layout_width="200dp" android:layout_height="wrap_content" android:layout_below="@+id/searchBtn" android:layout_centerHorizontal="true" 
+		android:layout_margin="10dp" android:layout_marginTop="30dp" bootstrapbutton:bb_icon_right="fa-trophy" bootstrapbutton:bb_type="primary" android:text="@string/rider_route" /> -->
+	<fragment
+		android:id="@+id/fragment1"
+		android:name="com.algomized.android.jourwee.view.fragment.RouteLocationFragment_"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_alignParentTop="true"
+		android:layout_marginTop="39dp" />
+	<fragment
+	android:id="@+id/fragment2"
+	android:name="com.algomized.android.jourwee.view.fragment.LocationListFragment_"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:layout_alignParentLeft="true"
+	android:layout_below="@+id/fragment1" />
+	
 
 </RelativeLayout>

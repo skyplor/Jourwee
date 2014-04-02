@@ -35,6 +35,21 @@
     <string name="origin">Origin</string>
     <string name="google_maps_api_key">AIzaSyB1ZwZar2ns4u_6lA_jV2ODr3cpA5hWs5I</string>
     <string name="google_browser_api_key">AIzaSyCoQowbIAVI-hzlKp6kRn4rzJUmVWn_lgs</string>
+    <string name="search_hint">Search Places</string>
+    <string name="action_search">Search</string>
+    <string name="search_settings">Search Places</string>
+    <string-array name="locations">
+        <item>hello1</item>
+        <item>hello2</item>
+        <item>hello3</item>
+        <item>hello4</item>
+        <item>hello5</item>
+        <item>hello6</item>
+        <item>hello7</item>
+        <item>hello8</item>
+        <item>hello9</item>
+    </string-array>
+    
     
 
 </resources>
