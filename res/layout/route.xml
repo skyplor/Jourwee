@@ -18,15 +18,8 @@
 		android:layout_above="@+id/destInput" android:layout_toLeftOf="@+id/originInput" android:contentDescription="@string/origin" android:src="@drawable/route_start_a" /> <ImageView android:id="@+id/routeBicn" 
 		android:layout_width="35dp" android:layout_height="35dp" android:layout_alignBottom="@+id/destInput" android:layout_alignLeft="@+id/routeAicn" android:contentDescription="@string/destination" android:src="@drawable/route_start_b" 
 		/> -->
-	<!-- <Button
-		android:id="@+id/searchBtn"
-		android:layout_width="200dp"
-		android:layout_height="wrap_content"
-		android:layout_centerHorizontal="true"
-		android:layout_centerVertical="true"
-		android:text="@string/rider_route"
-		android:background="#27a7df"
-		android:textColor="@android:color/white" /> -->
+	<!-- <Button android:id="@+id/searchBtn" android:layout_width="200dp" android:layout_height="wrap_content" android:layout_centerHorizontal="true" android:layout_centerVertical="true" android:text="@string/rider_route" 
+		android:background="#27a7df" android:textColor="@android:color/white" /> -->
 	<!-- <com.beardedhen.androidbootstrap.BootstrapButton android:id="@+id/btnTwo" android:layout_width="200dp" android:layout_height="wrap_content" android:layout_below="@+id/searchBtn" android:layout_centerHorizontal="true" 
 		android:layout_margin="10dp" android:layout_marginTop="30dp" bootstrapbutton:bb_icon_right="fa-trophy" bootstrapbutton:bb_type="primary" android:text="@string/rider_route" /> -->
 	<fragment
@@ -37,12 +30,12 @@
 		android:layout_alignParentTop="true"
 		android:layout_marginTop="39dp" />
 	<fragment
-	android:id="@+id/fragment2"
-	android:name="com.algomized.android.jourwee.view.fragment.LocationListFragment_"
-	android:layout_width="match_parent"
-	android:layout_height="wrap_content"
-	android:layout_alignParentLeft="true"
-	android:layout_below="@+id/fragment1" />
-	
+		android:id="@+id/fragment2"
+		android:name="com.algomized.android.jourwee.view.fragment.LocationListFragment_"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_alignParentLeft="true"
+		android:layout_below="@+id/fragment1" />
+
 
 </RelativeLayout>

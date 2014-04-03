@@ -39,8 +39,9 @@ public class SearchLocationActivity extends Activity implements Communicator // 
 {
 	// GoogleMap mGoogleMap;
 	//
-	// @Extra
-	// String searchExtra;
+	@Extra
+	int searchExtra;
+	
 	@FragmentById
 	LocationListFragment fragment2;
 	
@@ -71,6 +72,8 @@ public class SearchLocationActivity extends Activity implements Communicator // 
 		searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
 		// Do not iconify the widget; expand it by default
 		searchView.setIconifiedByDefault(false);
+		
+		fragment2.setInputType(searchExtra);
 
 		return true;
 	}
@@ -102,7 +105,7 @@ public class SearchLocationActivity extends Activity implements Communicator // 
 
 	private void handleIntent(Intent intent)
 	{
-		intent = new Intent(this, RouteActivity_.class);
+//		intent = new Intent(this, RouteActivity_.class);
 		if (intent.getAction() != null)
 		{
 			if (intent.getAction().equals(Intent.ACTION_SEARCH))
@@ -154,6 +157,7 @@ public class SearchLocationActivity extends Activity implements Communicator // 
 	public void respond(String data, int inputType)
 	{
 		// TODO Auto-generated method stub
+		intent = getIntent();
 		intent.putExtra("data", data);
 		intent.putExtra("InputType", inputType);
 		setResult(Activity.RESULT_OK, intent);

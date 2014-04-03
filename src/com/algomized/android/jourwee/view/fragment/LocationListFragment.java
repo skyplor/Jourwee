@@ -24,14 +24,16 @@ public class LocationListFragment extends Fragment
 {
 	@ViewById
 	ListView locationList;
-	
+
+	int inputType = Constants.DESTINATION;
+
 	Communicator comm;
-	
+
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 	{
 		return null;
 	}
-	
+
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState)
 	{
@@ -40,10 +42,15 @@ public class LocationListFragment extends Fragment
 		locationList.setAdapter(adapter);
 		comm = (Communicator) getActivity();
 	}
-	
+
 	@ItemClick
 	void locationList(String location)
 	{
-		comm.respond(location, Constants.DESTINATION);
+		comm.respond(location, inputType);
+	}
+
+	public void setInputType(int inputType)
+	{
+		this.inputType = inputType;
 	}
 }

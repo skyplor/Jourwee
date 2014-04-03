@@ -52,12 +52,13 @@ public class RouteActivity extends Activity implements Communicator
 {
 	public static final String LOG_TAG = RouteActivity.class.getName();
 	int userType;
+	final int searchlocation = 1;
 
-	// @ViewById
-	// AutoCompleteTextView originInput;
-	//
-	// @ViewById
-	// AutoCompleteTextView destInput;
+//	@ViewById
+//	AutoCompleteTextView originInput;
+//
+//	@ViewById
+//	AutoCompleteTextView destInput;
 	//
 	// @ViewById
 	// Button searchBtn;
@@ -122,7 +123,7 @@ public class RouteActivity extends Activity implements Communicator
 	{
 		Log.d(LOG_TAG, "startActionBarSearch");
 		// onSearchRequested();
-		SearchLocationActivity_.intent(this).startForResult(inputType);
+		SearchLocationActivity_.intent(this).searchExtra(inputType).startForResult(searchlocation);
 		// Intent intent = new Intent(this, SearchLocationActivity_.class);
 		// intent.setAction(Intent.ACTION_SEARCH).putExtra(SearchManager.QUERY, "");
 		// startActivityForResult(intent, inputType);
@@ -178,19 +179,20 @@ public class RouteActivity extends Activity implements Communicator
 	// MapsActivity_.intent(this).start();
 	// }
 	//
-	// @OnActivityResult(ORIGIN)
-	// void onOriginResult(Intent data)
-	// {
-	// String origin = data.getStringExtra("origin");
-	// originInput.setText(origin);
-	// }
-	//
-	// @OnActivityResult(DESTINATION)
-	// void onDestResult(Intent data)
-	// {
-	// String destination = data.getStringExtra("destination");
-	// destInput.setText(destination);
-	// }
+	@OnActivityResult(searchlocation)
+	void onOriginResult(Intent intent)
+	{
+		String data = intent.getStringExtra("data");
+		int inputType = intent.getIntExtra("InputType", 0);
+		fragment1.insertText(data, inputType);
+	}
+
+//	@OnActivityResult(Constants.DESTINATION)
+//	void onDestResult(Intent data)
+//	{
+//		String destination = data.getStringExtra("data");
+//		destInput.setText(destination);
+//	}
 
 }
 
