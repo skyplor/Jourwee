@@ -43,6 +43,8 @@ public class PlacesSuggestionProvider extends ContentProvider
 
 	public static final Uri SEARCH_URI = Uri.parse("content://" + AUTHORITY + "/search");
 
+//	public static final Uri SUGGESTION_URI = Uri.parse("content://" + AUTHORITY + "/" + SearchManager.SUGGEST_URI_PATH_QUERY);
+
 	public static final Uri DETAILS_URI = Uri.parse("content://" + AUTHORITY + "/details");
 
 	private static final int SEARCH = 1;
@@ -55,6 +57,10 @@ public class PlacesSuggestionProvider extends ContentProvider
 	// Defines a set of uris allowed with this content provider
 	private static final UriMatcher mUriMatcher = buildUriMatcher();
 
+	private static final String LOG_TAG = PlacesSuggestionProvider.class.getName();
+
+	public static String[] SUGGEST_FROM = new String[] { "_id", SearchManager.SUGGEST_COLUMN_TEXT_1, SearchManager.SUGGEST_COLUMN_INTENT_EXTRA_DATA };
+
 	private static UriMatcher buildUriMatcher()
 	{
 
@@ -64,7 +70,7 @@ public class PlacesSuggestionProvider extends ContentProvider
 		uriMatcher.addURI(AUTHORITY, "search", SEARCH);
 
 		// URI for suggestions in Search Dialog
-		uriMatcher.addURI(AUTHORITY, SearchManager.SUGGEST_URI_PATH_QUERY, SUGGESTIONS);
+//		uriMatcher.addURI(AUTHORITY, SearchManager.SUGGEST_URI_PATH_QUERY, SUGGESTIONS);
 
 		// URI for Details
 		uriMatcher.addURI(AUTHORITY, "details", DETAILS);
@@ -92,7 +98,7 @@ public class PlacesSuggestionProvider extends ContentProvider
 		{
 			case SEARCH:
 				// Defining a cursor object with columns description, lat and lng
-				mCursor = new MatrixCursor(new String[] { "description", "lat", "lng" });
+				mCursor = new MatrixCursor(new String[] { "_id", "description", "lat", "lng" });
 
 				// Create a parser object to parse places in JSON format
 				parser = new PlaceJSONParser();
@@ -126,7 +132,7 @@ public class PlacesSuggestionProvider extends ContentProvider
 							HashMap<String, String> hMapDetails = detailsList.get(j);
 
 							// Adding place details to cursor
-							mCursor.addRow(new String[] { hMap.get("description"), hMapDetails.get("lat"), hMapDetails.get("lng") });
+							mCursor.addRow(new String[] { Integer.toString(j), hMap.get("description"), hMapDetails.get("lat"), hMapDetails.get("lng") });
 						}
 
 					}
@@ -142,32 +148,37 @@ public class PlacesSuggestionProvider extends ContentProvider
 			case SUGGESTIONS:
 
 				// Defining a cursor object with columns id, SUGGEST_COLUMN_TEXT_1, SUGGEST_COLUMN_INTENT_EXTRA_DATA
-				mCursor = new MatrixCursor(new String[] { "_id", SearchManager.SUGGEST_COLUMN_TEXT_1, SearchManager.SUGGEST_COLUMN_INTENT_EXTRA_DATA });
+				mCursor = new MatrixCursor(SUGGEST_FROM);
 
 				// Creating a parser object to parse places in JSON format
 				parser = new PlaceJSONParser();
 
 				// Get Places from Google Places API
 				jsonString = getPlaces(selectionArgs);
-
-				try
+				Log.d(LOG_TAG, "jsonString: " + jsonString);
+				if (!jsonString.isEmpty())
 				{
-					// Parse the places ( JSON => List )
-					list = parser.parse(new JSONObject(jsonString));
-
-					// Creating cursor object with places
-					for (int i = 0; i < list.size(); i++)
+					try
 					{
-						HashMap<String, String> hMap = (HashMap<String, String>) list.get(i);
+						// Parse the places ( JSON => List )
+						list = parser.parse(new JSONObject(jsonString));
 
-						// Adding place details to cursor
-						mCursor.addRow(new String[] { Integer.toString(i), hMap.get("description"), hMap.get("reference") });
+						// Creating cursor object with places
+						for (int i = 0; i < list.size(); i++)
+						{
+							HashMap<String, String> hMap = (HashMap<String, String>) list.get(i);
+
+							Log.d(LOG_TAG, "Place result: description" + hMap.get("description"));
+
+							// Adding place details to cursor
+							mCursor.addRow(new String[] { Integer.toString(i), hMap.get("description"), hMap.get("reference") });
+						}
 					}
-				}
-				catch (JSONException e)
-				{
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					catch (JSONException e)
+					{
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
 				c = mCursor;
 				break;
@@ -333,15 +344,19 @@ public class PlacesSuggestionProvider extends ContentProvider
 	{
 		// For storing data from web service
 		String data = "";
-		String url = getPlacesUrl(params[0]);
-		try
+		if (params != null)
 		{
-			// Fetching the data from web service in background
-			data = downloadUrl(url);
-		}
-		catch (Exception e)
-		{
-			Log.d("Background Task", e.toString());
+			Log.d(LOG_TAG, "Params[0]: " + params[0]);
+			String url = getPlacesUrl(params[0]);
+			try
+			{
+				// Fetching the data from web service in background
+				data = downloadUrl(url);
+			}
+			catch (Exception e)
+			{
+				Log.d("Background Task", e.toString());
+			}
 		}
 		return data;
 	}

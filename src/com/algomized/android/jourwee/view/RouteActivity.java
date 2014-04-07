@@ -54,11 +54,11 @@ public class RouteActivity extends Activity implements Communicator
 	int userType;
 	final int searchlocation = 1;
 
-//	@ViewById
-//	AutoCompleteTextView originInput;
-//
-//	@ViewById
-//	AutoCompleteTextView destInput;
+	// @ViewById
+	// AutoCompleteTextView originInput;
+	//
+	// @ViewById
+	// AutoCompleteTextView destInput;
 	//
 	// @ViewById
 	// Button searchBtn;
@@ -182,17 +182,20 @@ public class RouteActivity extends Activity implements Communicator
 	@OnActivityResult(searchlocation)
 	void onOriginResult(Intent intent)
 	{
-		String data = intent.getStringExtra("data");
-		int inputType = intent.getIntExtra("InputType", 0);
-		fragment1.insertText(data, inputType);
+		if (intent != null)
+		{
+			String data = intent.getStringExtra("data");
+			int inputType = intent.getIntExtra("InputType", 0);
+			fragment1.insertText(data, inputType);
+		}
 	}
 
-//	@OnActivityResult(Constants.DESTINATION)
-//	void onDestResult(Intent data)
-//	{
-//		String destination = data.getStringExtra("data");
-//		destInput.setText(destination);
-//	}
+	// @OnActivityResult(Constants.DESTINATION)
+	// void onDestResult(Intent data)
+	// {
+	// String destination = data.getStringExtra("data");
+	// destInput.setText(destination);
+	// }
 
 }
 
