@@ -49,6 +49,11 @@
         <item>hello8</item>
         <item>hello9</item>
     </string-array>
+    <string name="btn_fb_description">Facebook Signin</string>
+    <string name="btn_twitter_description">Twitter Signin</string>
+    <string name="btn_google_description">Google Signin</string>
+    <string name="divider">Divider</string>
+    <string name="or">OR</string>
     
     
 

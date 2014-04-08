@@ -268,17 +268,17 @@ public class SearchLocationActivity extends Activity implements Communicator, Se
 		handleIntent(intent);
 	}
 
-	@Override
-	public boolean onMenuItemSelected(int featureId, MenuItem item)
-	{
-		switch (item.getItemId())
-		{
-			case R.id.action_search:
-				onSearchRequested();
-				break;
-		}
-		return super.onMenuItemSelected(featureId, item);
-	}
+//	@Override
+//	public boolean onMenuItemSelected(int featureId, MenuItem item)
+//	{
+//		switch (item.getItemId())
+//		{
+//			case R.id.action_search:
+//				onSearchRequested();
+//				break;
+//		}
+//		return super.onMenuItemSelected(featureId, item);
+//	}
 
 	@Override
 	public void respond(String data, int inputType)

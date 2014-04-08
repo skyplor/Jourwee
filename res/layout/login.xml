@@ -8,9 +8,7 @@
 	tools:context="Login"
 	android:background="#27a7df">
 
-	<!-- Edit Text has 2 attributes that has problems (If we type in something 
-		then it wouldnt have any problem)It's trying to delete the words when i focus 
-		on it but no words to delete hence indexoutofbound -->
+	<!-- Edit Text has 2 attributes that has problems (If we type in something then it wouldnt have any problem)It's trying to delete the words when i focus on it but no words to delete hence indexoutofbound -->
 
 	<ImageView
 		android:id="@+id/imageView1"
@@ -29,15 +27,17 @@
 		android:layout_height="30dp"
 		android:layout_below="@+id/imageView1"
 		android:layout_centerHorizontal="true"
-		android:background="@drawable/edittext_rounded_corners"
 		android:layout_marginTop="35dp"
 		android:hint="@string/login_id"
 		android:inputType="textNoSuggestions"
 		android:paddingLeft="5dp"
 		android:textColor="#27a7df"
-		android:textSize="13sp">
+		android:textSize="13sp"
+		android:background="@color/white">
 		<requestFocus />
 	</EditText>
+
+	<!-- android:background="@drawable/edittext_rounded_corners" -->
 	<Button
 		android:id="@+id/loginBtn"
 		android:layout_width="200dp"
@@ -58,11 +58,13 @@
 		android:layout_alignLeft="@+id/loginTxtBox"
 		android:layout_below="@+id/loginTxtBox"
 		android:layout_marginTop="5dp"
-		android:background="@drawable/edittext_rounded_corners"
 		android:ems="10"
 		android:hint="@string/password"
 		android:inputType="textPassword"
 		android:paddingLeft="5dp"
 		android:textColor="#27a7df"
-		android:textSize="13sp" />
+		android:textSize="13sp"
+		android:background="@color/white" />
+
+	<!-- android:background="@drawable/edittext_rounded_corners" -->
 </RelativeLayout>
