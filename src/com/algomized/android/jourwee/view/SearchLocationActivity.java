@@ -91,7 +91,7 @@ public class SearchLocationActivity extends Activity implements Communicator, Se
 	{
 		// Inflate the options menu from XML
 		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.options_menu, menu);
+		inflater.inflate(R.menu.search_menu, menu);
 
 		// Get the SearchView and set the searchable configuration
 		SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);

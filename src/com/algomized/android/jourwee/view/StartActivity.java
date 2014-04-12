@@ -6,6 +6,8 @@ import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
+
+import com.algomized.android.jourwee.Constants;
 import com.algomized.android.jourwee.R;
 import com.algomized.android.jourwee.util.NetworkUtil;
 
@@ -22,15 +24,9 @@ import android.widget.Toast;
 // @OptionsMenu(R.menu.start_activity_actions)
 public class StartActivity extends ActionBarActivity // implements AuthListener
 {
-	private static final int REGISTER = 0, LOGIN = 1;
-	EditText login_idBox, passwordBox;
+	private static final int REGISTER = 0, LOGIN = 1, FACEBOOK_SIGNIN_REQUEST = 2, TWITTER_SIGNIN_REQUEST = 3;
+	// EditText login_idBox, passwordBox;
 	String LOG_TAG = StartActivity.class.getName();
-
-	private final static String FACEBOOK_SIGIN_URL = "http://algomizedwebserver.elasticbeanstalk.com/api/signin/facebook";
-	private static final int FACEBOOK_SIGNIN_REQUEST = 2;
-
-	private final static String TWITTER_SIGIN_URL = "http://algomizedwebserver.elasticbeanstalk.com/api/signin/twitter";
-	private static final int TWITTER_SIGNIN_REQUEST = 3;
 
 	@ViewById(R.id.signinTxt)
 	TextView signinTxt;
@@ -92,13 +88,18 @@ public class StartActivity extends ActionBarActivity // implements AuthListener
 	@Click
 	void btn_fb()
 	{
-		startWebView(FACEBOOK_SIGIN_URL, "scope=publish_stream,offline_access", FACEBOOK_SIGNIN_REQUEST);
+		String fb_url = Constants.BASE_URL + Constants.URL_FBLOGIN;
+		Log.d(LOG_TAG, "Facebook URL: " + fb_url);
+//		startWebView(fb_url, "scope=publish_stream,offline_access", FACEBOOK_SIGNIN_REQUEST);
+		startWebView(fb_url, "publish_stream,offline_access", FACEBOOK_SIGNIN_REQUEST);
 	}
 
 	@Click
 	void btn_twitter()
 	{
-		startWebView(TWITTER_SIGIN_URL, null, TWITTER_SIGNIN_REQUEST);
+		String tw_url = Constants.BASE_URL + Constants.URL_TWLOGIN;
+		Log.d(LOG_TAG, "Twitter URL: " + tw_url);
+		startWebView(tw_url, null, TWITTER_SIGNIN_REQUEST);
 	}
 
 	@Override
@@ -145,9 +146,9 @@ public class StartActivity extends ActionBarActivity // implements AuthListener
 		}
 		startActivityForResult(intent, requestCode);
 
-		if (params != null)
-		{
-
-		}
+		// if (params != null)
+		// {
+		//
+		// }
 	}
 }

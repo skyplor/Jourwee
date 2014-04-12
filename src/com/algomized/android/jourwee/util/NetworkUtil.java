@@ -96,14 +96,13 @@ public class NetworkUtil
 		Log.d(LOG_TAG, "Password: " + password);
 		user = new JourUser();
 		nameValuePairs = new ArrayList<NameValuePair>();
-		nameValuePairs.add(new BasicNameValuePair(Constants.KEY_GRANT_TYPE, Constants.GRANT_PASSWORD));
 		nameValuePairs.add(new BasicNameValuePair(Constants.KEY_USERNAME, username));
 		nameValuePairs.add(new BasicNameValuePair(Constants.KEY_PASSWORD, password));
 
 		String encodedHeader = encodeHeader(Constants.CLIENT_ID, Constants.CLIENT_SECRET);
 
 		OkHttpClient httpclient = new OkHttpClient();
-		HttpURLConnection connection = httpclient.open(new URL(Constants.BASE_URL + Constants.URL_TOKEN));
+		HttpURLConnection connection = httpclient.open(new URL(Constants.BASE_URL + Constants.URL_LOGIN));
 
 		try
 		{
@@ -127,7 +126,7 @@ public class NetworkUtil
 			// Read the response.
 			if (connection.getResponseCode() == HttpURLConnection.HTTP_OK || connection.getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED || connection.getResponseCode() == HttpURLConnection.HTTP_BAD_REQUEST)
 			{
-				Log.d(LOG_TAG, "We got either http ok or unauthorized: " + connection.getResponseCode());
+				Log.d(LOG_TAG, "We got a response: " + connection.getResponseCode());
 
 				ObjectMapper mapper = new ObjectMapper();
 
@@ -276,13 +275,13 @@ public class NetworkUtil
 		try
 		{
 			nameValuePairs = new ArrayList<NameValuePair>();
-			nameValuePairs.add(new BasicNameValuePair(Constants.KEY_GRANT_TYPE, Constants.GRANT_REFRESH));
+//			nameValuePairs.add(new BasicNameValuePair(Constants.KEY_GRANT_TYPE, Constants.GRANT_REFRESH));
 			nameValuePairs.add(new BasicNameValuePair(Constants.KEY_REFRESH_TOKEN, refreshToken));
 
 			String encodedHeader = encodeHeader(Constants.CLIENT_ID, Constants.CLIENT_SECRET);
 
 			OkHttpClient httpclient = new OkHttpClient();
-			HttpURLConnection connection = httpclient.open(new URL(Constants.BASE_URL + Constants.URL_TOKEN));
+			HttpURLConnection connection = httpclient.open(new URL(Constants.BASE_URL + Constants.URL_REFRESH));
 
 			// Write the request.
 			connection.setRequestMethod(POST);
@@ -359,55 +358,55 @@ public class NetworkUtil
 		return bundleResult;
 	}
 
-	public boolean logout(String username, String oauthtoken) throws ClientProtocolException, IOException
-	{
-		user = new JourUser();
-		nameValuePairs = new ArrayList<NameValuePair>();
-		nameValuePairs.add(new BasicNameValuePair("j_username", username));
-		nameValuePairs.add(new BasicNameValuePair("j_oauth", oauthtoken));
-
-		try
-		{
-			OkHttpClient httpclient = new OkHttpClient();
-			HttpURLConnection connection = httpclient.open(new URL(Constants.BASE_URL + Constants.URL_LOGOUT));
-
-			// Write the request.
-			connection.setRequestMethod(POST);
-			connection.addRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-
-			out = connection.getOutputStream();
-			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out, "UTF-8"));
-			writer.write(getQuery(nameValuePairs));
-			writer.flush();
-			writer.close();
-			out.close();
-
-			// Read the response.
-			if (connection.getResponseCode() != HttpURLConnection.HTTP_OK)
-			{
-				throw new IOException("Unexpected HTTP response: " + connection.getResponseCode() + " " + connection.getResponseMessage());
-			}
-			in = connection.getInputStream();
-
-			ObjectMapper mapper = new ObjectMapper();
-
-			String result = readFirstLine(in);
-
-			Log.d(LOG_TAG, "Result: " + result);
-
-			user = mapper.readValue(result, JourUser.class);
-			Log.d(LOG_TAG, "JourUser message: " + user.getMessage());
-			return user.isStatus();
-		}
-		finally
-		{
-			// Clean up.
-			if (out != null)
-				out.close();
-			if (in != null)
-				in.close();
-		}
-	}
+//	public boolean logout(String username, String oauthtoken) throws ClientProtocolException, IOException
+//	{
+//		user = new JourUser();
+//		nameValuePairs = new ArrayList<NameValuePair>();
+//		nameValuePairs.add(new BasicNameValuePair("j_username", username));
+//		nameValuePairs.add(new BasicNameValuePair("j_oauth", oauthtoken));
+//
+//		try
+//		{
+//			OkHttpClient httpclient = new OkHttpClient();
+//			HttpURLConnection connection = httpclient.open(new URL(Constants.BASE_URL + Constants.URL_LOGOUT));
+//
+//			// Write the request.
+//			connection.setRequestMethod(POST);
+//			connection.addRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+//
+//			out = connection.getOutputStream();
+//			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out, "UTF-8"));
+//			writer.write(getQuery(nameValuePairs));
+//			writer.flush();
+//			writer.close();
+//			out.close();
+//
+//			// Read the response.
+//			if (connection.getResponseCode() != HttpURLConnection.HTTP_OK)
+//			{
+//				throw new IOException("Unexpected HTTP response: " + connection.getResponseCode() + " " + connection.getResponseMessage());
+//			}
+//			in = connection.getInputStream();
+//
+//			ObjectMapper mapper = new ObjectMapper();
+//
+//			String result = readFirstLine(in);
+//
+//			Log.d(LOG_TAG, "Result: " + result);
+//
+//			user = mapper.readValue(result, JourUser.class);
+//			Log.d(LOG_TAG, "JourUser message: " + user.getMessage());
+//			return user.isStatus();
+//		}
+//		finally
+//		{
+//			// Clean up.
+//			if (out != null)
+//				out.close();
+//			if (in != null)
+//				in.close();
+//		}
+//	}
 
 	public String printUserDetails()
 	{
@@ -503,11 +502,11 @@ public class NetworkUtil
 		try
 		{
 			nameValuePairs = new ArrayList<NameValuePair>();
-			nameValuePairs.add(new BasicNameValuePair(Constants.KEY_GRANT_TYPE, Constants.GRANT_PASSWORD));
-			nameValuePairs.add(new BasicNameValuePair(Constants.KEY_CLIENT_ID, Constants.CLIENT_ID));
-			nameValuePairs.add(new BasicNameValuePair(Constants.KEY_CLIENT_SECRET, Constants.CLIENT_SECRET));
 			nameValuePairs.add(new BasicNameValuePair(Constants.KEY_USERNAME, username));
 			nameValuePairs.add(new BasicNameValuePair(Constants.KEY_PASSWORD, password));
+			nameValuePairs.add(new BasicNameValuePair(Constants.KEY_USERTYPE, usertype.getRegType()));
+
+			String encodedHeader = encodeHeader(Constants.CLIENT_ID, Constants.CLIENT_SECRET);
 
 			OkHttpClient httpclient = new OkHttpClient();
 			HttpURLConnection connection = httpclient.open(new URL(Constants.BASE_URL + Constants.URL_REGISTER));
@@ -515,6 +514,12 @@ public class NetworkUtil
 			// Write the request.
 			connection.setRequestMethod(POST);
 			connection.addRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+
+			String headerValue = Constants.HEADER_BASIC + " " + encodedHeader;
+
+			Log.d(LOG_TAG, "Header Value: " + headerValue);
+
+			connection.addRequestProperty(Constants.KEY_HEADER_AUTH, headerValue);
 
 			out = connection.getOutputStream();
 			BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out, "UTF-8"));

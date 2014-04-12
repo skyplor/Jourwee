@@ -1,4 +1,4 @@
-package com.algomized.android.jourwee.model;
+package com.algomized.android.jourwee.unused;
 
 public class OAuth2AccessToken {
 	private String access_token;

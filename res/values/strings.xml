@@ -57,5 +57,6 @@
     <string name="divider">Divider</string>
     <string name="or">OR</string>
     <string name="title_activity_web_view">WebViewActivity</string>
+    <string name="action_logout">Logout</string>
 
 </resources>

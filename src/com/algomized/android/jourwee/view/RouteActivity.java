@@ -15,9 +15,13 @@ import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.FragmentById;
 import org.androidannotations.annotations.OnActivityResult;
+import org.androidannotations.annotations.OptionsItem;
+import org.androidannotations.annotations.OptionsMenu;
+import org.androidannotations.annotations.OptionsMenuItem;
 import org.androidannotations.annotations.Touch;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.res.StringRes;
+import org.apache.http.client.ClientProtocolException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -25,9 +29,15 @@ import org.json.JSONObject;
 import com.algomized.android.jourwee.Constants;
 import com.algomized.android.jourwee.R;
 import com.algomized.android.jourwee.util.Communicator;
+import com.algomized.android.jourwee.util.NetworkUtil;
 import com.algomized.android.jourwee.view.fragment.LocationListFragment;
 import com.algomized.android.jourwee.view.fragment.RouteLocationFragment;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
+import android.accounts.AccountManagerFuture;
+import android.accounts.AuthenticatorException;
+import android.accounts.OperationCanceledException;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.SearchManager;
@@ -37,8 +47,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -48,6 +60,7 @@ import android.widget.Filter;
 import android.widget.Filterable;
 
 @EActivity(R.layout.route)
+@OptionsMenu(R.menu.route_activity_actions)
 public class RouteActivity extends Activity implements Communicator
 {
 	public static final String LOG_TAG = RouteActivity.class.getName();
@@ -62,6 +75,19 @@ public class RouteActivity extends Activity implements Communicator
 	//
 	// @ViewById
 	// Button searchBtn;
+
+	@OptionsMenuItem
+	MenuItem action_logout;
+
+	@OptionsItem
+	void action_logoutSelected()
+	{
+		NetworkUtil nu = new NetworkUtil(this);
+
+		nu.removeAccounts();
+		StartActivity_.intent(this).start();
+		this.finish();
+	}
 
 	@FragmentById
 	RouteLocationFragment fragment1;
@@ -112,6 +138,20 @@ public class RouteActivity extends Activity implements Communicator
 	}
 
 	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event)
+	{
+		switch (keyCode)
+		{
+			case KeyEvent.KEYCODE_BACK:
+
+				moveTaskToBack(true);
+
+				return true;
+		}
+		return false;
+	}
+
+	@Override
 	public void respond(String data, int inputType)
 	{
 		fragment1.insertText(data, inputType);
@@ -131,23 +171,23 @@ public class RouteActivity extends Activity implements Communicator
 		// Catch the result back and insert into fragment1
 	}
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu)
-	{
-		// Inflate the options menu from XML
-		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.options_menu, menu);
-
-		// Get the SearchView and set the searchable configuration
-		SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-		SearchView searchView = (SearchView) menu.findItem(R.id.location_action_search).getActionView();
-		// Tells your app's SearchView to use this activity's searchable configuration
-		searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-		// Do not iconify the widget; expand it by default
-		searchView.setIconifiedByDefault(false);
-
-		return true;
-	}
+	// @Override
+	// public boolean onCreateOptionsMenu(Menu menu)
+	// {
+	// // Inflate the options menu from XML
+	// MenuInflater inflater = getMenuInflater();
+	// inflater.inflate(R.menu.search_menu, menu);
+	//
+	// // Get the SearchView and set the searchable configuration
+	// SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+	// SearchView searchView = (SearchView) menu.findItem(R.id.location_action_search).getActionView();
+	// // Tells your app's SearchView to use this activity's searchable configuration
+	// searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+	// // Do not iconify the widget; expand it by default
+	// searchView.setIconifiedByDefault(false);
+	//
+	// return true;
+	// }
 
 	// @Touch
 	// void originInput(View v, MotionEvent event)
