@@ -4,15 +4,14 @@ package com.algomized.android.jourwee;
 public class Constants
 {
 	public static Boolean LOGIN_STATUS;
-	public static final String BASE_URL = "http://algomizedwebserver.elasticbeanstalk.com/api/";
-	public static final String URL_REFRESH = "signin/refresh";
-	public static final String URL_GET_USER = "account";
-	public static final String URL_LOGIN = "signin/token";
-	public static final String URL_FBLOGIN = "signin/facebook";
-	public static final String URL_TWLOGIN = "signin/twitter";
-	public static final String URL_REGISTER = "signup";
-//	public static final String URL_TEST_API = "test";
-//	public static final String URL_LOGOUT = "logout";
+	public static final String BASE_URL = "http://algomizedwebserver.elasticbeanstalk.com/";
+	public static final String URL_REFRESH = "api/signin/refresh";
+	public static final String URL_GET_USER = "api/account";
+	public static final String URL_LOGIN = "api/signin/token";
+	public static final String URL_FBLOGIN = "api/signin/facebook";
+	public static final String URL_TWLOGIN = "api/signin/twitter";
+	public static final String URL_REGISTER = "api/signup";
+
 	public static final String SHARED_PREF_NAME = "com.algomized.android.jourwee";
 	public static final String PREF_SPRING_SECURITY_COOKIE = "spring_security_cookie";
 	public static final String AM_ACCOUNT_TYPE = "com.algomized.android.jourwee";
@@ -35,6 +34,7 @@ public class Constants
 	public static final String KEY_EXPIRES_IN = "expires_in";
 	public static final String KEY_HEADER_AUTH = "Authorization";
 	public static final String KEY_USERTYPE = "user_type";
+	
 	public static final String AM_KEY_REFRESH_TOKEN = BASE_URL + "refresh";
 	public static final String AM_KEY_EXPIRES_IN = BASE_URL + "expires";
 	public static final String BROWSER_KEY = "AIzaSyCoQowbIAVI-hzlKp6kRn4rzJUmVWn_lgs";

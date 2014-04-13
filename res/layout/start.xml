@@ -45,7 +45,8 @@
 		android:layout_marginTop="58dp"
 		android:contentDescription="@string/app_name"
 		android:src="@drawable/ic_jourweelogo" />
-	<ImageButton
+	<com.facebook.widget.LoginButton
+		xmlns:fb="http://schemas.android.com/apk/res-auto"
 		android:id="@+id/btn_fb"
 		android:layout_width="163dp"
 		android:layout_height="31dp"
@@ -53,7 +54,10 @@
 		android:layout_below="@+id/btn_twitter"
 		android:layout_marginTop="5dp"
 		android:contentDescription="@string/btn_fb_description"
-		android:src="@drawable/btn_facebook" />
+		fb:login_text=""
+		fb:logout_text=""
+		style="@style/login_button" />
+	<!-- android:src="@drawable/btn_facebook" fb:login_text="" fb:logout_text="" -->
 	<TextView
 		android:id="@+id/signinTxt"
 		android:layout_width="wrap_content"
@@ -67,16 +71,27 @@
 		android:textSize="12sp" />
 	<!-- <View android:layout_width="fill_parent" android:layout_height="1dp" android:layout_alignParentLeft="true" android:layout_below="@+id/signinTxt" android:layout_marginTop="22dp" android:layout_marginLeft="22dp" 
 		android:layout_marginRight="22dp" android:background="?android:attr/listDivider" /> -->
-	<!-- <ImageView
-		android:layout_gravity="center_horizontal"
-		android:layout_height="1dp"
-		android:layout_width="fill_parent"
+	<!-- <ImageView android:layout_gravity="center_horizontal" android:layout_height="1dp" android:layout_width="fill_parent" android:layout_below="@+id/signinTxt" android:layout_margin="22dp" android:src="@android:drawable/divider_horizontal_bright" 
+		android:background="@color/white" android:contentDescription="@string/divider" /> -->
+	<ImageButton
+		android:id="@+id/btn_twitter"
+		android:layout_width="163dp"
+		android:layout_height="31dp"
+		android:layout_alignLeft="@+id/btn_fb"
+		android:layout_below="@+id/OrTxt"
+		android:layout_marginTop="31dp"
+		android:contentDescription="@string/btn_twitter_description"
+		android:src="@drawable/btn_twitter" />
+	<TextView
+		android:id="@+id/OrTxt"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
 		android:layout_below="@+id/signinTxt"
-		android:layout_margin="22dp"
-		android:src="@android:drawable/divider_horizontal_bright"
-		android:background="@color/white"
-		android:contentDescription="@string/divider" /> -->
-	<ImageButton android:id="@+id/btn_twitter" android:layout_width="163dp" android:layout_height="31dp" android:layout_alignLeft="@+id/btn_fb" android:layout_below="@+id/OrTxt" android:layout_marginTop="31dp" android:contentDescription="@string/btn_twitter_description" android:src="@drawable/btn_twitter"/>
-	<TextView android:id="@+id/OrTxt" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_below="@+id/signinTxt" android:layout_centerHorizontal="true" android:layout_marginTop="35dp" android:text="@string/or" android:textAppearance="?android:attr/textAppearanceMedium" android:textColor="#FFFFFF" android:textSize="12sp"/>
+		android:layout_centerHorizontal="true"
+		android:layout_marginTop="35dp"
+		android:text="@string/or"
+		android:textAppearance="?android:attr/textAppearanceMedium"
+		android:textColor="#FFFFFF"
+		android:textSize="12sp" />
 
 </RelativeLayout>

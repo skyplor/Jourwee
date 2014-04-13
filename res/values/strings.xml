@@ -38,6 +38,7 @@
     <string name="search_hint">Search Places</string>
     <string name="action_search">Search</string>
     <string name="search_settings">Search Places</string>
+    <string name="fb_app_id">680303702025885</string>
 
     <string-array name="locations">
         <item>hello1</item>

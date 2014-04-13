@@ -10,6 +10,13 @@ import org.androidannotations.annotations.ViewById;
 import com.algomized.android.jourwee.Constants;
 import com.algomized.android.jourwee.R;
 import com.algomized.android.jourwee.util.NetworkUtil;
+import com.facebook.Request;
+import com.facebook.Request.GraphUserCallback;
+import com.facebook.Response;
+import com.facebook.SessionState;
+import com.facebook.Session;
+import com.facebook.model.GraphUser;
+import com.facebook.widget.LoginButton;
 
 import android.accounts.AccountManager;
 import android.content.Intent;
@@ -28,14 +35,48 @@ public class StartActivity extends ActionBarActivity // implements AuthListener
 	// EditText login_idBox, passwordBox;
 	String LOG_TAG = StartActivity.class.getName();
 
-	@ViewById(R.id.signinTxt)
+	@ViewById
 	TextView signinTxt;
+
+	@ViewById
+	LoginButton btn_fb;
 
 	@AfterViews
 	void init()
 	{
 		signinTxt.setClickable(true);
 		overridePendingTransition(R.anim.slide_in_from_bottom, R.anim.slide_out_to_bottom);
+		// btn_fb.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+		// btn_fb.setBackgroundResource(R.drawable.btn_facebook);
+
+		// start Facebook Login
+		Session.openActiveSession(this, true, new Session.StatusCallback()
+		{
+
+			// callback when session changes state
+			@Override
+			public void call(Session session, SessionState state, Exception exception)
+			{
+				if (session.isOpened())
+				{
+					// make request to the /me API
+					Request.newMeRequest(session, new GraphUserCallback()
+					{
+
+						// callback after Graph API response with user object
+						@Override
+						public void onCompleted(GraphUser user, Response response)
+						{
+							if (user != null)
+							{
+//								TextView welcome = (TextView) findViewById(R.id.welcome);
+								signinTxt.setText("Hello " + user.getName() + "!");
+							}
+						}
+					});
+				}
+			}
+		});
 		// Check if a valid token is in AccountManager. If yes, go to LocationActivity_.class. If no, stay here.
 		doFirstCheck();
 	}
@@ -85,14 +126,14 @@ public class StartActivity extends ActionBarActivity // implements AuthListener
 		LoginActivity_.intent(this).startForResult(LOGIN);
 	}
 
-	@Click
-	void btn_fb()
-	{
-		String fb_url = Constants.BASE_URL + Constants.URL_FBLOGIN;
-		Log.d(LOG_TAG, "Facebook URL: " + fb_url);
-//		startWebView(fb_url, "scope=publish_stream,offline_access", FACEBOOK_SIGNIN_REQUEST);
-		startWebView(fb_url, "publish_stream,offline_access", FACEBOOK_SIGNIN_REQUEST);
-	}
+	// @Click
+	// void btn_fb()
+	// {
+	// String fb_url = Constants.BASE_URL + Constants.URL_FBLOGIN;
+	// Log.d(LOG_TAG, "Facebook URL: " + fb_url);
+	// // startWebView(fb_url, "scope=publish_stream,offline_access", FACEBOOK_SIGNIN_REQUEST);
+	// startWebView(fb_url, "publish_stream,offline_access", FACEBOOK_SIGNIN_REQUEST);
+	// }
 
 	@Click
 	void btn_twitter()
@@ -105,6 +146,8 @@ public class StartActivity extends ActionBarActivity // implements AuthListener
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data)
 	{
+		super.onActivityResult(requestCode, resultCode, data);
+		Session.getActiveSession().onActivityResult(this, requestCode, resultCode, data);
 		if (data != null)
 		{
 			Bundle bundle = data.getExtras();
@@ -125,11 +168,13 @@ public class StartActivity extends ActionBarActivity // implements AuthListener
 						String accessToken = data.getStringExtra("access_token");
 						Log.d(LOG_TAG, "Facebook: " + accessToken);
 						Toast.makeText(this, accessToken, Toast.LENGTH_LONG).show();
+						startRouteActivity(bundle);
 						break;
 					case TWITTER_SIGNIN_REQUEST:
 						String accessToken1 = data.getStringExtra("access_token");
 						Log.d(LOG_TAG, "Twitter: " + accessToken1);
 						Toast.makeText(this, accessToken1, Toast.LENGTH_LONG).show();
+						startRouteActivity(bundle);
 						break;
 				}
 			}

@@ -92,8 +92,8 @@ public class LoginActivity extends AccountAuthenticatorActivity
 				data.putString(AccountManager.KEY_ACCOUNT_NAME, username);
 				data.putString(AccountManager.KEY_ACCOUNT_TYPE, Constants.AM_ACCOUNT_TYPE);
 				data.putString(AccountManager.KEY_AUTHTOKEN, user.getAccess_token());
-				data.putString(Constants.AM_KEY_REFRESH_TOKEN, user.getRefresh_token());
-				data.putString(Constants.AM_KEY_EXPIRES_IN, user.getExpires_in());
+				data.putString(Constants.KEY_REFRESH_TOKEN, user.getRefresh_token());
+				data.putString(Constants.KEY_EXPIRES_IN, user.getExpires_in());
 				data.putInt(Constants.KEY_USERTYPE, user.getUser_type());
 				publishProgress(100);
 			}
@@ -143,8 +143,8 @@ public class LoginActivity extends AccountAuthenticatorActivity
 				else
 				{
 					String oauth = intent.getStringExtra(AccountManager.KEY_AUTHTOKEN);
-					String refresh_token = intent.getStringExtra(Constants.AM_KEY_REFRESH_TOKEN);
-					String expires_in = intent.getStringExtra(Constants.AM_KEY_EXPIRES_IN);
+					String refresh_token = intent.getStringExtra(Constants.KEY_REFRESH_TOKEN);
+					String expires_in = intent.getStringExtra(Constants.KEY_EXPIRES_IN);
 					AccountManager mAccountManager = AccountManager.get(getBaseContext());
 					String username = intent.getExtras().getString(AccountManager.KEY_ACCOUNT_NAME);
 					final Account account = new Account(username, Constants.AM_ACCOUNT_TYPE);
