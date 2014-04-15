@@ -1,5 +1,8 @@
 package com.algomized.android.jourwee.view;
 
+import java.util.Arrays;
+import java.util.Set;
+
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Click;
@@ -10,6 +13,7 @@ import org.androidannotations.annotations.ViewById;
 import com.algomized.android.jourwee.Constants;
 import com.algomized.android.jourwee.R;
 import com.algomized.android.jourwee.util.NetworkUtil;
+import com.android.volley.VolleyLog;
 import com.facebook.Request;
 import com.facebook.Request.GraphUserCallback;
 import com.facebook.Response;
@@ -44,10 +48,14 @@ public class StartActivity extends ActionBarActivity // implements AuthListener
 	@AfterViews
 	void init()
 	{
+		VolleyLog.d("Initialising...");
 		signinTxt.setClickable(true);
 		overridePendingTransition(R.anim.slide_in_from_bottom, R.anim.slide_out_to_bottom);
 		// btn_fb.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
 		// btn_fb.setBackgroundResource(R.drawable.btn_facebook);
+
+		// btn_fb.setReadPermissions(Arrays.asList("offline_access", "publish_stream"));
+		// btn_fb.setpu(Arrays.asList("offline_access", "publish_stream"));
 
 		// start Facebook Login
 		Session.openActiveSession(this, true, new Session.StatusCallback()
@@ -59,6 +67,7 @@ public class StartActivity extends ActionBarActivity // implements AuthListener
 			{
 				if (session.isOpened())
 				{
+					VolleyLog.d("inside initialising, callback");
 					// make request to the /me API
 					Request.newMeRequest(session, new GraphUserCallback()
 					{
@@ -69,7 +78,7 @@ public class StartActivity extends ActionBarActivity // implements AuthListener
 						{
 							if (user != null)
 							{
-//								TextView welcome = (TextView) findViewById(R.id.welcome);
+								// TextView welcome = (TextView) findViewById(R.id.welcome);
 								signinTxt.setText("Hello " + user.getName() + "!");
 							}
 						}
@@ -147,7 +156,7 @@ public class StartActivity extends ActionBarActivity // implements AuthListener
 	protected void onActivityResult(int requestCode, int resultCode, Intent data)
 	{
 		super.onActivityResult(requestCode, resultCode, data);
-		Session.getActiveSession().onActivityResult(this, requestCode, resultCode, data);
+		VolleyLog.d("Before checking for data");
 		if (data != null)
 		{
 			Bundle bundle = data.getExtras();
@@ -164,6 +173,34 @@ public class StartActivity extends ActionBarActivity // implements AuthListener
 						startRouteActivity(bundle);
 
 						break;
+
+					case Session.DEFAULT_AUTHORIZE_ACTIVITY_CODE:
+						VolleyLog.d("In Facebook onActivityResult");
+						Session session = Session.getActiveSession();
+						session.onActivityResult(this, requestCode, resultCode, data);
+						if (data != null)
+						{
+							Bundle bundle1 = data.getExtras();
+							if (bundle1 != null)
+							{
+								Set<String> keys = bundle1.keySet();
+								for (String key : keys)
+								{
+									VolleyLog.d("Key: " + key);
+
+									VolleyLog.d("data: " + bundle1.get(key));
+
+								}
+
+							}
+						}
+						
+						//no session is opened yet so this is useless...
+						if (session.isOpened())
+						{
+						}
+
+						break;
 					case FACEBOOK_SIGNIN_REQUEST:
 						String accessToken = data.getStringExtra("access_token");
 						Log.d(LOG_TAG, "Facebook: " + accessToken);
@@ -178,6 +215,26 @@ public class StartActivity extends ActionBarActivity // implements AuthListener
 						break;
 				}
 			}
+		}
+	}
+
+	@Override
+	protected void onResume()
+	{
+		// TODO Auto-generated method stub
+		super.onResume();
+
+		VolleyLog.d("Before getting session");
+
+		Session session = Session.getActiveSession();
+		if (session.isOpened())
+		{
+			Toast.makeText(this, session.getAccessToken(), Toast.LENGTH_LONG).show();
+			// if session is opened, we check whether inside accountmanager got our accounts anot.
+			// If yes, direct to routeactivity.
+			// If no, pass the access token to server, then retrieve the access token, refresh token, token type, expires in from server 
+			//		then put into bundle and add into Account Manager
+			// Start routeactivity after that.
 		}
 	}
 
