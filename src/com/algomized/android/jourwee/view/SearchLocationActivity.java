@@ -81,7 +81,8 @@ public class SearchLocationActivity extends Activity implements Communicator, Se
 			else if (intent.getAction().equals(Intent.ACTION_VIEW))
 			{
 				Log.d(LOG_TAG, "In HandleIntent, action = Intent.ACTION_VIEW");
-				getPlace(intent.getStringExtra(SearchManager.EXTRA_DATA_KEY));
+				// getPlace(intent.getStringExtra(SearchManager.EXTRA_DATA_KEY));
+				getSuggestions(intent.getStringExtra(SearchManager.EXTRA_DATA_KEY));
 			}
 		}
 	}
@@ -140,12 +141,12 @@ public class SearchLocationActivity extends Activity implements Communicator, Se
 			cLoader = new CursorLoader(getBaseContext(), PlacesSuggestionProvider.SEARCH_URI, null, null, new String[] { query.getString("query") }, null);
 		else if (arg0 == 1)
 			cLoader = new CursorLoader(getBaseContext(), PlacesSuggestionProvider.DETAILS_URI, null, null, new String[] { query.getString("query") }, null);
-		// else if (arg0 == 2)
-		// {
-		// // Uri singleUri = ContentUris.withAppendedId(PlacesSuggestionProvider.SUGGESTION_URI, 0);
-		// cLoader = new CursorLoader(getBaseContext(), PlacesSuggestionProvider.SUGGESTION_URI, null, null, PlacesSuggestionProvider.SUGGEST_FROM, null);
-		// // Cursor cur = cl.loadInBackground();
-		// }
+		else if (arg0 == 2)
+		{
+			// Uri singleUri = ContentUris.withAppendedId(PlacesSuggestionProvider.SUGGESTION_URI, 0);
+			cLoader = new CursorLoader(getBaseContext(), PlacesSuggestionProvider.SUGGESTION_URI, null, null, PlacesSuggestionProvider.SUGGEST_FROM, null);
+			// Cursor cur = cl.loadInBackground();
+		}
 		return cLoader;
 	}
 
@@ -251,14 +252,13 @@ public class SearchLocationActivity extends Activity implements Communicator, Se
 		getLoaderManager().restartLoader(1, data, this);
 	}
 
-	//
-	// private void getSuggestions(String query)
-	// {
-	// Log.d(LOG_TAG, "In getSuggestions, query: " + query);
-	// Bundle data = new Bundle();
-	// data.putString("query", query);
-	// getLoaderManager().restartLoader(2, data, this);
-	// }
+	private void getSuggestions(String query)
+	{
+		Log.d(LOG_TAG, "In getSuggestions, query: " + query);
+		Bundle data = new Bundle();
+		data.putString("query", query);
+		getLoaderManager().restartLoader(2, data, this);
+	}
 
 	@Override
 	protected void onNewIntent(Intent intent)
@@ -268,17 +268,17 @@ public class SearchLocationActivity extends Activity implements Communicator, Se
 		handleIntent(intent);
 	}
 
-//	@Override
-//	public boolean onMenuItemSelected(int featureId, MenuItem item)
-//	{
-//		switch (item.getItemId())
-//		{
-//			case R.id.action_search:
-//				onSearchRequested();
-//				break;
-//		}
-//		return super.onMenuItemSelected(featureId, item);
-//	}
+	// @Override
+	// public boolean onMenuItemSelected(int featureId, MenuItem item)
+	// {
+	// switch (item.getItemId())
+	// {
+	// case R.id.action_search:
+	// onSearchRequested();
+	// break;
+	// }
+	// return super.onMenuItemSelected(featureId, item);
+	// }
 
 	@Override
 	public void respond(String data, int inputType)
@@ -314,8 +314,8 @@ public class SearchLocationActivity extends Activity implements Communicator, Se
 			// myList.setAdapter(defaultAdapter);
 			Log.d(LOG_TAG, "Inside onquerytextchange");
 		}
-		// return false;
-		return true;
+		return false;
+		// return true;
 	}
 
 	@Override
