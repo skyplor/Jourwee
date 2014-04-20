@@ -58,7 +58,7 @@ public class StartActivity extends ActionBarActivity // implements AuthListener
 		// btn_fb.setpu(Arrays.asList("offline_access", "publish_stream"));
 
 		// start Facebook Login
-		Session.openActiveSession(this, true, new Session.StatusCallback()
+		Session.openActiveSession(this, false, new Session.StatusCallback()
 		{
 
 			// callback when session changes state
@@ -227,7 +227,7 @@ public class StartActivity extends ActionBarActivity // implements AuthListener
 		VolleyLog.d("Before getting session");
 
 		Session session = Session.getActiveSession();
-		if (session.isOpened())
+		if (session != null && session.isOpened())
 		{
 			Toast.makeText(this, session.getAccessToken(), Toast.LENGTH_LONG).show();
 			// if session is opened, we check whether inside accountmanager got our accounts anot.

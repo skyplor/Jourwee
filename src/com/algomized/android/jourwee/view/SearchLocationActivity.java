@@ -6,9 +6,11 @@ import org.androidannotations.annotations.FragmentById;
 import org.androidannotations.annotations.ViewById;
 
 import com.algomized.android.jourwee.R;
+import com.algomized.android.jourwee.model.Place;
 import com.algomized.android.jourwee.util.Communicator;
 import com.algomized.android.jourwee.util.location.PlacesSuggestionProvider;
 import com.algomized.android.jourwee.view.fragment.LocationListFragment;
+import com.android.volley.VolleyLog;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -55,6 +57,8 @@ public class SearchLocationActivity extends Activity implements Communicator, Se
 
 	SearchView searchView;
 
+	boolean fromSuggestion;
+
 	private static final String LOG_TAG = SearchLocationActivity.class.getName();
 
 	@Override
@@ -81,8 +85,15 @@ public class SearchLocationActivity extends Activity implements Communicator, Se
 			else if (intent.getAction().equals(Intent.ACTION_VIEW))
 			{
 				Log.d(LOG_TAG, "In HandleIntent, action = Intent.ACTION_VIEW");
-				// getPlace(intent.getStringExtra(SearchManager.EXTRA_DATA_KEY));
-				getSuggestions(intent.getStringExtra(SearchManager.EXTRA_DATA_KEY));
+				getPlace(intent.getStringExtra(SearchManager.EXTRA_DATA_KEY));
+				Bundle bundle = intent.getExtras();
+
+				for (String key : bundle.keySet())
+				{
+					VolleyLog.d("Intent's key: " + key);
+					VolleyLog.d("Intent's data: " + bundle.get(key).toString());
+				}
+//				getSuggestionSelected(intent.getStringExtra(SearchManager.SUGGEST_COLUMN_TEXT_1));
 			}
 		}
 	}
@@ -141,12 +152,12 @@ public class SearchLocationActivity extends Activity implements Communicator, Se
 			cLoader = new CursorLoader(getBaseContext(), PlacesSuggestionProvider.SEARCH_URI, null, null, new String[] { query.getString("query") }, null);
 		else if (arg0 == 1)
 			cLoader = new CursorLoader(getBaseContext(), PlacesSuggestionProvider.DETAILS_URI, null, null, new String[] { query.getString("query") }, null);
-		else if (arg0 == 2)
-		{
-			// Uri singleUri = ContentUris.withAppendedId(PlacesSuggestionProvider.SUGGESTION_URI, 0);
-			cLoader = new CursorLoader(getBaseContext(), PlacesSuggestionProvider.SUGGESTION_URI, null, null, PlacesSuggestionProvider.SUGGEST_FROM, null);
-			// Cursor cur = cl.loadInBackground();
-		}
+//		else if (arg0 == 2)
+//		{
+//			// Uri singleUri = ContentUris.withAppendedId(PlacesSuggestionProvider.SUGGESTION_URI, 0);
+//			cLoader = new CursorLoader(getBaseContext(), PlacesSuggestionProvider.SUGGESTION_URI, null, null, PlacesSuggestionProvider.SUGGEST_FROM, null);
+//			// Cursor cur = cl.loadInBackground();
+//		}
 		return cLoader;
 	}
 
@@ -188,13 +199,12 @@ public class SearchLocationActivity extends Activity implements Communicator, Se
 				{
 					Log.d(LOG_TAG, "Cursor is null in onLoadFinished");
 				}
-				fragment2.setLocations(c);
+				fromSuggestion = false;
+				fragment2.setLocations(c, fromSuggestion);
 				break;
 			case 1:
 				// do some other stuff here
-				break;
-			case 2:
-				Log.d(LOG_TAG, "Fragment 2 set locations");
+				Log.d(LOG_TAG, "Fragment 2 suggestion details set locations");
 				if (c != null && c.moveToFirst())
 				{
 					do
@@ -204,6 +214,9 @@ public class SearchLocationActivity extends Activity implements Communicator, Se
 						{
 							Log.d(LOG_TAG, "Record " + result_count + ": " + c.getColumnName(j) + " -> " + c.getString(j));
 						}
+
+						Place place = Place.newInstance(c);
+						respond(place.name, searchExtra);
 					}
 					while (c.moveToNext());
 				}
@@ -220,7 +233,38 @@ public class SearchLocationActivity extends Activity implements Communicator, Se
 				{
 					Log.d(LOG_TAG, "Cursor is null in onLoadFinished");
 				}
-				fragment2.setLocations(c);
+//				fromSuggestion = true;
+//				fragment2.setLocations(c, fromSuggestion);
+				break;
+			case 2:
+//				Log.d(LOG_TAG, "Fragment 2 set locations");
+//				if (c != null && c.moveToFirst())
+//				{
+//					do
+//					{
+//						result_count++;
+//						for (int j = 0; j < c.getColumnCount(); j++)
+//						{
+//							Log.d(LOG_TAG, "Record " + result_count + ": " + c.getColumnName(j) + " -> " + c.getString(j));
+//						}
+//					}
+//					while (c.moveToNext());
+//				}
+//				else if (!c.moveToFirst())
+//				{
+//					Log.d(LOG_TAG, "Cursor has no records in onLoadFinished");
+//					for (int j = 0; j < c.getColumnCount(); j++)
+//					{
+//						int tempCol = j + 1;
+//						Log.d(LOG_TAG, "Column " + tempCol + ": " + c.getColumnName(j));
+//					}
+//				}
+//				else
+//				{
+//					Log.d(LOG_TAG, "Cursor is null in onLoadFinished");
+//				}
+//				fromSuggestion = true;
+//				fragment2.setLocations(c, fromSuggestion);
 				break;
 			default:
 				break;
@@ -252,11 +296,11 @@ public class SearchLocationActivity extends Activity implements Communicator, Se
 		getLoaderManager().restartLoader(1, data, this);
 	}
 
-	private void getSuggestions(String query)
+	private void getSuggestionSelected(String description)
 	{
-		Log.d(LOG_TAG, "In getSuggestions, query: " + query);
+		Log.d(LOG_TAG, "In getSuggestionSelected, description: " + description);
 		Bundle data = new Bundle();
-		data.putString("query", query);
+		data.putString("description", description);
 		getLoaderManager().restartLoader(2, data, this);
 	}
 

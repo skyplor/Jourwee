@@ -21,6 +21,7 @@ import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -46,7 +47,7 @@ public class PlacesSuggestionProvider extends ContentProvider
 
 	public static final Uri SEARCH_URI = Uri.parse("content://" + AUTHORITY + "/search");
 
-	public static final Uri SUGGESTION_URI = Uri.parse("content://" + AUTHORITY + "/" + SearchManager.SUGGEST_URI_PATH_QUERY);
+	// public static final Uri SUGGESTION_URI = Uri.parse("content://" + AUTHORITY + "/" + SearchManager.SUGGEST_URI_PATH_QUERY);
 
 	public static final Uri DETAILS_URI = Uri.parse("content://" + AUTHORITY + "/details");
 
@@ -63,7 +64,8 @@ public class PlacesSuggestionProvider extends ContentProvider
 	private static final String LOG_TAG = PlacesSuggestionProvider.class.getName();
 
 	public static String[] SUGGEST_FROM = new String[] { "_id", SearchManager.SUGGEST_COLUMN_TEXT_1, SearchManager.SUGGEST_COLUMN_INTENT_EXTRA_DATA };
-//	public static String[] SUGGEST_FROM = new String[] { "_id", "description", "lat", "lng" };
+
+	// public static String[] SUGGEST_FROM = new String[] { "_id", "description", "lat", "lng" };
 
 	private static UriMatcher buildUriMatcher()
 	{
@@ -176,28 +178,29 @@ public class PlacesSuggestionProvider extends ContentProvider
 				if (!jsonString.isEmpty())
 				{
 
-//					try
-//					{
-						// Parse the places ( JSON => List )
-						// list = parser.parse(new JSONObject(jsonString));
+					// try
+					// {
+					// Parse the places ( JSON => List )
+					// list = parser.parse(new JSONObject(jsonString));
 
-						jpList = parser.Mapper(jsonString);
-						resultsList = jpList.getPredictions();
+					jpList = parser.Mapper(jsonString);
+					resultsList = jpList.getPredictions();
 
-						// Creating cursor object with places
-						// for (int i = 0; i < list.size(); i++)
-						// {
-						for (int i = 0; i < resultsList.size(); i++)
-						{
-							jPlace = resultsList.get(i);
-							// HashMap<String, String> hMap = (HashMap<String, String>) list.get(i);
+					// Creating cursor object with places
+					// for (int i = 0; i < list.size(); i++)
+					// {
+					for (int i = 0; i < resultsList.size(); i++)
+					{
+						jPlace = resultsList.get(i);
+						// HashMap<String, String> hMap = (HashMap<String, String>) list.get(i);
 
-							// Log.d(LOG_TAG, "Place result: description" + hMap.get("description"));
+						// Log.d(LOG_TAG, "Place result: description" + hMap.get("description"));
 
-							// Adding place details to cursor
-							// mCursor.addRow(new String[] { Integer.toString(i), hMap.get("description"), hMap.get("reference") });
-							mCursor.addRow(new String[] { Integer.toString(i), jPlace.getDescription(), jPlace.getReference() });
-						}
+						// Adding place details to cursor
+						// mCursor.addRow(new String[] { Integer.toString(i), hMap.get("description"), hMap.get("reference") });
+						VolleyLog.d("jPlace Description: " + jPlace.getDescription());
+						mCursor.addRow(new String[] { Integer.toString(i), jPlace.getDescription(), jPlace.getReference() });
+					}
 					// }
 					// catch (JSONException e)
 					// {
@@ -210,24 +213,33 @@ public class PlacesSuggestionProvider extends ContentProvider
 
 			case DETAILS:
 				// Defining a cursor object with columns description, lat and lng
-				mCursor = new MatrixCursor(new String[] { "description", "lat", "lng" });
+				mCursor = new MatrixCursor(new String[] { "_id", "description", "lat", "lng" });
 
 				detailsParser = new PlaceDetailsJSONParser();
 				jsonPlaceDetails = getPlaceDetails(selectionArgs[0]);
-				try
+				// try
+				// {
+				// detailsList = detailsParser.parse(new JSONObject(jsonPlaceDetails));
+				// }
+				// catch (JSONException e)
+				// {
+				// // TODO Auto-generated catch block
+				// e.printStackTrace();
+				// }
+				if (StringUtils.isNotEmpty(jsonPlaceDetails))
 				{
-					detailsList = detailsParser.parse(new JSONObject(jsonPlaceDetails));
-				}
-				catch (JSONException e)
-				{
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-
-				for (int j = 0; j < detailsList.size(); j++)
-				{
-					HashMap<String, String> hMapDetails = detailsList.get(j);
-					mCursor.addRow(new String[] { hMapDetails.get("formatted_address"), hMapDetails.get("lat"), hMapDetails.get("lng") });
+					Log.d(LOG_TAG, "jsonPlaceDetails: " + jsonPlaceDetails);
+					jpList = parser.Mapper(jsonPlaceDetails);
+					jPlace = jpList.getResult();
+					// for (int j = 0; j < detailsList.size(); j++)
+					// {
+					if (jPlace != null)
+					{
+						VolleyLog.d("jPlace Description: " + jPlace.getDescription());
+						mCursor.addRow(new String[] { Integer.toString(0), jPlace.getName() + ", " + jPlace.getFormatted_address(), Double.toString(jPlace.getGeometry().getLocation().getLat()), Double.toString(jPlace.getGeometry().getLocation().getLng()) });
+						// HashMap<String, String> hMapDetails = detailsList.get(j);
+						// mCursor.addRow(new String[] { hMapDetails.get("formatted_address"), hMapDetails.get("lat"), hMapDetails.get("lng") });
+					}
 				}
 				c = mCursor;
 				break;
