@@ -1,4 +1,4 @@
-package com.algomized.android.jourwee.model;
+package com.algomized.android.jourwee.unused;
 
 import java.io.Serializable;
 

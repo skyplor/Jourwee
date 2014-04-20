@@ -9,7 +9,9 @@ import org.androidannotations.annotations.ViewById;
 
 import com.algomized.android.jourwee.Constants;
 import com.algomized.android.jourwee.R;
-import com.algomized.android.jourwee.model.Place;
+import com.algomized.android.jourwee.model.JourPlace;
+import com.algomized.android.jourwee.model.JourRoute;
+//import com.algomized.android.jourwee.unused.Place;
 import com.algomized.android.jourwee.util.Communicator;
 import com.algomized.android.jourwee.util.location.PlacesSuggestionProvider;
 import com.android.volley.VolleyLog;
@@ -57,7 +59,8 @@ public class LocationListFragment extends Fragment// implements OnQueryTextListe
 	Communicator comm;
 	LoaderManager loadermanager;
 	CursorLoader cursorLoader;
-//	boolean fromSuggestion = true;
+
+	// boolean fromSuggestion = true;
 
 	public void onActivityCreated(Bundle savedInstanceState)
 	{
@@ -186,9 +189,21 @@ public class LocationListFragment extends Fragment// implements OnQueryTextListe
 	@ItemClick
 	void locationList(Cursor c)
 	{
-//		fromSuggestion = false;
-		Place place = Place.newInstance(c);
-		comm.respond(place.name, inputType);
+		// fromSuggestion = false;
+		JourPlace place = new JourPlace(c);
+		comm.respond(place.getDescription(), inputType);
+		VolleyLog.d("Selected: Lat: " + place.getGeometry().getLocation().getLat());
+		VolleyLog.d("Selected: Lng: " + place.getGeometry().getLocation().getLng());
+		if (inputType == Constants.ORIGIN)
+		{
+			VolleyLog.d("Setting Origin...");
+			JourRoute.getInstance().setOrigin(place);
+		}
+		else if (inputType == Constants.DESTINATION)
+		{
+			VolleyLog.d("Setting Destination...");
+			JourRoute.getInstance().setDestination(place);
+		}
 	}
 
 	public void setInputType(int inputType)
@@ -226,10 +241,10 @@ public class LocationListFragment extends Fragment// implements OnQueryTextListe
 	{
 		Log.d(LOG_TAG, "in setAdapter");
 		String[] from = new String[1];
-		if(fromSuggestion)
+		if (fromSuggestion)
 		{
 			VolleyLog.d("from suggestion is true");
-//			from[0] = SearchManager.SUGGEST_COLUMN_TEXT_1;
+			// from[0] = SearchManager.SUGGEST_COLUMN_TEXT_1;
 			from[0] = "description";
 		}
 		else

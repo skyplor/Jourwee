@@ -28,6 +28,7 @@ import org.json.JSONObject;
 import com.algomized.android.jourwee.Constants;
 import com.algomized.android.jourwee.R;
 import com.algomized.android.jourwee.model.JourPlace;
+import com.algomized.android.jourwee.model.JourPlaceDetails;
 import com.algomized.android.jourwee.model.JourPlaceList;
 import com.android.volley.VolleyLog;
 
@@ -40,7 +41,7 @@ import android.database.MatrixCursor;
 import android.net.Uri;
 import android.util.Log;
 
-public class PlacesSuggestionProvider extends ContentProvider
+public class PlacesSuggestionProvider<T> extends ContentProvider
 {
 
 	public static final String AUTHORITY = "com.algomized.android.jourwee.PlacesSuggestionProvider";
@@ -89,17 +90,18 @@ public class PlacesSuggestionProvider extends ContentProvider
 	{
 		Cursor c = null;
 
-		PlaceJSONParser parser = new PlaceJSONParser();
-		PlaceDetailsJSONParser detailsParser = new PlaceDetailsJSONParser();
+		PlaceJSONParser<T> parser = new PlaceJSONParser<T>((Class<T>) JourPlaceList.class);
+//		PlaceDetailsJSONParser detailsParser = new PlaceDetailsJSONParser();
 
 		String jsonString = "";
 		String jsonPlaceDetails = "";
 
 		// List<HashMap<String, String>> list = null;
 		JourPlaceList jpList = null;
+		JourPlaceDetails jpDetails = null;
 		List<JourPlace> resultsList = null;
 		JourPlace jPlace = null;
-		List<HashMap<String, String>> detailsList = null;
+//		List<HashMap<String, String>> detailsList = null;
 
 		MatrixCursor mCursor = null;
 
@@ -110,10 +112,10 @@ public class PlacesSuggestionProvider extends ContentProvider
 				mCursor = new MatrixCursor(new String[] { "_id", "description", "lat", "lng" });
 
 				// Create a parser object to parse places in JSON format
-				parser = new PlaceJSONParser();
+				parser = new PlaceJSONParser<T>((Class<T>) JourPlaceList.class);
 
 				// Create a parser object to parse place details in JSON format
-				detailsParser = new PlaceDetailsJSONParser();
+//				detailsParser = new PlaceDetailsJSONParser();
 
 				// Get Places from Google Places API
 				jsonString = getPlaces(selectionArgs, SEARCH);
@@ -122,7 +124,7 @@ public class PlacesSuggestionProvider extends ContentProvider
 				// {
 				// Parse the places ( JSON => List )
 				// list = parser.parse(new JSONObject(jsonString));
-				jpList = parser.Mapper(jsonString);
+				jpList = (JourPlaceList) parser.unmarshal(jsonString);
 				resultsList = jpList.getResults();
 
 				// Finding latitude and longitude for each places using Google Places Details API
@@ -170,7 +172,7 @@ public class PlacesSuggestionProvider extends ContentProvider
 				mCursor = new MatrixCursor(SUGGEST_FROM);
 
 				// Creating a parser object to parse places in JSON format
-				parser = new PlaceJSONParser();
+				parser = new PlaceJSONParser<T>((Class<T>) JourPlaceList.class);
 
 				// Get Places from Google Places API
 				jsonString = getPlaces(selectionArgs, SUGGESTIONS);
@@ -183,7 +185,7 @@ public class PlacesSuggestionProvider extends ContentProvider
 					// Parse the places ( JSON => List )
 					// list = parser.parse(new JSONObject(jsonString));
 
-					jpList = parser.Mapper(jsonString);
+					jpList = (JourPlaceList) parser.unmarshal(jsonString);
 					resultsList = jpList.getPredictions();
 
 					// Creating cursor object with places
@@ -215,7 +217,9 @@ public class PlacesSuggestionProvider extends ContentProvider
 				// Defining a cursor object with columns description, lat and lng
 				mCursor = new MatrixCursor(new String[] { "_id", "description", "lat", "lng" });
 
-				detailsParser = new PlaceDetailsJSONParser();
+//				detailsParser = new PlaceDetailsJSONParser();
+				// Create a parser object to parse places in JSON format
+				parser = new PlaceJSONParser<T>((Class<T>) JourPlaceDetails.class);
 				jsonPlaceDetails = getPlaceDetails(selectionArgs[0]);
 				// try
 				// {
@@ -229,8 +233,8 @@ public class PlacesSuggestionProvider extends ContentProvider
 				if (StringUtils.isNotEmpty(jsonPlaceDetails))
 				{
 					Log.d(LOG_TAG, "jsonPlaceDetails: " + jsonPlaceDetails);
-					jpList = parser.Mapper(jsonPlaceDetails);
-					jPlace = jpList.getResult();
+					jpDetails = (JourPlaceDetails) parser.unmarshal(jsonPlaceDetails);
+					jPlace = jpDetails.getResult();
 					// for (int j = 0; j < detailsList.size(); j++)
 					// {
 					if (jPlace != null)

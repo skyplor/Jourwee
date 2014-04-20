@@ -10,13 +10,22 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.algomized.android.jourwee.model.JourPlace;
+import com.algomized.android.jourwee.model.JourPlaceDetails;
 import com.algomized.android.jourwee.model.JourPlaceList;
 import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.AnnotationIntrospector;
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.introspect.JacksonAnnotationIntrospector;
 
-public class PlaceJSONParser
+public class PlaceJSONParser<T>
 {
+//	 T stands for "Type"
+	private Class<T> targetClass;
+
+	private T jPlace;
+
 	// boolean search_flag = false;
 	//
 	// public PlaceJSONParser(int search)
@@ -26,14 +35,47 @@ public class PlaceJSONParser
 	// search_flag = true;
 	// }
 	// }
-
-	public JourPlaceList Mapper(String json)
+	// public void set(T t)
+	// {
+	// this.targetClass = t;
+	// }
+	//
+	// public T getT()
+	// {
+	// return targetClass;
+	// }
+	
+	public PlaceJSONParser(Class<T> cls)
 	{
-		JourPlaceList jPlaceList = new JourPlaceList();
+		targetClass = cls;
+	}
+	
+	public T unmarshal(String json)
+	{
+		// Class<T> jPlaceList = new
+		// JourPlaceDetails jPlaceDetails = new JourPlaceDetails();
 		ObjectMapper mapper = new ObjectMapper();
+
+		// AnnotationIntrospector introspector = new JacksonAnnotationIntrospector();
+		//
+		// mapper.getDeserializationConfig().withInsertedAnnotationIntrospector(introspector);
+		//
+		// mapper.getSerializationConfig().withInsertedAnnotationIntrospector(introspector);
+		//
+		// JavaType type = mapper.getTypeFactory().constructCollectionType(targetClass.getClass(), T);
 		try
 		{
-			jPlaceList = mapper.readValue(json, JourPlaceList.class);
+			// if (getT().getClass() == JourPlaceList.class)
+			// {
+			// jPlaceList = mapper.readValue(json, JourPlaceList.class);
+			// return jPlaceList;
+			// }
+			// else if (getT().getClass() == JourPlaceDetails.class)
+			// {
+			// jPlaceDetails = mapper.readValue(json, JourPlaceDetails.class);
+			// }
+			jPlace = mapper.readValue(json, targetClass);
+
 		}
 		catch (JsonParseException e)
 		{
@@ -50,9 +92,9 @@ public class PlaceJSONParser
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return jPlaceList;
+
+		return jPlace;
 	}
-	
 
 	// /** Receives a JSONObject and returns a list */
 	// public List<HashMap<String, String>> parse(JSONObject jObject)

@@ -1,7 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<fragment
-	xmlns:android="http://schemas.android.com/apk/res/android"
-	android:id="@+id/map"
+<LinearLayout
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
-	android:name="com.google.android.gms.maps.MapFragment" />
+	android:baselineAligned="false"
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical">
+	<fragment
+		android:id="@+id/map_fragment"
+		android:layout_width="match_parent"
+		android:layout_height="0dp"
+		android:layout_weight="2"
+		android:name="com.google.android.gms.maps.MapFragment" />
+	<fragment
+		android:id="@+id/userDetails_fragment"
+		android:layout_width="match_parent"
+		android:layout_height="0dp"
+		android:layout_weight="1"
+		android:name="com.algomized.android.jourwee.view.fragment.UserDetailsFragment_" />
+
+</LinearLayout>

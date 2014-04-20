@@ -5,8 +5,11 @@ import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.FragmentById;
 import org.androidannotations.annotations.ViewById;
 
+import com.algomized.android.jourwee.Constants;
 import com.algomized.android.jourwee.R;
-import com.algomized.android.jourwee.model.Place;
+import com.algomized.android.jourwee.model.JourPlace;
+import com.algomized.android.jourwee.model.JourRoute;
+//import com.algomized.android.jourwee.unused.Place;
 import com.algomized.android.jourwee.util.Communicator;
 import com.algomized.android.jourwee.util.location.PlacesSuggestionProvider;
 import com.algomized.android.jourwee.view.fragment.LocationListFragment;
@@ -93,7 +96,7 @@ public class SearchLocationActivity extends Activity implements Communicator, Se
 					VolleyLog.d("Intent's key: " + key);
 					VolleyLog.d("Intent's data: " + bundle.get(key).toString());
 				}
-//				getSuggestionSelected(intent.getStringExtra(SearchManager.SUGGEST_COLUMN_TEXT_1));
+				// getSuggestionSelected(intent.getStringExtra(SearchManager.SUGGEST_COLUMN_TEXT_1));
 			}
 		}
 	}
@@ -152,12 +155,12 @@ public class SearchLocationActivity extends Activity implements Communicator, Se
 			cLoader = new CursorLoader(getBaseContext(), PlacesSuggestionProvider.SEARCH_URI, null, null, new String[] { query.getString("query") }, null);
 		else if (arg0 == 1)
 			cLoader = new CursorLoader(getBaseContext(), PlacesSuggestionProvider.DETAILS_URI, null, null, new String[] { query.getString("query") }, null);
-//		else if (arg0 == 2)
-//		{
-//			// Uri singleUri = ContentUris.withAppendedId(PlacesSuggestionProvider.SUGGESTION_URI, 0);
-//			cLoader = new CursorLoader(getBaseContext(), PlacesSuggestionProvider.SUGGESTION_URI, null, null, PlacesSuggestionProvider.SUGGEST_FROM, null);
-//			// Cursor cur = cl.loadInBackground();
-//		}
+		// else if (arg0 == 2)
+		// {
+		// // Uri singleUri = ContentUris.withAppendedId(PlacesSuggestionProvider.SUGGESTION_URI, 0);
+		// cLoader = new CursorLoader(getBaseContext(), PlacesSuggestionProvider.SUGGESTION_URI, null, null, PlacesSuggestionProvider.SUGGEST_FROM, null);
+		// // Cursor cur = cl.loadInBackground();
+		// }
 		return cLoader;
 	}
 
@@ -215,8 +218,13 @@ public class SearchLocationActivity extends Activity implements Communicator, Se
 							Log.d(LOG_TAG, "Record " + result_count + ": " + c.getColumnName(j) + " -> " + c.getString(j));
 						}
 
-						Place place = Place.newInstance(c);
-						respond(place.name, searchExtra);
+						JourPlace place = new JourPlace(c);
+						respond(place.getDescription(), searchExtra);
+						if (searchExtra == Constants.ORIGIN)
+							JourRoute.getInstance().setOrigin(place);
+						else if (searchExtra == Constants.DESTINATION)
+							JourRoute.getInstance().setDestination(place);
+
 					}
 					while (c.moveToNext());
 				}
@@ -233,38 +241,38 @@ public class SearchLocationActivity extends Activity implements Communicator, Se
 				{
 					Log.d(LOG_TAG, "Cursor is null in onLoadFinished");
 				}
-//				fromSuggestion = true;
-//				fragment2.setLocations(c, fromSuggestion);
+				// fromSuggestion = true;
+				// fragment2.setLocations(c, fromSuggestion);
 				break;
 			case 2:
-//				Log.d(LOG_TAG, "Fragment 2 set locations");
-//				if (c != null && c.moveToFirst())
-//				{
-//					do
-//					{
-//						result_count++;
-//						for (int j = 0; j < c.getColumnCount(); j++)
-//						{
-//							Log.d(LOG_TAG, "Record " + result_count + ": " + c.getColumnName(j) + " -> " + c.getString(j));
-//						}
-//					}
-//					while (c.moveToNext());
-//				}
-//				else if (!c.moveToFirst())
-//				{
-//					Log.d(LOG_TAG, "Cursor has no records in onLoadFinished");
-//					for (int j = 0; j < c.getColumnCount(); j++)
-//					{
-//						int tempCol = j + 1;
-//						Log.d(LOG_TAG, "Column " + tempCol + ": " + c.getColumnName(j));
-//					}
-//				}
-//				else
-//				{
-//					Log.d(LOG_TAG, "Cursor is null in onLoadFinished");
-//				}
-//				fromSuggestion = true;
-//				fragment2.setLocations(c, fromSuggestion);
+				// Log.d(LOG_TAG, "Fragment 2 set locations");
+				// if (c != null && c.moveToFirst())
+				// {
+				// do
+				// {
+				// result_count++;
+				// for (int j = 0; j < c.getColumnCount(); j++)
+				// {
+				// Log.d(LOG_TAG, "Record " + result_count + ": " + c.getColumnName(j) + " -> " + c.getString(j));
+				// }
+				// }
+				// while (c.moveToNext());
+				// }
+				// else if (!c.moveToFirst())
+				// {
+				// Log.d(LOG_TAG, "Cursor has no records in onLoadFinished");
+				// for (int j = 0; j < c.getColumnCount(); j++)
+				// {
+				// int tempCol = j + 1;
+				// Log.d(LOG_TAG, "Column " + tempCol + ": " + c.getColumnName(j));
+				// }
+				// }
+				// else
+				// {
+				// Log.d(LOG_TAG, "Cursor is null in onLoadFinished");
+				// }
+				// fromSuggestion = true;
+				// fragment2.setLocations(c, fromSuggestion);
 				break;
 			default:
 				break;

@@ -9,7 +9,6 @@ public class JourPlaceList
 {
 	private String status;
 	private List<JourPlace> results, predictions;
-	private JourPlace result;
 
 	/**
 	 * @return the status
@@ -60,21 +59,4 @@ public class JourPlaceList
 	{
 		this.predictions = predictions;
 	}
-
-	/**
-	 * @return the result
-	 */
-	public JourPlace getResult()
-	{
-		return result;
-	}
-
-	/**
-	 * @param result the result to set
-	 */
-	public void setResult(JourPlace result)
-	{
-		this.result = result;
-	}
-
 }

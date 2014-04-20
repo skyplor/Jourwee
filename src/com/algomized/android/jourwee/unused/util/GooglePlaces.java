@@ -4,8 +4,8 @@ import org.apache.http.client.HttpResponseException;
 
 import android.util.Log;
 
-import com.algomized.android.jourwee.model.PlaceDetails;
-import com.algomized.android.jourwee.model.PlacesList;
+import com.algomized.android.jourwee.unused.PlaceDetails;
+import com.algomized.android.jourwee.unused.PlacesList;
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpHeaders;
 import com.google.api.client.http.HttpRequest;

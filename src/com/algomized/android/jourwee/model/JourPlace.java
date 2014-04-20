@@ -26,25 +26,23 @@ public class JourPlace
 	private String formatted_address;
 
 	private String formatted_phone_number;
-
+	
 	public JourPlace()
 	{
-		// TODO Auto-generated constructor stub
+		
 	}
 
-	public static JourPlace newInstance(Cursor c)
+	public JourPlace(Cursor c)
 	{
-		JourPlace jPlace = new JourPlace();
 		// For Search: 0 = _id, 1 = description, 2 = lat, 3 = lng
-		jPlace.setId(c.getString(c.getColumnIndex("_id")));
-		jPlace.setDescription(c.getString(c.getColumnIndex("description")));
+		id = c.getString(c.getColumnIndex("_id"));
+		description = c.getString(c.getColumnIndex("description"));
 		Log.d("PLACE", "lat: " + c.getColumnIndex("lat"));
-		JourGeometry jGeometry = jPlace.getGeometry();
-		JourLocation location = jGeometry.getLocation();
-		location.setLat(Double.parseDouble(c.getString(c.getColumnIndex("lat"))));
-		location.setLng(Double.parseDouble(c.getString(c.getColumnIndex("lng"))));
-
-		return jPlace;
+		JourLocation jLocation = new JourLocation();
+		jLocation.setLat(Double.parseDouble(c.getString(c.getColumnIndex("lat"))));
+		jLocation.setLng(Double.parseDouble(c.getString(c.getColumnIndex("lng"))));
+		geometry = new JourGeometry();
+		geometry.setLocation(jLocation);
 	}
 
 	@Override

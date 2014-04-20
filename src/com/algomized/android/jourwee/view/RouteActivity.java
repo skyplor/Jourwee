@@ -28,10 +28,13 @@ import org.json.JSONObject;
 
 import com.algomized.android.jourwee.Constants;
 import com.algomized.android.jourwee.R;
+import com.algomized.android.jourwee.model.JourPlace;
+import com.algomized.android.jourwee.model.JourRoute;
 import com.algomized.android.jourwee.util.Communicator;
 import com.algomized.android.jourwee.util.NetworkUtil;
 import com.algomized.android.jourwee.view.fragment.LocationListFragment;
 import com.algomized.android.jourwee.view.fragment.RouteLocationFragment;
+import com.android.volley.VolleyLog;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
@@ -222,11 +225,38 @@ public class RouteActivity extends Activity implements Communicator
 	@OnActivityResult(searchlocation)
 	void onOriginResult(Intent intent)
 	{
+		Double origin_lat, origin_lng, dest_lat, dest_lng;
 		if (intent != null)
 		{
 			String data = intent.getStringExtra("data");
 			int inputType = intent.getIntExtra("InputType", 0);
 			fragment1.insertText(data, inputType);
+
+			// get route object
+			VolleyLog.d("Retrieving route...");
+			JourPlace origin = JourRoute.getInstance().getOrigin();
+			JourPlace destination = JourRoute.getInstance().getDestination();
+			if (origin != null)
+			{
+				origin_lat = origin.getGeometry().getLocation().getLat();
+				origin_lng = origin.getGeometry().getLocation().getLng();
+				VolleyLog.d("Origin Lat: " + origin_lat);
+				VolleyLog.d("Origin Lng: " + origin_lng);
+			}
+			if (destination != null)
+			{
+				dest_lat = destination.getGeometry().getLocation().getLat();
+				dest_lng = destination.getGeometry().getLocation().getLng();
+				VolleyLog.d("Destination Lat: " + dest_lat);
+				VolleyLog.d("Destination Lng: " + dest_lng);
+			}
+			if (origin != null && destination != null)
+			{
+				// TODO send route to server to compute waypoint
+				// Once server comes back with the list of drivers/riders, change activity to display in map view
+				MapsActivity_.intent(this).start();
+				this.finish();
+			}
 		}
 	}
 
