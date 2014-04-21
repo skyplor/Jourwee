@@ -46,6 +46,8 @@ public class JourUser
 	private Integer age = null;
 
 	private List<Map<String, String>> userRoles = null;
+	
+	private JourRoute route;
 
 	/**
 	 * @return the age
@@ -277,6 +279,22 @@ public class JourUser
 	public void setUser_type(int user_type)
 	{
 		this.user_type = user_type;
+	}
+
+	/**
+	 * @return the route
+	 */
+	public JourRoute getRoute()
+	{
+		return route;
+	}
+
+	/**
+	 * @param route the route to set
+	 */
+	public void setRoute(JourRoute route)
+	{
+		this.route = route;
 	}
 
 	@Override
