@@ -1,4 +1,5 @@
-package com.algomized.android.jourwee.view;
+package com.algomized.android.jourwee.unused;
+/*package com.algomized.android.jourwee.view;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -119,20 +120,20 @@ public class WebViewActivity extends AccountAuthenticatorActivity
 		social_web.getSettings().setJavaScriptEnabled(true);
 		social_web.setBackgroundColor(color.black);
 
-		/* Register a new JavaScript interface called HTMLOUT */
+		 Register a new JavaScript interface called HTMLOUT 
 		social_web.addJavascriptInterface(new MyJavaScriptInterface(), "htmlOut");
 		social_web.getSettings().setBuiltInZoomControls(true);
 		social_web.getSettings().setDisplayZoomControls(true);
 		// social_web.getSettings().setDefaultZoom(ZoomDensity.FAR);
 //		social_web.getSettings().setLayoutAlgorithm(LayoutAlgorithm.SINGLE_COLUMN);
 
-		/* WebViewClient must be set BEFORE calling loadUrl! */
+		 WebViewClient must be set BEFORE calling loadUrl! 
 		social_web.setWebViewClient(new WebViewClient()
 		{
 			@Override
 			public void onPageFinished(WebView view, String url)
 			{
-				/* This call inject JavaScript into the page which just finished loading. */
+				 This call inject JavaScript into the page which just finished loading. 
 				Log.d(LogUtil.getCurrentClassName(), LogUtil.getCurrentMethodName() + ", URL: " + url);
 				Uri uri = Uri.parse(url);
 				if (uri.getLastPathSegment() != null && uri.getLastPathSegment().equals(POSTSIGNIN_ENDPOINT))
@@ -186,7 +187,7 @@ public class WebViewActivity extends AccountAuthenticatorActivity
 	         {
 	        	 result = new BasicResponseHandler().handleResponse(response);
 
-			/*OkHttpClient httpclient = new OkHttpClient();
+			OkHttpClient httpclient = new OkHttpClient();
 			HttpURLConnection connection = httpclient.open(new URL(url));
 
 			// Write the request.
@@ -243,7 +244,7 @@ public class WebViewActivity extends AccountAuthenticatorActivity
 					// user = login();
 					// }
 				}
-				*/
+				
 	        	 writeToFile(result);
 				showWebView(1, result);
 
@@ -433,9 +434,9 @@ public class WebViewActivity extends AccountAuthenticatorActivity
 		return super.onOptionsItemSelected(item);
 	}
 
-	/**
+	*//**
 	 * A placeholder fragment containing a simple view.
-	 */
+	 *//*
 	// public static class PlaceholderFragment extends Fragment
 	// {
 	//
@@ -451,7 +452,7 @@ public class WebViewActivity extends AccountAuthenticatorActivity
 	// }
 	// }
 
-	/* An instance of this class will be registered as a JavaScript interface */
+	 An instance of this class will be registered as a JavaScript interface 
 	class MyJavaScriptInterface
 	{
 		@JavascriptInterface
@@ -518,3 +519,4 @@ public class WebViewActivity extends AccountAuthenticatorActivity
 		}
 	}
 }
+*/

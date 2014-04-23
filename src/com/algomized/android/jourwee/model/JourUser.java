@@ -3,13 +3,16 @@ package com.algomized.android.jourwee.model;
 import java.util.List;
 import java.util.Map;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.algomized.android.jourwee.Constants;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class JourUser
+public class JourUser //implements Parcelable
 {
 
 	private String name = null;
@@ -312,5 +315,24 @@ public class JourUser
 		else
 			return "null";
 	}
+
+//	@Override
+//	public int describeContents()
+//	{
+//		// TODO Auto-generated method stub
+//		return 0;
+//	}
+//
+//	@Override
+//	public void writeToParcel(Parcel dest, int flags)
+//	{
+//		dest.writeInt(id);
+//		dest.writeString(username);
+//        dest.writeString(access_token);
+//        dest.writeString(expires_in);
+//        dest.writeString(refresh_token);
+//        dest.writeString(token_type);
+//		
+//	}
 
 }

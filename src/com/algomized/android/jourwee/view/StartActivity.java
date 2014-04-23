@@ -149,7 +149,7 @@ public class StartActivity extends ActionBarActivity // implements AuthListener
 	{
 		String tw_url = Constants.BASE_URL + Constants.URL_TWLOGIN;
 		Log.d(LOG_TAG, "Twitter URL: " + tw_url);
-		startWebView(tw_url, null, TWITTER_SIGNIN_REQUEST);
+//		startWebView(tw_url, null, TWITTER_SIGNIN_REQUEST);
 	}
 
 	@Override
@@ -238,19 +238,19 @@ public class StartActivity extends ActionBarActivity // implements AuthListener
 		}
 	}
 
-	private void startWebView(String url, String params, int requestCode)
-	{
-		Intent intent = new Intent(this, WebViewActivity_.class);
-		intent.putExtra("url", url);
-		if (params != null)
-		{
-			intent.putExtra("params", params);
-		}
-		startActivityForResult(intent, requestCode);
-
-		// if (params != null)
-		// {
-		//
-		// }
-	}
+//	private void startWebView(String url, String params, int requestCode)
+//	{
+//		Intent intent = new Intent(this, WebViewActivity_.class);
+//		intent.putExtra("url", url);
+//		if (params != null)
+//		{
+//			intent.putExtra("params", params);
+//		}
+//		startActivityForResult(intent, requestCode);
+//
+//		// if (params != null)
+//		// {
+//		//
+//		// }
+//	}
 }

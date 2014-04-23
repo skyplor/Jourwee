@@ -1,21 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<!-- <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent" android:baselineAligned="false" xmlns:android="http://schemas.android.com/apk/res/android" android:orientation="vertical"> -->
+
+<com.sothree.slidinguppanel.SlidingUpPanelLayout
+	xmlns:sothree="http://schemas.android.com/apk/res-auto"
+	android:id="@+id/sliding_layout"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
-	android:baselineAligned="false"
+	android:gravity="bottom"
 	xmlns:android="http://schemas.android.com/apk/res/android"
-	android:orientation="vertical">
+	android:orientation="vertical"
+	sothree:panelHeight="68dp"
+	sothree:shadowHeight="4dp">
 	<fragment
 		android:id="@+id/map_fragment"
 		android:layout_width="match_parent"
-		android:layout_height="0dp"
-		android:layout_weight="2"
+		android:layout_height="match_parent"
+		
 		android:name="com.google.android.gms.maps.MapFragment" />
+	<!-- android:layout_height="0dp"
+	android:layout_weight="2" -->
 	<fragment
-		android:id="@+id/userDetails_fragment"
+		android:id="@+id/userList_fragment"
 		android:layout_width="match_parent"
-		android:layout_height="0dp"
-		android:layout_weight="1"
-		android:name="com.algomized.android.jourwee.view.fragment.UserDetailsFragment_" />
-
-</LinearLayout>
+		android:layout_height="match_parent"
+		android:name="com.algomized.android.jourwee.view.fragment.UserListFragment_" />
+	
+		<!-- android:layout_height="0dp"
+		android:layout_weight="1" -->
+</com.sothree.slidinguppanel.SlidingUpPanelLayout>
+<!-- </LinearLayout> -->

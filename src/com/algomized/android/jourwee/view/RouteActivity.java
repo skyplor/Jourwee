@@ -8,8 +8,11 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.List;
 
+import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.Extra;
@@ -28,13 +31,19 @@ import org.json.JSONObject;
 
 import com.algomized.android.jourwee.Constants;
 import com.algomized.android.jourwee.R;
+import com.algomized.android.jourwee.events.BusProvider;
+import com.algomized.android.jourwee.events.JourUserAvailableEvent;
+import com.algomized.android.jourwee.model.JourGeometry;
+import com.algomized.android.jourwee.model.JourLocation;
 import com.algomized.android.jourwee.model.JourPlace;
 import com.algomized.android.jourwee.model.JourRoute;
+import com.algomized.android.jourwee.model.JourUser;
 import com.algomized.android.jourwee.util.Communicator;
 import com.algomized.android.jourwee.util.NetworkUtil;
 import com.algomized.android.jourwee.view.fragment.LocationListFragment;
 import com.algomized.android.jourwee.view.fragment.RouteLocationFragment;
 import com.android.volley.VolleyLog;
+import com.squareup.otto.Produce;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
@@ -69,6 +78,9 @@ public class RouteActivity extends Activity implements Communicator
 	public static final String LOG_TAG = RouteActivity.class.getName();
 	int userType;
 	final int searchlocation = 1;
+	// A reference to the JourUser we will be passing.
+	private JourUser jUser;
+	List<JourUser> jUserList;
 
 	// @ViewById
 	// AutoCompleteTextView originInput;
@@ -100,6 +112,10 @@ public class RouteActivity extends Activity implements Communicator
 
 	@StringRes
 	static String google_browser_api_key;
+
+	// Injected object
+	@Bean
+	BusProvider busProvider;
 
 	@AfterViews
 	void init()
@@ -254,8 +270,35 @@ public class RouteActivity extends Activity implements Communicator
 			{
 				// TODO send route to server to compute waypoint
 				// Once server comes back with the list of drivers/riders, change activity to display in map view
+				// Add extras of jourusers to mapactivity den starts it
+				jUserList = new ArrayList<JourUser>();
+				jUser = new JourUser();
+				jUser.setId(1);
+				jUser.setUsername("Tom");
+				jUser.setAccess_token("access token");
+				jUser.setExpires_in("expires in");
+				jUser.setRefresh_token("refresh token");
+				jUser.setToken_type("token type");
+				JourRoute jRoute = new JourRoute();
+				JourPlace jorigin = new JourPlace();
+				JourPlace jdest = new JourPlace();
+				JourGeometry geometry = new JourGeometry();
+				JourLocation jloc = new JourLocation();
+				jloc.setLng(1.4);
+				jloc.setLat(103.8);
+				geometry.setLocation(jloc);
+				jorigin.setGeometry(geometry);
+				jloc.setLat(1.3);
+				jloc.setLng(103.9);
+				geometry.setLocation(jloc);
+				jdest.setGeometry(geometry);
+				jRoute.setOrigin(jorigin);
+				jRoute.setDestination(jdest);
+				jUser.setRoute(jRoute);
+				jUserList.add(jUser);
+				busProvider.getEventBus().register(createJourUserEventHandler);
 				MapsActivity_.intent(this).start();
-				this.finish();
+				// this.finish();
 			}
 		}
 	}
@@ -266,6 +309,42 @@ public class RouteActivity extends Activity implements Communicator
 	// String destination = data.getStringExtra("data");
 	// destInput.setText(destination);
 	// }
+
+	/**
+	 * Injection has taken place. Register to retrieve the latest contact object from the bus. We use an anonymous class to handle the events (see comments at the bottom of the class).
+	 */
+	@AfterInject
+	public void postInjection()
+	{
+//		busProvider.getEventBus().register(createJourUserEventHandler);
+	}
+
+	/**
+	 * Unregister from the eventbus.
+	 */
+	@Override
+	public void onDestroy()
+	{
+		super.onDestroy();
+		busProvider.getEventBus().unregister(createJourUserEventHandler);
+	}
+
+	/**
+	 * Otto has a limitation (as per design) that it will only find methods on the immediate class type. As a result, if at runtime this instance actually points to a subclass implementation, the methods registered in this class will not be found. This immediately becomes a problem when using the AndroidAnnotations framework as it always produces a subclass of annotated classes.
+	 * 
+	 * To get around the class hierarchy limitation, one can use a separate anonymous class to handle the events.
+	 */
+	private Object createJourUserEventHandler = new Object()
+	{
+		/**
+		 * This class is a producer of Contact objects on the eventbus.
+		 */
+		@Produce
+		public JourUserAvailableEvent produceJourUser()
+		{
+			return new JourUserAvailableEvent(jUser);
+		}
+	};
 
 }
 
