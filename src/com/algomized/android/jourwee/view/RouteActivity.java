@@ -1,35 +1,26 @@
 package com.algomized.android.jourwee.view;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.androidannotations.annotations.AfterInject;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
-import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.Extra;
 import org.androidannotations.annotations.FragmentById;
 import org.androidannotations.annotations.OnActivityResult;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.OptionsMenuItem;
-import org.androidannotations.annotations.Touch;
-import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.res.StringRes;
-import org.apache.http.client.ClientProtocolException;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
-import com.algomized.android.jourwee.Constants;
+import android.app.Activity;
+import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.KeyEvent;
+import android.view.MenuItem;
+
 import com.algomized.android.jourwee.R;
 import com.algomized.android.jourwee.events.BusProvider;
 import com.algomized.android.jourwee.events.JourUserAvailableEvent;
@@ -44,32 +35,6 @@ import com.algomized.android.jourwee.view.fragment.LocationListFragment;
 import com.algomized.android.jourwee.view.fragment.RouteLocationFragment;
 import com.android.volley.VolleyLog;
 import com.squareup.otto.Produce;
-
-import android.accounts.Account;
-import android.accounts.AccountManager;
-import android.accounts.AccountManagerFuture;
-import android.accounts.AuthenticatorException;
-import android.accounts.OperationCanceledException;
-import android.app.Activity;
-import android.app.Fragment;
-import android.app.SearchManager;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.os.Bundle;
-import android.support.v7.widget.SearchView;
-import android.util.Log;
-import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.MotionEvent;
-import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
-import android.widget.Button;
-import android.widget.Filter;
-import android.widget.Filterable;
 
 @EActivity(R.layout.route)
 @OptionsMenu(R.menu.route_activity_actions)
@@ -296,7 +261,7 @@ public class RouteActivity extends Activity implements Communicator
 				jRoute.setDestination(jdest);
 				jUser.setRoute(jRoute);
 				jUserList.add(jUser);
-				busProvider.getEventBus().register(createJourUserEventHandler);
+				// busProvider.getEventBus().register(createJourUserEventHandler);
 				MapsActivity_.intent(this).start();
 				// this.finish();
 			}
@@ -316,7 +281,7 @@ public class RouteActivity extends Activity implements Communicator
 	@AfterInject
 	public void postInjection()
 	{
-//		busProvider.getEventBus().register(createJourUserEventHandler);
+		busProvider.getEventBus().register(createJourUserEventHandler);
 	}
 
 	/**
@@ -326,6 +291,7 @@ public class RouteActivity extends Activity implements Communicator
 	public void onDestroy()
 	{
 		super.onDestroy();
+
 		busProvider.getEventBus().unregister(createJourUserEventHandler);
 	}
 
@@ -337,7 +303,7 @@ public class RouteActivity extends Activity implements Communicator
 	private Object createJourUserEventHandler = new Object()
 	{
 		/**
-		 * This class is a producer of Contact objects on the eventbus.
+		 * This class is a producer of JourUser objects on the eventbus.
 		 */
 		@Produce
 		public JourUserAvailableEvent produceJourUser()
@@ -348,132 +314,36 @@ public class RouteActivity extends Activity implements Communicator
 
 }
 
-class PlacesAutoCompleteAdapter extends ArrayAdapter<String> implements Filterable
-{
-	private ArrayList<String> resultList;
-	private static final String PLACES_API_BASE = "https://maps.googleapis.com/maps/api/place";
-	private static final String TYPE_AUTOCOMPLETE = "/autocomplete";
-	private static final String OUT_JSON = "/json";
-
-	public PlacesAutoCompleteAdapter(Context context, int textViewResourceId)
-	{
-		super(context, textViewResourceId);
-	}
-
-	@Override
-	public int getCount()
-	{
-		return resultList.size();
-	}
-
-	@Override
-	public String getItem(int index)
-	{
-		return resultList.get(index);
-	}
-
-	@Override
-	public Filter getFilter()
-	{
-		Filter filter = new Filter()
-		{
-			@Override
-			protected FilterResults performFiltering(CharSequence constraint)
-			{
-				FilterResults filterResults = new FilterResults();
-				if (constraint != null)
-				{
-					// Retrieve the autocomplete results.
-					resultList = autocomplete(constraint.toString());
-
-					// Assign the data to the FilterResults
-					filterResults.values = resultList;
-					filterResults.count = resultList.size();
-				}
-				return filterResults;
-			}
-
-			@Override
-			protected void publishResults(CharSequence constraint, FilterResults results)
-			{
-				if (results != null && results.count > 0)
-				{
-					notifyDataSetChanged();
-				}
-				else
-				{
-					notifyDataSetInvalidated();
-				}
-			}
-		};
-		return filter;
-	}
-
-	private ArrayList<String> autocomplete(String input)
-	{
-		ArrayList<String> resultList = null;
-
-		HttpURLConnection conn = null;
-		StringBuilder jsonResults = new StringBuilder();
-		try
-		{
-			StringBuilder sb = new StringBuilder(PLACES_API_BASE + TYPE_AUTOCOMPLETE + OUT_JSON);
-			sb.append("?sensor=false&key=" + RouteActivity.google_browser_api_key);
-			sb.append("&components=country:sg");
-			sb.append("&input=" + URLEncoder.encode(input, "utf8"));
-
-			URL url = new URL(sb.toString());
-			Log.d(RouteActivity.LOG_TAG, "url: " + sb.toString());
-			conn = (HttpURLConnection) url.openConnection();
-			InputStream is = conn.getInputStream();
-			InputStreamReader in = new InputStreamReader(is);
-
-			// Load the results into a StringBuilder
-			int read;
-			char[] buff = new char[1024];
-			while ((read = in.read(buff)) != -1)
-			{
-				jsonResults.append(buff, 0, read);
-			}
-
-			Log.d(RouteActivity.LOG_TAG, "JSON RESULT: " + jsonResults.toString());
-		}
-		catch (MalformedURLException e)
-		{
-			Log.e(RouteActivity.LOG_TAG, "Error processing Places API URL", e);
-			return resultList;
-		}
-		catch (IOException e)
-		{
-			Log.e(RouteActivity.LOG_TAG, "Error connecting to Places API", e);
-			return resultList;
-		}
-		finally
-		{
-			if (conn != null)
-			{
-				conn.disconnect();
-			}
-		}
-
-		try
-		{
-			// Create a JSON object hierarchy from the results
-			JSONObject jsonObj = new JSONObject(jsonResults.toString());
-			JSONArray predsJsonArray = jsonObj.getJSONArray("predictions");
-
-			// Extract the Place descriptions from the results
-			resultList = new ArrayList<String>(predsJsonArray.length());
-			for (int i = 0; i < predsJsonArray.length(); i++)
-			{
-				resultList.add(predsJsonArray.getJSONObject(i).getString("description"));
-			}
-		}
-		catch (JSONException e)
-		{
-			Log.e(RouteActivity.LOG_TAG, "Cannot process JSON results", e);
-		}
-
-		return resultList;
-	}
-}
+/*
+ * class PlacesAutoCompleteAdapter extends ArrayAdapter<String> implements Filterable { private ArrayList<String> resultList; private static final String PLACES_API_BASE = "https://maps.googleapis.com/maps/api/place"; private static final String TYPE_AUTOCOMPLETE = "/autocomplete"; private static final String OUT_JSON = "/json";
+ * 
+ * public PlacesAutoCompleteAdapter(Context context, int textViewResourceId) { super(context, textViewResourceId); }
+ * 
+ * @Override public int getCount() { return resultList.size(); }
+ * 
+ * @Override public String getItem(int index) { return resultList.get(index); }
+ * 
+ * @Override public Filter getFilter() { Filter filter = new Filter() {
+ * 
+ * @Override protected FilterResults performFiltering(CharSequence constraint) { FilterResults filterResults = new FilterResults(); if (constraint != null) { // Retrieve the autocomplete results. resultList = autocomplete(constraint.toString());
+ * 
+ * // Assign the data to the FilterResults filterResults.values = resultList; filterResults.count = resultList.size(); } return filterResults; }
+ * 
+ * @Override protected void publishResults(CharSequence constraint, FilterResults results) { if (results != null && results.count > 0) { notifyDataSetChanged(); } else { notifyDataSetInvalidated(); } } }; return filter; }
+ * 
+ * private ArrayList<String> autocomplete(String input) { ArrayList<String> resultList = null;
+ * 
+ * HttpURLConnection conn = null; StringBuilder jsonResults = new StringBuilder(); try { StringBuilder sb = new StringBuilder(PLACES_API_BASE + TYPE_AUTOCOMPLETE + OUT_JSON); sb.append("?sensor=false&key=" + RouteActivity.google_browser_api_key); sb.append("&components=country:sg"); sb.append("&input=" + URLEncoder.encode(input, "utf8"));
+ * 
+ * URL url = new URL(sb.toString()); Log.d(RouteActivity.LOG_TAG, "url: " + sb.toString()); conn = (HttpURLConnection) url.openConnection(); InputStream is = conn.getInputStream(); InputStreamReader in = new InputStreamReader(is);
+ * 
+ * // Load the results into a StringBuilder int read; char[] buff = new char[1024]; while ((read = in.read(buff)) != -1) { jsonResults.append(buff, 0, read); }
+ * 
+ * Log.d(RouteActivity.LOG_TAG, "JSON RESULT: " + jsonResults.toString()); } catch (MalformedURLException e) { Log.e(RouteActivity.LOG_TAG, "Error processing Places API URL", e); return resultList; } catch (IOException e) { Log.e(RouteActivity.LOG_TAG, "Error connecting to Places API", e); return resultList; } finally { if (conn != null) { conn.disconnect(); } }
+ * 
+ * try { // Create a JSON object hierarchy from the results JSONObject jsonObj = new JSONObject(jsonResults.toString()); JSONArray predsJsonArray = jsonObj.getJSONArray("predictions");
+ * 
+ * // Extract the Place descriptions from the results resultList = new ArrayList<String>(predsJsonArray.length()); for (int i = 0; i < predsJsonArray.length(); i++) { resultList.add(predsJsonArray.getJSONObject(i).getString("description")); } } catch (JSONException e) { Log.e(RouteActivity.LOG_TAG, "Cannot process JSON results", e); }
+ * 
+ * return resultList; } }
+ */

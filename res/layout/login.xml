@@ -33,7 +33,7 @@
 		android:paddingLeft="5dp"
 		android:textColor="#27a7df"
 		android:textSize="13sp"
-		android:background="@color/white">
+		android:background="#FFFFFF">
 		<requestFocus />
 	</EditText>
 
@@ -64,7 +64,7 @@
 		android:paddingLeft="5dp"
 		android:textColor="#27a7df"
 		android:textSize="13sp"
-		android:background="@color/white" />
+		android:background="#FFFFFF" />
 
 	<!-- android:background="@drawable/edittext_rounded_corners" -->
 </RelativeLayout>
